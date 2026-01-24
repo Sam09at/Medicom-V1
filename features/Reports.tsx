@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { 
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend 
 } from 'recharts';
-import { IconDownload, IconFileText } from '../components/Icons';
+import { IconDownload, IconFileText, IconUsers, IconActivity, IconLayers } from '../components/Icons';
 import { User } from '../types';
 
 interface ReportsProps {
@@ -43,12 +44,23 @@ const treatmentPerformance = [
   { name: 'Blanchiment', count: 15, avgDuration: 60, revenue: 45000 },
 ];
 
-const saasStats = [
-  { month: 'Jan', activeClinics: 10, totalAppointments: 1200 },
-  { month: 'Fev', activeClinics: 14, totalAppointments: 1800 },
-  { month: 'Mar', activeClinics: 18, totalAppointments: 2400 },
-  { month: 'Avr', activeClinics: 22, totalAppointments: 3100 },
-  { month: 'Mai', activeClinics: 28, totalAppointments: 4500 },
+// --- Super Admin Mock Data ---
+const featureAdoption = [
+    { feature: 'Agenda', usedBy: 98 },
+    { feature: 'Dossiers', usedBy: 95 },
+    { feature: 'Facturation', usedBy: 70 },
+    { feature: 'SMS', usedBy: 45 },
+    { feature: 'Stock', usedBy: 30 },
+    { feature: 'AI Assist', usedBy: 15 },
+];
+
+const cohorts = [
+    { cohort: 'Jan 23', size: 12, m1: 100, m2: 98, m3: 95, m6: 90, m12: 85 },
+    { cohort: 'Fev 23', size: 15, m1: 100, m2: 100, m3: 98, m6: 92, m12: 88 },
+    { cohort: 'Mar 23', size: 10, m1: 100, m2: 90, m3: 88, m6: 80, m12: 75 },
+    { cohort: 'Avr 23', size: 18, m1: 100, m2: 98, m3: 98, m6: 96, m12: 92 },
+    { cohort: 'Mai 23', size: 20, m1: 100, m2: 95, m3: 92, m6: 88, m12: '-' },
+    { cohort: 'Jun 23', size: 22, m1: 100, m2: 98, m3: 95, m6: '-', m12: '-' },
 ];
 
 export const Reports: React.FC<ReportsProps> = ({ user }) => {
@@ -224,34 +236,77 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
 
   const renderSuperAdminReports = () => (
     <div className="space-y-6">
-       <div className="bg-white p-6 rounded-md border border-slate-200">
-          <div className="flex justify-between mb-6 items-center">
-            <h3 className="text-sm font-semibold text-slate-800">Croissance Globale SaaS</h3>
-            <div className="flex gap-2">
-              <button onClick={() => handleExport('csv')} className="text-xs text-blue-600 font-medium hover:underline">Exporter CSV</button>
-            </div>
-          </div>
-          <div className="h-96">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={saasStats} barSize={40}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dy={10} />
-                <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
-                <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
-                <Tooltip contentStyle={{borderRadius: '4px', border: '1px solid #e2e8f0', boxShadow: 'none'}} />
-                <Legend wrapperStyle={{fontSize: '12px', paddingTop: '10px'}}/>
-                <Bar yAxisId="left" dataKey="activeClinics" name="Cabinets Actifs" fill="#4f46e5" radius={[4, 4, 0, 0]} />
-                <Bar yAxisId="right" dataKey="totalAppointments" name="Volume RDV Total" fill="#10b981" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+           {/* Retention Cohort Analysis */}
+           <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+               <h3 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                   <IconUsers className="w-4 h-4 text-slate-400" /> Analyse de Rétention (Cohortes)
+               </h3>
+               <div className="overflow-x-auto">
+                   <table className="w-full text-xs text-center border-collapse">
+                       <thead>
+                           <tr>
+                               <th className="p-2 border-b border-slate-200 text-left text-slate-500 font-medium">Cohorte</th>
+                               <th className="p-2 border-b border-slate-200 text-slate-500 font-medium">Taille</th>
+                               <th className="p-2 border-b border-slate-200 text-slate-500 font-medium">M1</th>
+                               <th className="p-2 border-b border-slate-200 text-slate-500 font-medium">M2</th>
+                               <th className="p-2 border-b border-slate-200 text-slate-500 font-medium">M3</th>
+                               <th className="p-2 border-b border-slate-200 text-slate-500 font-medium">M6</th>
+                               <th className="p-2 border-b border-slate-200 text-slate-500 font-medium">M12</th>
+                           </tr>
+                       </thead>
+                       <tbody>
+                           {cohorts.map((c, i) => (
+                               <tr key={i}>
+                                   <td className="p-2 border-b border-slate-100 text-left font-medium text-slate-900">{c.cohort}</td>
+                                   <td className="p-2 border-b border-slate-100 text-slate-500">{c.size}</td>
+                                   <td className="p-2 border-b border-slate-100 bg-indigo-50 text-indigo-700">{c.m1}%</td>
+                                   <td className="p-2 border-b border-slate-100 bg-indigo-50 text-indigo-700" style={{opacity: typeof c.m2 === 'number' ? c.m2/100 : 0.5}}>{c.m2}%</td>
+                                   <td className="p-2 border-b border-slate-100 bg-indigo-50 text-indigo-700" style={{opacity: typeof c.m3 === 'number' ? c.m3/100 : 0.5}}>{c.m3}%</td>
+                                   <td className="p-2 border-b border-slate-100 bg-indigo-50 text-indigo-700" style={{opacity: typeof c.m6 === 'number' ? c.m6/100 : 0.1}}>{c.m6}%</td>
+                                   <td className="p-2 border-b border-slate-100 bg-indigo-50 text-indigo-700" style={{opacity: typeof c.m12 === 'number' ? c.m12/100 : 0.1}}>{c.m12}%</td>
+                               </tr>
+                           ))}
+                       </tbody>
+                   </table>
+               </div>
+           </div>
+
+           {/* Feature Adoption */}
+           <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+               <h3 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                   <IconLayers className="w-4 h-4 text-slate-400" /> Adoption des Fonctionnalités
+               </h3>
+               <div className="h-64">
+                   <ResponsiveContainer width="100%" height="100%">
+                       <BarChart data={featureAdoption} layout="vertical" margin={{ left: 20 }}>
+                           <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" />
+                           <XAxis type="number" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} unit="%" />
+                           <YAxis type="category" dataKey="feature" axisLine={false} tickLine={false} tick={{fill: '#1e293b', fontSize: 12, fontWeight: 500}} width={80} />
+                           <Tooltip cursor={{fill: '#f8fafc'}} contentStyle={{borderRadius: '4px', border: '1px solid #e2e8f0'}} />
+                           <Bar dataKey="usedBy" fill="#8b5cf6" radius={[0, 4, 4, 0]} barSize={20} />
+                       </BarChart>
+                   </ResponsiveContainer>
+               </div>
+               <div className="mt-4 text-xs text-slate-500 text-center">
+                   % des cabinets actifs utilisant la fonctionnalité au moins 1 fois / semaine.
+               </div>
+           </div>
        </div>
     </div>
   );
 
   return (
     <div className="h-full flex flex-col">
-       <h2 className="text-xl font-semibold text-slate-800 mb-6">{isSuperAdmin ? 'Rapports Système SaaS' : 'Rapports & Analyses'}</h2>
+       <div className="flex justify-between items-center mb-6">
+           <h2 className="text-xl font-bold text-slate-900">{isSuperAdmin ? 'Intelligence SaaS' : 'Rapports & Analyses'}</h2>
+           {isSuperAdmin && (
+               <div className="flex gap-2">
+                   <button className="px-3 py-1.5 bg-white border border-slate-200 rounded text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors">Dernier Trimestre</button>
+                   <button className="px-3 py-1.5 bg-indigo-50 border border-indigo-200 rounded text-xs font-medium text-indigo-700 transition-colors">Cette Année</button>
+               </div>
+           )}
+       </div>
        {isSuperAdmin ? renderSuperAdminReports() : renderClinicReports()}
     </div>
   );
