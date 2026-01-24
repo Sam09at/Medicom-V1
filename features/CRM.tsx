@@ -1,8 +1,13 @@
-
 import React, { useState } from 'react';
-import { IconSearch, IconPlus, IconUserPlus, IconX, IconCheck, IconFilter, IconUsers, IconBriefcase, IconCheckCircle, IconClock, IconMessage, IconSend, IconMoreHorizontal } from '../components/Icons';
+import { 
+  IconSearch, IconPlus, IconUserPlus, IconX, IconCheck, IconFilter, 
+  IconUsers, IconBriefcase, IconCheckCircle, IconClock, IconMessage, 
+  IconSend, IconMoreHorizontal, IconTrendingUp, IconActivity
+} from '../components/Icons';
 import { Prospect, OnboardingLead, Partner, Campaign } from '../types';
 import { MOCK_ONBOARDING, MOCK_PARTNERS } from '../constants';
+// Add missing SlideOver import
+import { SlideOver } from '../components/SlideOver';
 
 const MOCK_PROSPECTS: Prospect[] = [
   { id: '1', clinicName: 'Cabinet Dentaire Targa', contactName: 'Dr. Tazi', city: 'Marrakech', status: 'New', source: 'LinkedIn', date: '25 Jan 2024', leadScore: 85, priority: 'High', email: 'contact@targa.ma' },
@@ -89,29 +94,25 @@ export const CRM = () => {
       }
   };
 
-  // Sub-components
   const SalesView = () => (
       <div className="flex-1 overflow-x-auto pb-4">
-          <div className="flex gap-6 min-w-[1000px] h-full p-2">
+          <div className="flex gap-6 min-w-[1200px] h-full p-2">
               {COLUMNS.map(col => (
                   <div 
                     key={col} 
-                    className={`flex-1 flex flex-col min-w-[280px] rounded-xl transition-colors ${draggedItem ? 'bg-slate-50/50' : ''}`}
+                    className={`flex-1 flex flex-col min-w-[280px] rounded-xl transition-colors ${draggedItem ? 'bg-slate-100/50' : ''}`}
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, col)}
                   >
                       {/* Column Header */}
-                      <div className="flex items-center justify-between mb-4 px-1">
+                      <div className="flex items-center justify-between mb-4 px-2">
                           <div className="flex items-center gap-2">
                               <div className={`w-2 h-2 rounded-full ${STATUS_CONFIG[col].dot}`}></div>
                               <span className="text-sm font-bold text-slate-700">{STATUS_CONFIG[col].label}</span>
-                              <span className="text-xs font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+                              <span className="text-xs font-bold text-slate-400 bg-white px-2 py-0.5 rounded-md border border-slate-200">
                                   {prospects.filter(p => p.status === col).length}
                               </span>
                           </div>
-                          <button className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-1 rounded transition-colors">
-                              <IconPlus className="w-4 h-4" />
-                          </button>
                       </div>
 
                       {/* Cards */}
@@ -122,9 +123,8 @@ export const CRM = () => {
                                 draggable
                                 onDragStart={(e) => handleDragStart(e, prospect)}
                                 onClick={() => setSelectedProspect(prospect)}
-                                className={`bg-white p-4 rounded-xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] cursor-grab active:cursor-grabbing transition-all group relative ${draggedItem?.id === prospect.id ? 'opacity-50 rotate-3 scale-95' : ''}`}
+                                className={`bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing transition-all group ${draggedItem?.id === prospect.id ? 'opacity-50' : ''}`}
                               >
-                                  {/* Tags Row */}
                                   <div className="flex justify-between items-start mb-3">
                                       <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-md ${
                                           prospect.priority === 'High' ? 'bg-red-50 text-red-600' :
@@ -134,28 +134,22 @@ export const CRM = () => {
                                           {prospect.priority || 'Low'}
                                       </span>
                                       <button className="text-slate-300 hover:text-slate-500">
-                                          <div className="w-6 h-6 rounded-full hover:bg-slate-50 flex items-center justify-center">
-                                              <IconMoreHorizontal className="w-4 h-4" />
-                                          </div>
+                                          <IconMoreHorizontal className="w-4 h-4" />
                                       </button>
                                   </div>
 
-                                  {/* Content */}
                                   <h4 className="font-bold text-slate-900 text-sm mb-1">{prospect.clinicName}</h4>
-                                  <p className="text-xs text-slate-500 line-clamp-2 mb-4">{prospect.contactName} • {prospect.city}</p>
+                                  <p className="text-xs text-slate-500 mb-4">{prospect.contactName} • {prospect.city}</p>
 
-                                  {/* Progress / Lead Score */}
                                   {prospect.leadScore && (
                                       <div className="mb-4">
                                           <div className="flex justify-between items-center mb-1.5">
-                                              <span className="text-[10px] font-semibold text-slate-400 flex items-center gap-1">
-                                                  <IconCheckCircle className="w-3 h-3" /> Score
-                                              </span>
+                                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Lead Score</span>
                                               <span className="text-[10px] font-bold text-slate-700">{prospect.leadScore}%</span>
                                           </div>
-                                          <div className="w-full bg-slate-100 rounded-full h-1.5">
+                                          <div className="w-full bg-slate-100 rounded-full h-1">
                                               <div 
-                                                  className={`h-1.5 rounded-full transition-all duration-500 ${
+                                                  className={`h-1 rounded-full transition-all duration-500 ${
                                                       prospect.leadScore > 80 ? 'bg-green-500' : 
                                                       prospect.leadScore > 50 ? 'bg-blue-500' : 'bg-slate-400'
                                                   }`} 
@@ -165,22 +159,22 @@ export const CRM = () => {
                                       </div>
                                   )}
 
-                                  {/* Footer */}
                                   <div className="flex items-center justify-between pt-3 border-t border-slate-50">
-                                      {/* Fake Avatars */}
-                                      <div className="flex -space-x-2">
-                                          <div className="w-6 h-6 rounded-full bg-indigo-100 border-2 border-white flex items-center justify-center text-[8px] font-bold text-indigo-600">JD</div>
-                                          <div className="w-6 h-6 rounded-full bg-pink-100 border-2 border-white flex items-center justify-center text-[8px] font-bold text-pink-600">SM</div>
-                                      </div>
-                                      
-                                      <div className="flex items-center gap-3 text-slate-400">
-                                          <div className="flex items-center gap-1 text-[10px] font-medium bg-slate-50 px-1.5 py-0.5 rounded">
-                                              <IconClock className="w-3 h-3" /> {prospect.date.split(' ')[0]} {prospect.date.split(' ')[1]}
+                                      <div className="flex items-center gap-2">
+                                          <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[9px] font-bold text-slate-500 border border-slate-200">
+                                              {prospect.contactName.substring(0,2).toUpperCase()}
                                           </div>
+                                          <span className="text-[10px] font-medium text-slate-400">{prospect.date}</span>
                                       </div>
+                                      <IconMessage className="w-3.5 h-3.5 text-slate-300 group-hover:text-blue-500 transition-colors" />
                                   </div>
                               </div>
                           ))}
+                          {prospects.filter(p => p.status === col).length === 0 && (
+                              <div className="h-24 border-2 border-dashed border-slate-200 rounded-xl flex items-center justify-center text-slate-300 text-xs font-medium">
+                                  Aucun prospect
+                              </div>
+                          )}
                       </div>
                   </div>
               ))}
@@ -189,118 +183,45 @@ export const CRM = () => {
   );
 
   const OnboardingView = () => (
-      <div className="space-y-6">
-          <div className="grid grid-cols-1 gap-4">
-              {MOCK_ONBOARDING.map(lead => (
-                  <div key={lead.id} className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm flex items-center gap-6">
-                      <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold text-sm shrink-0">
-                          {lead.clinicName.substring(0, 2).toUpperCase()}
-                      </div>
-                      <div className="w-64 shrink-0">
-                          <div className="font-bold text-slate-900">{lead.clinicName}</div>
-                          <div className="text-xs text-slate-500">{lead.doctorName}</div>
-                      </div>
-                      <div className="flex-1 flex items-center gap-1">
-                          {ONBOARDING_STEPS.map((step, idx) => {
-                              const currentIndex = ONBOARDING_STEPS.indexOf(lead.status);
-                              const isCompleted = idx <= currentIndex;
-                              const isCurrent = idx === currentIndex;
-                              
-                              return (
-                                  <div key={step} className="flex-1 flex flex-col items-center relative group">
-                                      <div className={`w-full h-1 absolute top-1/2 left-[-50%] z-0 ${idx === 0 ? 'hidden' : ''} ${isCompleted ? 'bg-indigo-600' : 'bg-slate-200'}`}></div>
-                                      <div className={`w-3 h-3 rounded-full z-10 relative ${isCurrent ? 'bg-white border-2 border-indigo-600 scale-125' : isCompleted ? 'bg-indigo-600' : 'bg-slate-200'}`}></div>
-                                      <div className={`text-[10px] mt-2 font-medium ${isCurrent ? 'text-indigo-700' : 'text-slate-400'}`}>
-                                          {step.replace('_', ' ')}
-                                      </div>
-                                  </div>
-                              );
-                          })}
-                      </div>
-                      <div className="shrink-0 text-right">
-                          <button onClick={() => alert("Gestion onboarding pour " + lead.clinicName)} className="text-sm bg-white border border-slate-300 px-3 py-1.5 rounded text-slate-700 hover:bg-slate-50">Gérer</button>
-                      </div>
-                  </div>
-              ))}
-          </div>
-      </div>
-  );
-
-  const PartnersView = () => (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {partners.map(partner => (
-              <div key={partner.id} className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm hover:border-indigo-300 transition-colors">
-                  <div className="flex justify-between items-start mb-4">
-                      <div className="p-3 bg-green-50 text-green-600 rounded-lg">
-                          <IconBriefcase className="w-6 h-6" />
-                      </div>
-                      <span className={`px-2 py-1 rounded text-xs font-bold ${partner.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600'}`}>
-                          {partner.status}
-                      </span>
-                  </div>
-                  <h3 className="font-bold text-lg text-slate-900">{partner.name}</h3>
-                  <p className="text-sm text-slate-500 mb-6">{partner.type} • {partner.commissionRate}% Commission</p>
-                  
-                  <div className="grid grid-cols-2 gap-4 border-t border-slate-100 pt-4">
-                      <div>
-                          <div className="text-xs text-slate-400 uppercase font-medium">Revenus</div>
-                          <div className="text-lg font-bold text-slate-900">{partner.totalRevenue.toLocaleString()} <span className="text-xs font-normal text-slate-400">MAD</span></div>
-                      </div>
-                      <div>
-                          <div className="text-xs text-slate-400 uppercase font-medium">Referrals</div>
-                          <div className="text-lg font-bold text-slate-900">{partner.activeReferrals}</div>
-                      </div>
-                  </div>
-              </div>
-          ))}
-          <button onClick={handleAddPartner} className="border-2 border-dashed border-slate-200 rounded-lg p-6 flex flex-col items-center justify-center text-slate-400 hover:border-indigo-300 hover:text-indigo-600 transition-all">
-              <IconPlus className="w-8 h-8 mb-2" />
-              <span className="font-medium">Ajouter un Partenaire</span>
-          </button>
-      </div>
-  );
-
-  const CampaignsView = () => (
-      <div className="space-y-6">
-          <div className="flex justify-end">
-              <button onClick={createCampaign} className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 shadow-sm">
-                  <IconPlus className="w-4 h-4" /> Créer Campagne
-              </button>
-          </div>
-          <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+      <div className="space-y-4">
+          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
               <table className="min-w-full divide-y divide-slate-100">
                   <thead className="bg-slate-50">
                       <tr>
-                          <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Nom</th>
-                          <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Type</th>
-                          <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Statut</th>
-                          <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Audience</th>
-                          <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Envois</th>
-                          <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Date</th>
+                          <th className="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-widest">Client</th>
+                          <th className="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-widest">Étape Onboarding</th>
+                          <th className="px-6 py-4 text-right text-[11px] font-bold text-slate-400 uppercase tracking-widest">Contact</th>
                       </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-slate-100">
-                      {campaigns.map(camp => (
-                          <tr key={camp.id} className="hover:bg-slate-50">
-                              <td className="px-6 py-4 text-sm font-medium text-slate-900">{camp.name}</td>
+                  <tbody className="divide-y divide-slate-100">
+                      {MOCK_ONBOARDING.map(lead => (
+                          <tr key={lead.id} className="hover:bg-slate-50 transition-colors">
                               <td className="px-6 py-4">
-                                  <span className="inline-flex items-center gap-1 text-xs text-slate-600">
-                                      {camp.type === 'SMS' ? <IconMessage className="w-3 h-3" /> : <IconSend className="w-3 h-3" />}
-                                      {camp.type}
-                                  </span>
+                                  <div className="font-bold text-slate-900 text-sm">{lead.clinicName}</div>
+                                  <div className="text-xs text-slate-500">{lead.doctorName}</div>
                               </td>
                               <td className="px-6 py-4">
-                                  <span className={`px-2 py-0.5 rounded text-xs font-medium border ${
-                                      camp.status === 'Sent' ? 'bg-green-50 text-green-700 border-green-200' :
-                                      camp.status === 'Scheduled' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                      'bg-slate-100 text-slate-600 border-slate-200'
-                                  }`}>
-                                      {camp.status}
-                                  </span>
+                                  <div className="flex items-center gap-1.5">
+                                      {ONBOARDING_STEPS.map((step, idx) => {
+                                          const currentIndex = ONBOARDING_STEPS.indexOf(lead.status);
+                                          const isCompleted = idx <= currentIndex;
+                                          return (
+                                              <div 
+                                                key={step} 
+                                                className={`h-2 rounded-full flex-1 transition-all ${
+                                                  isCompleted ? 'bg-green-500' : 'bg-slate-200'
+                                                }`}
+                                                title={step.replace('_', ' ')}
+                                              ></div>
+                                          );
+                                      })}
+                                      <span className="ml-3 text-xs font-bold text-slate-700 capitalize">{lead.status.replace('_', ' ')}</span>
+                                  </div>
                               </td>
-                              <td className="px-6 py-4 text-sm text-slate-500">{camp.audience}</td>
-                              <td className="px-6 py-4 text-sm font-bold text-slate-900">{camp.sentCount}</td>
-                              <td className="px-6 py-4 text-right text-sm text-slate-500">{camp.date}</td>
+                              <td className="px-6 py-4 text-right">
+                                  <div className="text-sm font-medium text-slate-900">{lead.contact}</div>
+                                  <button className="text-[11px] text-blue-600 font-bold hover:underline">Ouvrir Dossier</button>
+                              </td>
                           </tr>
                       ))}
                   </tbody>
@@ -310,81 +231,158 @@ export const CRM = () => {
   );
 
   return (
-    <div className="h-full flex flex-col relative overflow-hidden">
-      {/* Header Tabs */}
-      <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-slate-900">CRM & Growth</h2>
-          <div className="flex bg-slate-100 p-1 rounded-md">
+    <div className="flex flex-col h-full space-y-8 font-sans">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div>
+              <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Growth & CRM</h2>
+              <p className="text-[14px] text-slate-500 font-medium mt-1">Gérez votre pipeline de vente et l'onboarding client.</p>
+          </div>
+          <div className="flex bg-white p-1 rounded-xl border border-slate-200 shadow-sm">
               <button 
                 onClick={() => setActiveTab('sales')}
-                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${activeTab === 'sales' ? 'bg-white text-indigo-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                className={`px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-lg transition-all ${activeTab === 'sales' ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:text-slate-900'}`}
               >
-                  Sales Pipeline
+                  Sales
               </button>
               <button 
                 onClick={() => setActiveTab('onboarding')}
-                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${activeTab === 'onboarding' ? 'bg-white text-indigo-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                className={`px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-lg transition-all ${activeTab === 'onboarding' ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:text-slate-900'}`}
               >
                   Onboarding
               </button>
               <button 
                 onClick={() => setActiveTab('partners')}
-                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${activeTab === 'partners' ? 'bg-white text-indigo-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                className={`px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-lg transition-all ${activeTab === 'partners' ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:text-slate-900'}`}
               >
-                  Partners
+                  Partenaires
               </button>
-              <button 
-                onClick={() => setActiveTab('campaigns')}
-                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${activeTab === 'campaigns' ? 'bg-white text-indigo-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-              >
-                  Campagnes
-              </button>
+          </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Conversion Rate</div>
+              <div className="text-2xl font-bold text-slate-900 mt-1">24.5%</div>
+              <div className="flex items-center gap-1 text-green-600 text-[11px] font-bold mt-2">
+                  <IconTrendingUp className="w-3 h-3" /> +2.1%
+              </div>
+          </div>
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Trials</div>
+              <div className="text-2xl font-bold text-slate-900 mt-1">12</div>
+              <div className="flex items-center gap-1 text-slate-400 text-[11px] font-bold mt-2">
+                  Cabinets en démo
+              </div>
+          </div>
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pipeline Value</div>
+              <div className="text-2xl font-bold text-slate-900 mt-1">125k <span className="text-sm font-medium text-slate-400">MAD</span></div>
+              <div className="flex items-center gap-1 text-blue-600 text-[11px] font-bold mt-2">
+                  Potentiel MRR
+              </div>
+          </div>
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Days to Close</div>
+              <div className="text-2xl font-bold text-slate-900 mt-1">18</div>
+              <div className="flex items-center gap-1 text-slate-400 text-[11px] font-bold mt-2">
+                  Moyenne cycle vente
+              </div>
           </div>
       </div>
 
       {activeTab === 'sales' && <SalesView />}
       {activeTab === 'onboarding' && <OnboardingView />}
-      {activeTab === 'partners' && <PartnersView />}
-      {activeTab === 'campaigns' && <CampaignsView />}
-
-      {/* Prospect Detail SlideOver (Only active in Sales tab logic) */}
-      <div 
-        className={`fixed inset-0 z-50 transition-opacity duration-300 ${selectedProspect ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
-      >
-          <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm" onClick={() => setSelectedProspect(null)}></div>
-          <div className={`absolute inset-y-0 right-0 w-[500px] bg-white shadow-2xl transform transition-transform duration-300 ease-out flex flex-col ${selectedProspect ? 'translate-x-0' : 'translate-x-full'}`}>
-              {selectedProspect && (
-                  <>
-                    <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
-                        <div>
-                            <h2 className="text-lg font-semibold text-slate-900">{selectedProspect.clinicName}</h2>
-                            <p className="text-sm text-slate-500">{selectedProspect.contactName} • {selectedProspect.city}</p>
-                        </div>
-                        <button onClick={() => setSelectedProspect(null)} className="text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-200/50 transition-colors">
-                            <IconX className="w-5 h-5" />
-                        </button>
-                    </div>
-                    <div className="p-6 flex-1 overflow-y-auto space-y-6">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="p-3 bg-slate-50 rounded border border-slate-100">
-                                <div className="text-xs text-slate-500 uppercase font-medium">Statut</div>
-                                <div className={`mt-1 font-semibold ${STATUS_CONFIG[selectedProspect.status].color}`}>{STATUS_CONFIG[selectedProspect.status].label}</div>
-                            </div>
-                            <div className="p-3 bg-slate-50 rounded border border-slate-100">
-                                <div className="text-xs text-slate-500 uppercase font-medium">Score Lead</div>
-                                <div className="mt-1 font-semibold text-slate-900">{selectedProspect.leadScore || '-'} / 100</div>
-                            </div>
-                        </div>
-                        {/* Details... */}
-                        <div className="space-y-3 text-sm">
-                            <div className="flex justify-between border-b border-slate-50 pb-2"><span className="text-slate-500">Email</span><span className="font-medium">{selectedProspect.email}</span></div>
-                            <div className="flex justify-between border-b border-slate-50 pb-2"><span className="text-slate-500">Source</span><span className="font-medium">{selectedProspect.source}</span></div>
-                        </div>
-                    </div>
-                  </>
-              )}
+      {activeTab === 'partners' && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {partners.map(partner => (
+                  <div key={partner.id} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-blue-400 transition-all">
+                      <div className="flex justify-between items-start mb-6">
+                          <div className="p-3 bg-blue-50 text-blue-600 rounded-xl border border-blue-100">
+                              <IconBriefcase className="w-6 h-6" />
+                          </div>
+                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${partner.status === 'Active' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
+                              {partner.status}
+                          </span>
+                      </div>
+                      <h3 className="font-bold text-lg text-slate-900">{partner.name}</h3>
+                      <p className="text-sm text-slate-500 mb-6">{partner.type} • {partner.commissionRate}% Commission</p>
+                      
+                      <div className="grid grid-cols-2 gap-4 border-t border-slate-50 pt-6">
+                          <div>
+                              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Revenue</div>
+                              <div className="text-lg font-bold text-slate-900">{partner.totalRevenue.toLocaleString()} MAD</div>
+                          </div>
+                          <div>
+                              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Referrals</div>
+                              <div className="text-lg font-bold text-slate-900">{partner.activeReferrals}</div>
+                          </div>
+                      </div>
+                  </div>
+              ))}
+              <button onClick={handleAddPartner} className="border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center text-slate-400 hover:border-blue-400 hover:text-blue-600 transition-all bg-white hover:bg-blue-50/20">
+                  <IconPlus className="w-10 h-10 mb-2" />
+                  <span className="font-bold text-sm">Ajouter un Partenaire</span>
+              </button>
           </div>
-      </div>
+      )}
+
+      {/* Details SlideOver */}
+      <SlideOver
+        isOpen={!!selectedProspect}
+        onClose={() => setSelectedProspect(null)}
+        title={selectedProspect?.clinicName || ''}
+        subtitle="Détail du Prospect"
+      >
+          {selectedProspect && (
+              <div className="p-8 space-y-8">
+                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                      <div className="grid grid-cols-2 gap-6">
+                          <div>
+                              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Contact</label>
+                              <div className="font-bold text-slate-900">{selectedProspect.contactName}</div>
+                          </div>
+                          <div>
+                              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Email</label>
+                              <div className="font-bold text-slate-900">{selectedProspect.email || '—'}</div>
+                          </div>
+                          <div>
+                              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ville</label>
+                              <div className="font-bold text-slate-900">{selectedProspect.city}</div>
+                          </div>
+                          <div>
+                              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Source</label>
+                              <div className="font-bold text-slate-900">{selectedProspect.source}</div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div className="space-y-4">
+                      <h4 className="font-bold text-slate-900 text-sm">Historique des interactions</h4>
+                      <div className="space-y-4">
+                          <div className="flex gap-4">
+                              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 shrink-0"><IconMessage className="w-4 h-4" /></div>
+                              <div>
+                                  <div className="text-sm font-bold">Email envoyé</div>
+                                  <div className="text-xs text-slate-500">24 Jan 2024 • Proposition commerciale envoyée.</div>
+                              </div>
+                          </div>
+                          <div className="flex gap-4">
+                              <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 shrink-0"><IconActivity className="w-4 h-4" /></div>
+                              <div>
+                                  <div className="text-sm font-bold">Démo programmée</div>
+                                  <div className="text-xs text-slate-500">22 Jan 2024 • RDV fixé pour mardi à 11h.</div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div className="pt-8 border-t border-slate-100 flex gap-3">
+                      <button className="flex-1 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold shadow-md hover:bg-blue-700">Programmer Démo</button>
+                      <button className="flex-1 py-3 bg-white border border-slate-200 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50">Modifier Lead</button>
+                  </div>
+              </div>
+          )}
+      </SlideOver>
     </div>
   );
 };

@@ -21,10 +21,9 @@ import { SaaSAdministration } from './features/SaaSAdministration';
 import { SuperAdminDashboard } from './features/SuperAdminDashboard';
 import { SlideOver } from './components/SlideOver';
 import { CommandPalette } from './components/CommandPalette';
-import { IconCheck, IconCalendar, IconUserPlus, IconClock } from './components/Icons';
 
 import { ToastContainer } from './components/Toast';
-import { CURRENT_USER_ADMIN, CURRENT_USER_DOCTOR, MOCK_APPOINTMENTS, MOCK_PATIENTS } from './constants';
+import { CURRENT_USER_ADMIN, CURRENT_USER_DOCTOR, CURRENT_USER_ASSISTANT, MOCK_APPOINTMENTS, MOCK_PATIENTS, MOCK_TENANTS_DETAILED } from './constants';
 import { User, CabinetStats, Appointment, ToastMessage, SearchResult, AppointmentStatus, ToastType, AppointmentType } from './types';
 
 // Mock stats for dashboard
@@ -33,7 +32,7 @@ const INITIAL_STATS: CabinetStats = {
   pendingConfirmations: 3,
   revenueToday: 4200,
   activeTreatments: 142,
-  waitingRoom: 1 // Initial value
+  waitingRoom: 1
 };
 
 function App() {
@@ -85,151 +84,98 @@ function App() {
 
   const updateAppointmentStatus = (id: string, status: AppointmentStatus) => {
      setAppointments(prev => prev.map(a => a.id === id ? { ...a, status } : a));
-     
      if (status === AppointmentStatus.IN_PROGRESS) {
          const apt = appointments.find(a => a.id === id);
-         if (apt) {
-             setActiveConsultation(apt);
-             addToast('info', `Consultation démarrée avec ${apt.patientName}`);
-         }
-     } else {
-        addToast('success', `Statut mis à jour : ${status}`);
+         if (apt) setActiveConsultation(apt);
      }
   };
 
   const handleGlobalSearch = (query: string): SearchResult[] => {
     const lowerQuery = query.toLowerCase();
     const results: SearchResult[] = [];
-
-    // Search Patients
     MOCK_PATIENTS.forEach(p => {
-        if (p.firstName.toLowerCase().includes(lowerQuery) || p.lastName.toLowerCase().includes(lowerQuery) || p.phone.includes(lowerQuery)) {
-            results.push({
-                id: p.id,
-                type: 'Patient',
-                title: `${p.firstName} ${p.lastName}`,
-                subtitle: p.phone,
-            });
+        if (p.firstName.toLowerCase().includes(lowerQuery) || p.lastName.toLowerCase().includes(lowerQuery)) {
+            results.push({ id: p.id, type: 'Patient', title: `${p.firstName} ${p.lastName}`, subtitle: p.phone });
         }
     });
-
-    // Search Appointments
-    appointments.forEach(a => {
-        if (a.patientName.toLowerCase().includes(lowerQuery) || a.type.toLowerCase().includes(lowerQuery)) {
-            results.push({
-                id: a.id,
-                type: 'RDV',
-                title: `${a.type} - ${a.patientName}`,
-                subtitle: `${new Date(a.start).toLocaleDateString()} ${new Date(a.start).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`,
-            });
-        }
-    });
-
     return results.slice(0, 10);
   };
 
-  // Triggered from Calendar Grid click
   const handleOpenAddAppointment = (date: Date, time: string) => {
-    setNewAppointmentData({
-        patientId: '',
-        type: AppointmentType.CONSULTATION,
-        date: date.toISOString().split('T')[0],
-        time: time,
-        duration: 30,
-        notes: ''
-    });
+    setNewAppointmentData({ ...newAppointmentData, date: date.toISOString().split('T')[0], time: time });
     setIsAppointmentModalOpen(true);
   };
 
-  const handleSubmitAppointment = (e: React.FormEvent) => {
-      e.preventDefault();
-      const patient = MOCK_PATIENTS.find(p => p.id === newAppointmentData.patientId);
-      if (!patient) {
-          addToast('error', 'Veuillez sélectionner un patient');
-          return;
+  // Switch between demo profiles
+  const handleLogin = (role: 'DOCTOR' | 'ASSISTANT' | 'SUPER_ADMIN', tenantId?: string) => {
+      if (role === 'SUPER_ADMIN') {
+          setUser(CURRENT_USER_ADMIN);
+          setCurrentView('saas-dashboard');
+      } else if (role === 'ASSISTANT') {
+          setUser(CURRENT_USER_ASSISTANT);
+          setCurrentView('dashboard');
+      } else {
+          const tenant = MOCK_TENANTS_DETAILED.find(t => t.id === tenantId);
+          if (tenant) {
+              const doctorUser: User = {
+                  ...CURRENT_USER_DOCTOR,
+                  clinicName: tenant.name,
+                  plan: tenant.plan,
+                  enabledModules: tenant.enabledModules
+              };
+              setUser(doctorUser);
+              setCurrentView('dashboard');
+          }
       }
-
-      const [hours, minutes] = newAppointmentData.time.split(':').map(Number);
-      const start = new Date(newAppointmentData.date);
-      start.setHours(hours, minutes);
-
-      const newApt: Appointment = {
-          id: `apt-${Date.now()}`,
-          patientId: patient.id,
-          doctorId: user?.id || 'u1',
-          start: start,
-          duration: newAppointmentData.duration,
-          type: newAppointmentData.type,
-          status: AppointmentStatus.PENDING,
-          patientName: `${patient.firstName} ${patient.lastName}`,
-          notes: newAppointmentData.notes
-      };
-
-      setAppointments([...appointments, newApt]);
-      setIsAppointmentModalOpen(false);
-      addToast('success', 'Rendez-vous planifié avec succès');
   };
 
-  // Simple Login Screen
   if (!user) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
+      <div className="min-h-screen bg-white flex flex-col justify-center py-12 px-6 font-sans">
         <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-           <div className="inline-flex justify-center mb-8">
-             <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-2xl shadow-sm shadow-blue-200">M</div>
-           </div>
-           <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Connexion Medicom</h2>
-           <p className="mt-2 text-sm text-slate-500">
-             Choisissez un profil de démonstration pour accéder à la plateforme.
-           </p>
+           <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-2xl shadow-lg mx-auto mb-10">M</div>
+           <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Medicom login</h2>
+           <p className="mt-3 text-slate-500 text-[15px]">Select a demo profile to enter the platform.</p>
         </div>
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow-sm border border-slate-200 rounded-lg sm:px-10 space-y-4">
-             <button 
-               onClick={() => { setUser(CURRENT_USER_DOCTOR); setCurrentView('dashboard'); }}
-               className="w-full flex items-center justify-between p-4 border border-slate-200 rounded-md hover:border-blue-500 hover:bg-blue-50/30 transition-all group bg-white"
-             >
-               <div className="flex items-center gap-4">
-                 <img src={CURRENT_USER_DOCTOR.avatar} className="w-10 h-10 rounded-full bg-slate-100 object-cover" alt="" />
-                 <div className="text-left">
-                   <p className="font-semibold text-slate-900 group-hover:text-blue-700">Dr. Amina</p>
-                   <p className="text-xs text-slate-500">Cabinet Dentaire</p>
-                 </div>
+        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-md space-y-4">
+             <button onClick={() => handleLogin('DOCTOR', 'TEN-001')} className="w-full flex items-center justify-between p-5 border border-slate-200 rounded-xl hover:border-blue-600 hover:bg-blue-50/50 transition-all bg-white group">
+               <div className="text-left">
+                   <p className="font-bold text-slate-900 group-hover:text-blue-700">Dr. Amina (Doctor)</p>
+                   <p className="text-xs text-slate-500 font-medium">Full Access - Premium Plan</p>
                </div>
-               <span className="text-blue-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">Login &rarr;</span>
+               <span className="text-blue-600 font-bold">&rarr;</span>
              </button>
 
-             <button 
-               onClick={() => { setUser(CURRENT_USER_ADMIN); setCurrentView('saas-dashboard'); }}
-               className="w-full flex items-center justify-between p-4 border border-slate-200 rounded-md hover:border-indigo-500 hover:bg-indigo-50/30 transition-all group bg-white"
-             >
-               <div className="flex items-center gap-4">
-                 <img src={CURRENT_USER_ADMIN.avatar} className="w-10 h-10 rounded-full bg-slate-100 object-cover" alt="" />
-                 <div className="text-left">
-                   <p className="font-semibold text-slate-900 group-hover:text-indigo-700">Sami</p>
-                   <p className="text-xs text-slate-500">Super Admin SaaS</p>
-                 </div>
+             <button onClick={() => handleLogin('ASSISTANT')} className="w-full flex items-center justify-between p-5 border border-slate-200 rounded-xl hover:border-blue-600 hover:bg-blue-50/50 transition-all bg-white group">
+               <div className="text-left">
+                   <p className="font-bold text-slate-900 group-hover:text-blue-700">Sarah Benani (Assistant)</p>
+                   <p className="text-xs text-slate-500 font-medium">Limited Access - Front Desk & Stock</p>
                </div>
-               <span className="text-indigo-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">Login &rarr;</span>
+               <span className="text-blue-600 font-bold">&rarr;</span>
              </button>
-          </div>
+
+             <button onClick={() => handleLogin('SUPER_ADMIN')} className="w-full flex items-center justify-between p-5 border border-slate-200 rounded-xl hover:border-indigo-600 hover:bg-indigo-50/50 transition-all bg-white group">
+               <div className="text-left">
+                   <p className="font-bold text-slate-900 group-hover:text-indigo-700">Platform Admin</p>
+                   <p className="text-xs text-slate-500 font-medium">Sami Admin - Super Admin Control</p>
+               </div>
+               <span className="text-indigo-600 font-bold">&rarr;</span>
+             </button>
         </div>
       </div>
     );
   }
 
   const renderContent = () => {
-      // Safety check: ensure user exists before rendering content
-      if (!user) return null;
+      const modules = user.enabledModules || ({} as any);
 
-      // Super Admin Views
       if (user.role === 'SUPER_ADMIN') {
           switch (currentView) {
               case 'saas-dashboard': return <SuperAdminDashboard />;
               case 'cabinets': return <Cabinets />;
-              case 'saas-admin': return <SaaSAdministration />;
               case 'crm': return <CRM />;
+              case 'saas-admin': return <SaaSAdministration />;
               case 'reports': return <Reports user={user} />;
               case 'support': return <Support user={user} />;
               case 'settings': return <Settings />;
@@ -237,22 +183,21 @@ function App() {
           }
       }
 
-      // Doctor Views
+      // Dynamic Module Rendering
       switch (currentView) {
-        case 'dashboard': return <Dashboard stats={stats} />;
-        case 'calendar': return <CalendarView appointments={appointments} onAddAppointment={handleOpenAddAppointment} addToast={addToast} />;
-        case 'waiting-room': return <WaitingRoom appointments={appointments} onUpdateStatus={updateAppointmentStatus} />; 
-        case 'patients': return <PatientList patients={MOCK_PATIENTS} />;
-        case 'treatments': return <Treatments />;
-        case 'inventory': return <Inventory />; 
-        case 'lab-orders': return <LabOrders />; 
-        case 'records': return <MedicalRecord />;
-        case 'documents': return <Documents />; 
-        case 'billing': return <Billing />;
-        case 'reports': return <Reports user={user} />;
-        case 'support': return <Support user={user} />;
-        case 'settings': return <Settings />;
-        default: return <div className="flex items-center justify-center h-full text-slate-400">Module en construction (MVP)</div>;
+        case 'dashboard': return modules.dashboard ? <Dashboard stats={stats} /> : <NoAccess />;
+        case 'calendar': return modules.calendar ? <CalendarView appointments={appointments} onAddAppointment={handleOpenAddAppointment} addToast={addToast} /> : <NoAccess />;
+        case 'patients': return modules.patients ? <PatientList patients={MOCK_PATIENTS} /> : <NoAccess />;
+        case 'treatments': return modules.treatments ? <Treatments /> : <NoAccess />;
+        case 'inventory': return modules.inventory ? <Inventory /> : <NoAccess />; 
+        case 'lab-orders': return modules.labOrders ? <LabOrders /> : <NoAccess />; 
+        case 'records': return modules.records ? <MedicalRecord /> : <NoAccess />;
+        case 'documents': return modules.documents ? <Documents /> : <NoAccess />; 
+        case 'billing': return modules.billing ? <Billing /> : <NoAccess />;
+        case 'reports': return modules.reports ? <Reports user={user} /> : <NoAccess />;
+        case 'support': return modules.support ? <Support user={user} /> : <NoAccess />;
+        case 'settings': return <Settings />; 
+        default: return <Dashboard stats={stats} />;
       }
   };
 
@@ -260,143 +205,35 @@ function App() {
     <>
       <ToastContainer toasts={toasts} removeToast={removeToast} />
       
-      {/* Active Consultation Overlay */}
-      <SlideOver 
-         isOpen={!!activeConsultation} 
-         onClose={() => setActiveConsultation(null)}
-         title="Consultation en cours"
-         subtitle={`${activeConsultation?.patientName} • ${activeConsultation?.type}`}
-         width="2xl"
-      >
+      <SlideOver isOpen={!!activeConsultation} onClose={() => setActiveConsultation(null)} title="Consultation" width="2xl">
          {activeConsultation && (
              <Consultation 
-                patient={MOCK_PATIENTS.find(p => p.id === activeConsultation.patientId) || MOCK_PATIENTS[0]} 
+                patient={MOCK_PATIENTS[0]} 
                 appointment={activeConsultation}
-                onFinish={() => {
-                    updateAppointmentStatus(activeConsultation.id, AppointmentStatus.COMPLETED);
-                    setActiveConsultation(null);
-                    addToast('success', 'Consultation terminée');
-                }}
+                onFinish={() => { setActiveConsultation(null); addToast('success', 'Consultation terminée'); }}
              />
          )}
       </SlideOver>
 
-      {/* Appointment Creation SlideOver */}
-      <SlideOver
-        isOpen={isAppointmentModalOpen}
-        onClose={() => setIsAppointmentModalOpen(false)}
-        title="Nouveau Rendez-vous"
-        subtitle="Planifier une consultation"
-      >
-          <form onSubmit={handleSubmitAppointment} className="p-6 space-y-6">
-              <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Patient</label>
-                  <select 
-                    required
-                    className="w-full border-slate-300 rounded-md p-2.5 text-sm border focus:ring-2 focus:ring-blue-500 outline-none bg-white"
-                    value={newAppointmentData.patientId}
-                    onChange={e => setNewAppointmentData({...newAppointmentData, patientId: e.target.value})}
-                  >
-                      <option value="">Sélectionner un patient...</option>
-                      {MOCK_PATIENTS.map(p => (
-                          <option key={p.id} value={p.id}>{p.firstName} {p.lastName} - {p.phone}</option>
-                      ))}
-                  </select>
-                  <button type="button" className="text-xs text-blue-600 mt-1 hover:underline flex items-center gap-1">
-                      <IconUserPlus className="w-3 h-3" /> Nouveau patient ?
-                  </button>
-              </div>
+      <CommandPalette isOpen={isCommandPaletteOpen} onClose={() => setIsCommandPaletteOpen(false)} onNavigate={setCurrentView} />
 
-              <div className="grid grid-cols-2 gap-4">
-                  <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">Date</label>
-                      <input 
-                        type="date" 
-                        required
-                        className="w-full border-slate-300 rounded-md p-2.5 text-sm border focus:ring-2 focus:ring-blue-500 outline-none"
-                        value={newAppointmentData.date}
-                        onChange={e => setNewAppointmentData({...newAppointmentData, date: e.target.value})}
-                      />
-                  </div>
-                  <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">Heure</label>
-                      <input 
-                        type="time" 
-                        required
-                        className="w-full border-slate-300 rounded-md p-2.5 text-sm border focus:ring-2 focus:ring-blue-500 outline-none"
-                        value={newAppointmentData.time}
-                        onChange={e => setNewAppointmentData({...newAppointmentData, time: e.target.value})}
-                      />
-                  </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                  <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">Type</label>
-                      <select 
-                        className="w-full border-slate-300 rounded-md p-2.5 text-sm border focus:ring-2 focus:ring-blue-500 outline-none bg-white"
-                        value={newAppointmentData.type}
-                        onChange={e => setNewAppointmentData({...newAppointmentData, type: e.target.value as AppointmentType})}
-                      >
-                          {Object.values(AppointmentType).map(t => (
-                              <option key={t} value={t}>{t}</option>
-                          ))}
-                      </select>
-                  </div>
-                  <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">Durée (min)</label>
-                      <select 
-                        className="w-full border-slate-300 rounded-md p-2.5 text-sm border focus:ring-2 focus:ring-blue-500 outline-none bg-white"
-                        value={newAppointmentData.duration}
-                        onChange={e => setNewAppointmentData({...newAppointmentData, duration: parseInt(e.target.value)})}
-                      >
-                          <option value="15">15 min</option>
-                          <option value="30">30 min</option>
-                          <option value="45">45 min</option>
-                          <option value="60">1h 00</option>
-                          <option value="90">1h 30</option>
-                      </select>
-                  </div>
-              </div>
-
-              <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Notes</label>
-                  <textarea 
-                    rows={3}
-                    className="w-full border-slate-300 rounded-md p-2.5 text-sm border focus:ring-2 focus:ring-blue-500 outline-none"
-                    placeholder="Motif de la consultation..."
-                    value={newAppointmentData.notes}
-                    onChange={e => setNewAppointmentData({...newAppointmentData, notes: e.target.value})}
-                  />
-              </div>
-
-              <div className="pt-4 flex gap-3">
-                  <button type="button" onClick={() => setIsAppointmentModalOpen(false)} className="flex-1 py-2.5 text-sm font-medium text-slate-700 border border-slate-300 rounded-md hover:bg-slate-50 transition-colors">Annuler</button>
-                  <button type="submit" className="flex-1 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 shadow-sm flex justify-center items-center gap-2 transition-colors">
-                      <IconCalendar className="w-4 h-4" /> Confirmer le RDV
-                  </button>
-              </div>
-          </form>
-      </SlideOver>
-
-      {/* Global Command Palette */}
-      <CommandPalette 
-        isOpen={isCommandPaletteOpen} 
-        onClose={() => setIsCommandPaletteOpen(false)}
-        onNavigate={setCurrentView}
-      />
-
-      <Layout 
-        user={user} 
-        onLogout={() => setUser(null)}
-        currentView={currentView}
-        onChangeView={setCurrentView}
-        onSearch={handleGlobalSearch}
-      >
+      <Layout user={user} onLogout={() => setUser(null)} currentView={currentView} onChangeView={setCurrentView} onSearch={handleGlobalSearch}>
         {renderContent()}
       </Layout>
     </>
   );
 }
+
+const NoAccess = () => (
+    <div className="flex flex-col items-center justify-center h-full text-center p-10 bg-white rounded-xl border border-slate-200">
+        <div className="w-16 h-16 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mb-6 border border-slate-100"><IconShield className="w-8 h-8" /></div>
+        <h3 className="text-xl font-bold text-slate-900">Module restreint</h3>
+        <p className="text-slate-500 mt-2 max-w-sm">Votre rôle ne vous permet pas d'accéder à cette section, ou le module a été désactivé pour votre cabinet.</p>
+        <button className="mt-8 px-6 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-all">Retour au tableau de bord</button>
+    </div>
+);
+
+import { IconShield as ShieldIcon } from './components/Icons';
+const IconShield = ShieldIcon;
 
 export default App;

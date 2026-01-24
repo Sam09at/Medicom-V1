@@ -1,6 +1,20 @@
 
 export type UserRole = 'DOCTOR' | 'ASSISTANT' | 'SUPER_ADMIN';
 
+export interface ModuleConfiguration {
+  dashboard: boolean;
+  calendar: boolean;
+  patients: boolean;
+  treatments: boolean;
+  inventory: boolean;
+  labOrders: boolean;
+  documents: boolean;
+  records: boolean;
+  billing: boolean;
+  reports: boolean;
+  support: boolean;
+}
+
 export interface User {
   id: string;
   name: string;
@@ -11,10 +25,10 @@ export interface User {
   mrr?: number;
   email?: string;
   phone?: string;
+  enabledModules?: ModuleConfiguration;
 }
 
-// ... (Existing types unchanged) ...
-
+// ... rest of the file remains unchanged ...
 export enum AppointmentStatus {
   PENDING = 'En attente',
   CONFIRMED = 'Confirmé',
@@ -276,8 +290,6 @@ export interface SearchResult {
   url?: string;
 }
 
-// --- NEW SAAS TYPES ---
-
 export interface AuditLog {
   id: string;
   action: string;
@@ -349,7 +361,7 @@ export interface FeatureFlag {
   name: string;
   status: 'Active' | 'Inactive';
   rolloutPercentage: number;
-  targetClinics?: string[]; // IDs
+  targetClinics?: string[];
 }
 
 export interface Integration {
@@ -389,8 +401,8 @@ export interface CronJob {
 
 export interface StorageStat {
   clinicName: string;
-  used: number; // GB
-  limit: number; // GB
+  used: number;
+  limit: number;
   files: number;
 }
 
@@ -438,7 +450,7 @@ export interface CustomDomain {
 export interface ChurnRisk {
   id: string;
   clinicName: string;
-  riskScore: number; // 0-100
+  riskScore: number;
   mrr: number;
   factors: string[];
 }
@@ -530,7 +542,7 @@ export interface AiModelConfig {
   provider: 'OpenAI' | 'Anthropic' | 'Google';
   costPer1kTokens: number;
   status: 'Active' | 'Deprecated';
-  usage24h: number; // Tokens
+  usage24h: number;
 }
 
 export interface GatewayStatus {
@@ -539,7 +551,7 @@ export interface GatewayStatus {
   type: 'SMS' | 'Email';
   provider: 'Twilio' | 'SendGrid' | 'AWS SES';
   status: 'Operational' | 'Degraded' | 'Down';
-  deliveryRate: number; // %
+  deliveryRate: number;
   balance?: number;
 }
 
@@ -561,9 +573,9 @@ export interface Region {
 }
 
 export interface CacheMetric {
-  name: string; // e.g. "Main Redis"
-  hitRate: number; // %
-  memoryUsed: number; // MB
+  name: string;
+  hitRate: number;
+  memoryUsed: number;
   keys: number;
   uptime: string;
 }
@@ -589,7 +601,7 @@ export interface FirewallRule {
 export interface SlowQuery {
   id: string;
   query: string;
-  duration: number; // ms
+  duration: number;
   timestamp: string;
   caller: string;
 }
@@ -613,7 +625,6 @@ export interface AuditReportDoc {
   status: 'Ready' | 'Generating';
 }
 
-// --- NEW TENANT TYPE ---
 export interface TenantDetailed {
   id: string;
   name: string;
@@ -626,4 +637,5 @@ export interface TenantDetailed {
   joinedAt: string;
   mrr: number;
   region: string;
+  enabledModules: ModuleConfiguration;
 }
