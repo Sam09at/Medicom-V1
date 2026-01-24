@@ -5,7 +5,8 @@ import {
   ApiMetric, TenantDetailed, AiModelConfig, Webhook, ModuleConfiguration, EmailTemplate,
   MedicalService, OnboardingLead, Partner, AuditLog, CronJob, AppError, SecurityEvent,
   FeatureFlag, BroadcastMessage, Region, CacheMetric, JobQueue, Deployment,
-  ComplianceRecord, FeatureRequest, Addon, Backup, ChurnRisk, ContentPage, TranslationModule
+  ComplianceRecord, FeatureRequest, Addon, Backup, ChurnRisk, ContentPage, TranslationModule,
+  InsuranceTemplate
 } from './types';
 
 export const DEFAULT_MODULES: ModuleConfiguration = {
@@ -92,12 +93,18 @@ export const CURRENT_USER_ADMIN: User = {
   enabledModules: DEFAULT_MODULES
 };
 
+export const MOCK_INSURANCE_TEMPLATES: InsuranceTemplate[] = [
+    { id: 'it-1', provider: 'CNSS', name: 'Feuille de Soins Maladie CNSS', type: 'Medical', lastUpdated: '10 Jan 2024', isActive: true },
+    { id: 'it-2', provider: 'CNOPS', name: 'Feuille de Soins CNOPS (AMO)', type: 'Medical', lastUpdated: '05 Jan 2024', isActive: true },
+    { id: 'it-3', provider: 'Private', name: 'Formulaire Standard Assurances Privées', type: 'Medical', lastUpdated: '15 Dec 2023', isActive: true },
+];
+
 export const MOCK_PATIENTS: Patient[] = [
-  { id: 'p1', firstName: 'Karim', lastName: 'Benali', phone: '0661234567', age: 34, gender: 'M', insuranceType: 'CNOPS', lastVisit: '24 Jan 2024', email: 'karim@gmail.com', medicalHistory: ['Allergie Pénicilline', 'Hypertension'] },
-  { id: 'p2', firstName: 'Fatima', lastName: 'Zahra', phone: '0661987654', age: 28, gender: 'F', insuranceType: 'CNSS', lastVisit: '15 Jan 2024', email: 'fatima@gmail.com' },
-  { id: 'p3', firstName: 'Youssef', lastName: 'Idrissi', phone: '0662334455', age: 45, gender: 'M', insuranceType: 'Private', lastVisit: '23 Jan 2024' },
+  { id: 'p1', firstName: 'Karim', lastName: 'Benali', phone: '0661234567', age: 34, gender: 'M', insuranceType: 'CNOPS', insuranceId: 'A-99283-BB', lastVisit: '24 Jan 2024', email: 'karim@gmail.com', medicalHistory: ['Allergie Pénicilline', 'Hypertension'] },
+  { id: 'p2', firstName: 'Fatima', lastName: 'Zahra', phone: '0661987654', age: 28, gender: 'F', insuranceType: 'CNSS', insuranceId: '102-33-492', lastVisit: '15 Jan 2024', email: 'fatima@gmail.com' },
+  { id: 'p3', firstName: 'Youssef', lastName: 'Idrissi', phone: '0662334455', age: 45, gender: 'M', insuranceType: 'Private', insuranceId: 'AXA-M992', lastVisit: '23 Jan 2024' },
   { id: 'p4', firstName: 'Layla', lastName: 'Amrani', phone: '0663112233', age: 22, gender: 'F', insuranceType: 'None', lastVisit: '22 Jan 2024' },
-  { id: 'p5', firstName: 'Omar', lastName: 'Tazi', phone: '0664556677', age: 52, gender: 'M', insuranceType: 'CNSS', lastVisit: '20 Jan 2024' },
+  { id: 'p5', firstName: 'Omar', lastName: 'Tazi', phone: '0664556677', age: 52, gender: 'M', insuranceType: 'CNSS', insuranceId: '221-55-102', lastVisit: '20 Jan 2024' },
 ];
 
 export const MOCK_APPOINTMENTS: Appointment[] = [
@@ -145,7 +152,6 @@ export const MOCK_SAAS_USERS: SaaSUser[] = [
   { id: 'su2', name: 'Dr. Amina', email: 'amina@cabinet.ma', role: 'Doctor', clinic: 'Cabinet Amina', lastLogin: 'Hier', status: 'Active' },
 ];
 
-// Removed 'defaultModules' as it does not exist in PricingPlan type
 export const MOCK_PLANS: PricingPlan[] = [
   { id: 'p1', name: 'Starter', price: 450, currency: 'MAD', billing: 'Monthly', features: ['Agenda', 'Dossiers Patients', 'Documents'], activeClinics: 12 },
   { id: 'p2', name: 'Pro', price: 850, currency: 'MAD', billing: 'Monthly', features: ['Tout Starter', 'Facturation', 'Comptabilité', 'Stock'], activeClinics: 25, isPopular: true },
@@ -183,20 +189,17 @@ export const MOCK_SERVICES: MedicalService[] = [
   { id: 's4', name: 'Extraction simple', code: 'E1', price: 400, duration: 30 },
 ];
 
-// Fixed OnboardingLead objects missing properties
 export const MOCK_ONBOARDING: OnboardingLead[] = [
   { id: 'ob1', clinicName: 'Clinique du Sourire', doctorName: 'Dr. Tazi', status: 'Training', startDate: '2024-01-01', contact: '0612345678' },
   { id: 'ob2', clinicName: 'Cabinet Amina', doctorName: 'Dr. Amina', status: 'Live', startDate: '2023-12-15', contact: '0661223344' },
   { id: 'ob3', clinicName: 'Ortho Plus', doctorName: 'Dr. Bennani', status: 'Contract_Signed', startDate: '2024-01-20', contact: '0677889900' },
 ];
 
-// Fixed Partner type mismatch
 export const MOCK_PARTNERS: Partner[] = [
   { id: 'p1', name: 'Dental Distribution SA', type: 'Reseller', commissionRate: 5, activeReferrals: 12, totalRevenue: 45000, status: 'Active' },
   { id: 'p2', name: 'Association Dentistes Casa', type: 'Referral', commissionRate: 0, activeReferrals: 8, totalRevenue: 0, status: 'Active' },
 ];
 
-// Added missing exports required by features
 export const MOCK_AUDIT_LOGS: AuditLog[] = [
   { id: 'log1', action: 'Login', actorName: 'Dr. Amina', clinicName: 'Cabinet Amina', timestamp: '2024-01-24 10:00', ipAddress: '192.168.1.1', status: 'Success' },
 ];

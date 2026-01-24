@@ -28,7 +28,6 @@ export interface User {
   enabledModules?: ModuleConfiguration;
 }
 
-// ... rest of the file remains unchanged ...
 export enum AppointmentStatus {
   PENDING = 'En attente',
   CONFIRMED = 'Confirmé',
@@ -56,6 +55,7 @@ export interface Patient {
   age: number;
   gender: 'M' | 'F';
   insuranceType: 'CNOPS' | 'CNSS' | 'Private' | 'None';
+  insuranceId?: string;
   lastVisit?: string;
   email?: string;
   address?: string;
@@ -218,11 +218,20 @@ export interface MedicalService {
 export interface MedicalDocument {
   id: string;
   patientName: string;
-  type: 'Radio' | 'Ordonnance' | 'Analyse' | 'Certificat' | 'Autre';
+  type: 'Radio' | 'Ordonnance' | 'Analyse' | 'Certificat' | 'Autre' | 'FeuilleSoin';
   fileName: string;
   date: string;
   size: string;
   tags?: string[];
+}
+
+export interface InsuranceTemplate {
+  id: string;
+  provider: 'CNSS' | 'CNOPS' | 'Private';
+  name: string;
+  type: 'Medical' | 'Dental' | 'Special';
+  lastUpdated: string;
+  isActive: boolean;
 }
 
 export interface AppNotification {
