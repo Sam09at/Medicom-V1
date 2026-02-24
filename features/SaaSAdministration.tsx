@@ -168,29 +168,29 @@ export const ContentManagementPage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-6">
         <div>
-          <h3 className="text-lg font-bold text-gray-900">Content Management System</h3>
-          <p className="text-sm text-gray-500">
-            Gérez les communications, pages légales et traductions.
+          <h3 className="text-[18px] font-semibold text-gray-900">Content Management System</h3>
+          <p className="text-[13px] text-gray-500 mt-1">
+            Gérez les communications, pages légales et traductions
           </p>
         </div>
-        <div className="flex bg-gray-100 p-1 rounded-[8px]">
+        <div className="flex bg-slate-50/80 p-1 rounded-[8px] border border-slate-100">
           <button
             onClick={() => setActiveTab('templates')}
-            className={`px-4 py-1.5 text-sm font-medium rounded-[8px] transition-all ${activeTab === 'templates' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            className={`px-4 py-1.5 text-[13px] font-medium rounded-[6px] transition-all ${activeTab === 'templates' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
           >
             Templates (Email/SMS)
           </button>
           <button
             onClick={() => setActiveTab('pages')}
-            className={`px-4 py-1.5 text-sm font-medium rounded-[8px] transition-all ${activeTab === 'pages' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            className={`px-4 py-1.5 text-[13px] font-medium rounded-[6px] transition-all ${activeTab === 'pages' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
           >
             Pages Légales
           </button>
           <button
             onClick={() => setActiveTab('translations')}
-            className={`px-4 py-1.5 text-sm font-medium rounded-[8px] transition-all ${activeTab === 'translations' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            className={`px-4 py-1.5 text-[13px] font-medium rounded-[6px] transition-all ${activeTab === 'translations' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
           >
             Traductions
           </button>
@@ -273,11 +273,10 @@ export const ContentManagementPage = () => {
                   <td className="px-6 py-4 text-xs text-gray-500">{page.lastUpdated}</td>
                   <td className="px-6 py-4 text-right">
                     <span
-                      className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${
-                        page.status === 'Published'
-                          ? 'bg-green-50 text-green-700 border border-green-100'
-                          : 'bg-yellow-50 text-yellow-700 border border-yellow-100'
-                      }`}
+                      className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${page.status === 'Published'
+                        ? 'bg-green-50 text-green-700 border border-green-100'
+                        : 'bg-yellow-50 text-yellow-700 border border-yellow-100'
+                        }`}
                     >
                       {page.status}
                     </span>
@@ -411,48 +410,48 @@ export const FinancePage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white p-5 rounded-[8px] border border-gray-200 shadow-sm flex flex-col justify-between h-32">
-          <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white p-5 rounded-[8px] border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.03)] flex flex-col justify-between h-32">
+          <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">
             MRR (Mensuel)
           </div>
           <div className="flex items-end justify-between">
-            <span className="text-3xl font-bold text-gray-900">{mrr.toLocaleString()}</span>
+            <span className="text-2xl font-semibold text-gray-900 tracking-tight">{mrr.toLocaleString()}</span>
             <span
-              className={`text-xs px-1.5 py-0.5 rounded font-medium border ${mrrGrowth >= 0 ? 'bg-green-50 text-green-600 border-green-100' : 'bg-red-50 text-red-600 border-red-100'}`}
+              className={`badge ${mrrGrowth >= 0 ? 'badge-green' : 'badge-red'}`}
             >
               {mrrGrowth >= 0 ? '+' : ''}
               {mrrGrowth}%
             </span>
           </div>
-          <div className="text-xs text-gray-400">MAD Recurring Revenue</div>
+          <div className="text-[12px] text-gray-400">MAD Recurring Revenue</div>
         </div>
-        <div className="bg-white p-5 rounded-[8px] border border-gray-200 shadow-sm flex flex-col justify-between h-32">
-          <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">ARPU</div>
+        <div className="bg-white p-5 rounded-[8px] border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.03)] flex flex-col justify-between h-32">
+          <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">ARPU</div>
           <div className="flex items-end justify-between">
-            <span className="text-3xl font-bold text-gray-900">{arpu.toLocaleString()}</span>
-            <span className="text-xs bg-green-50 text-green-600 px-1.5 py-0.5 rounded font-medium border border-green-100">
+            <span className="text-2xl font-semibold text-gray-900 tracking-tight">{arpu.toLocaleString()}</span>
+            <span className="badge badge-green">
               +5%
             </span>
           </div>
-          <div className="text-xs text-gray-400">
+          <div className="text-[12px] text-gray-400">
             Revenu moyen par cabinet ({activeTenants} actifs)
           </div>
         </div>
-        <div className="bg-white p-5 rounded-[8px] border border-gray-200 shadow-sm flex flex-col justify-between h-32">
-          <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Churn Rate</div>
+        <div className="bg-white p-5 rounded-[8px] border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.03)] flex flex-col justify-between h-32">
+          <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">Churn Rate</div>
           <div className="flex items-end justify-between">
-            <span className="text-3xl font-bold text-gray-900">1.2%</span>
-            <span className="text-xs bg-red-50 text-red-600 px-1.5 py-0.5 rounded font-medium border border-red-100">
+            <span className="text-2xl font-semibold text-gray-900 tracking-tight">1.2%</span>
+            <span className="badge badge-red">
               +0.1%
             </span>
           </div>
-          <div className="text-xs text-gray-400">Taux de désabonnement</div>
+          <div className="text-[12px] text-gray-400">Taux de désabonnement</div>
         </div>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-[8px] shadow-sm p-6">
-        <h3 className="text-sm font-bold text-gray-900 mb-4">Plans d'abonnement</h3>
+      <div className="bg-white border border-slate-200/60 rounded-[8px] shadow-[0_1px_2px_rgba(0,0,0,0.03)] p-6">
+        <h3 className="text-[14px] font-semibold text-gray-900 mb-6">Plans d'abonnement</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {MOCK_PLANS.map((plan) => (
             <div
@@ -509,11 +508,11 @@ export const MarketplacePage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-end mb-6">
         <div>
-          <h3 className="text-lg font-bold text-gray-900">Marketplace & Add-ons</h3>
-          <p className="text-sm text-gray-500">
-            Gérez les modules additionnels vendus aux cliniques.
+          <h3 className="text-[18px] font-semibold text-gray-900">Marketplace & Add-ons</h3>
+          <p className="text-[13px] text-gray-500 mt-1">
+            Gérez les modules additionnels vendus aux cliniques
           </p>
         </div>
         <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-[8px] text-sm font-medium hover:bg-blue-700 shadow-sm">
@@ -538,13 +537,12 @@ export const MarketplacePage = () => {
                 )}
               </div>
               <span
-                className={`px-2 py-1 rounded text-xs font-bold ${
-                  addon.status === 'Available'
-                    ? 'bg-green-100 text-green-700'
-                    : addon.status === 'Beta'
-                      ? 'bg-purple-100 text-purple-700'
-                      : 'bg-gray-100 text-gray-600'
-                }`}
+                className={`px-2 py-1 rounded text-xs font-bold ${addon.status === 'Available'
+                  ? 'bg-green-100 text-green-700'
+                  : addon.status === 'Beta'
+                    ? 'bg-purple-100 text-purple-700'
+                    : 'bg-gray-100 text-gray-600'
+                  }`}
               >
                 {addon.status}
               </span>
@@ -565,11 +563,10 @@ export const MarketplacePage = () => {
               </button>
               <button
                 onClick={() => toggleStatus(addon.id)}
-                className={`flex-1 py-1.5 text-xs font-medium border rounded transition-colors ${
-                  addon.status === 'Available'
-                    ? 'border-red-200 text-red-600 hover:bg-red-50'
-                    : 'border-green-200 text-green-600 hover:bg-green-50'
-                }`}
+                className={`flex-1 py-1.5 text-xs font-medium border rounded transition-colors ${addon.status === 'Available'
+                  ? 'border-red-200 text-red-600 hover:bg-red-50'
+                  : 'border-green-200 text-green-600 hover:bg-green-50'
+                  }`}
               >
                 {addon.status === 'Available' ? 'Désactiver' : 'Activer'}
               </button>
@@ -624,10 +621,10 @@ export const BroadcastsPage = () => {
 
   return (
     <div className="space-y-6 h-full flex flex-col">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-end mb-6">
         <div>
-          <h3 className="text-lg font-bold text-gray-900">Broadcasts & Annonces</h3>
-          <p className="text-sm text-gray-500">Envoyez des messages à tous vos utilisateurs.</p>
+          <h3 className="text-[18px] font-semibold text-gray-900">Broadcasts & Annonces</h3>
+          <p className="text-[13px] text-gray-500 mt-1">Envoyez des messages à tous vos utilisateurs</p>
         </div>
         <button
           onClick={() => setIsComposeOpen(true)}
@@ -718,10 +715,10 @@ export const AiOpsPage = () => {
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-end mb-6">
         <div>
-          <h3 className="text-lg font-bold text-gray-900">AI Command Center</h3>
-          <p className="text-sm text-gray-500">Gestion des modèles LLM et coûts.</p>
+          <h3 className="text-[18px] font-semibold text-gray-900">AI Command Center</h3>
+          <p className="text-[13px] text-gray-500 mt-1">Gestion des modèles LLM et coûts</p>
         </div>
         <span className="text-xl font-bold text-gray-900">185.40 USD / jour</span>
       </div>
@@ -776,9 +773,14 @@ export const CustomerSuccessPage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-[8px] p-6 text-white shadow-lg flex justify-between">
-        <h3 className="text-xl font-bold">Santé du Parc Clients</h3>
-        <div className="text-3xl font-bold">92/100</div>
+      <div className="bg-emerald-50 rounded-[8px] p-6 border border-emerald-100 flex items-center justify-between h-32">
+        <div>
+          <h3 className="text-[14px] font-semibold text-emerald-900 mb-1">Santé du Parc Clients</h3>
+          <p className="text-[12px] text-emerald-700 mt-1">Vue globale sur le risque d'attrition</p>
+        </div>
+        <div className="text-4xl font-semibold text-emerald-700 tracking-tight">
+          92<span className="text-xl text-emerald-500/70 font-medium tracking-normal">/100</span>
+        </div>
       </div>
       <div className="bg-white border border-gray-200 rounded-[8px] shadow-sm overflow-hidden">
         <table className="min-w-full divide-y divide-gray-100">
@@ -816,7 +818,7 @@ export const CustomerSuccessPage = () => {
 
 export const BackupManagerPage = () => (
   <div className="space-y-6">
-    <h3 className="text-lg font-bold">Data & Backups</h3>
+    <h3 className="text-[18px] font-semibold text-gray-900 mb-6">Data & Backups</h3>
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div className="bg-white p-6 rounded-[8px] border border-gray-200 shadow-sm">
         <h4 className="text-sm font-bold mb-4">Derniers Snapshots</h4>
@@ -837,7 +839,7 @@ export const BackupManagerPage = () => (
 
 export const InfrastructurePage = () => (
   <div className="space-y-6">
-    <h3 className="text-lg font-bold">Infrastructure & Scaling</h3>
+    <h3 className="text-[18px] font-semibold text-gray-900 mb-6">Infrastructure & Scaling</h3>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {MOCK_REGIONS.map((region) => (
         <div key={region.id} className="bg-gray-900 rounded-[8px] p-5 text-white">
@@ -866,7 +868,7 @@ export const InfrastructurePage = () => (
 
 export const CompliancePage = () => (
   <div className="space-y-6">
-    <h3 className="text-lg font-bold">Compliance Center</h3>
+    <h3 className="text-[18px] font-semibold text-gray-900 mb-6">Compliance Center</h3>
     <div className="bg-white border border-gray-200 rounded-[8px] overflow-hidden">
       <table className="min-w-full divide-y divide-gray-100">
         <thead className="bg-gray-50">
@@ -896,7 +898,7 @@ export const CompliancePage = () => (
 
 export const RoadmapPage = () => (
   <div className="space-y-6">
-    <h3 className="text-lg font-bold">Product Roadmap</h3>
+    <h3 className="text-[18px] font-semibold text-gray-900 mb-6">Product Roadmap</h3>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {['Planned', 'In Progress', 'Live'].map((status) => (
         <div key={status} className="space-y-4">
@@ -917,10 +919,10 @@ export const RoadmapPage = () => (
 
 export const SecurityPage = () => (
   <div className="space-y-6">
-    <div className="grid grid-cols-4 gap-4">
-      <div className="bg-gray-900 p-4 rounded-[8px] text-white">
-        <div className="text-xs opacity-60">Threat Level</div>
-        <div className="text-xl font-bold text-green-400">Low</div>
+    <div className="grid grid-cols-4 gap-6">
+      <div className="bg-[#0F0F0F] p-5 rounded-[8px] text-white border border-gray-800 flex flex-col justify-between h-32 shadow-[0_4px_16px_rgba(0,0,0,0.1)]">
+        <div className="text-[11px] font-semibold text-gray-500 uppercase tracking-widest">Threat Level</div>
+        <div className="text-3xl font-semibold text-emerald-400 tracking-tight">Low</div>
       </div>
     </div>
     <div className="bg-white border rounded-[8px] overflow-hidden">
@@ -948,7 +950,7 @@ export const SecurityPage = () => (
 
 export const SystemHealthPage = () => (
   <div className="space-y-6">
-    <h2 className="text-lg font-bold">System Health</h2>
+    <h2 className="text-[18px] font-semibold text-gray-900 mb-6">System Health</h2>
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2 bg-white p-6 border rounded-[8px]">
         <h4 className="mb-4">Latency (ms)</h4>
@@ -1021,9 +1023,11 @@ export const SaaSAdministration = () => {
     { id: 'users', label: 'Utilisateurs', icon: IconUsers },
     { id: 'finance', label: 'Finance & Plans', icon: IconCreditCard },
     { id: 'marketplace', label: 'Marketplace', icon: IconShoppingBag },
+    { id: 'content', label: 'Content Management', icon: IconFileText },
     { id: 'broadcasts', label: 'Broadcasts', icon: IconBroadcast },
     { id: 'ai', label: 'AI Command Center', icon: IconWand },
     { id: 'success', label: 'Customer Success', icon: IconTrendingUp },
+    { id: 'health', label: 'System Health', icon: IconActivity },
     { id: 'infra', label: 'Infrastructure', icon: IconServer },
     { id: 'backups', label: 'Data & Backups', icon: IconHardDrive },
     { id: 'compliance', label: 'Compliance & Legal', icon: IconScale },
@@ -1040,6 +1044,8 @@ export const SaaSAdministration = () => {
         return <FinancePage />;
       case 'marketplace':
         return <MarketplacePage />;
+      case 'content':
+        return <ContentManagementPage />;
       case 'broadcasts':
         return <BroadcastsPage />;
       case 'ai':
@@ -1066,33 +1072,32 @@ export const SaaSAdministration = () => {
   };
 
   return (
-    <div className="flex h-full bg-white rounded-[8px] border border-gray-200 shadow-sm overflow-hidden font-sans">
-      <div className="w-64 bg-gray-50 border-r border-gray-200 flex flex-col">
-        <div className="p-4 border-b border-gray-200">
-          <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
+    <div className="flex h-full bg-white rounded-[12px] border border-slate-200/60 shadow-[0_2px_8px_rgba(0,0,0,0.02)] overflow-hidden font-sans">
+      <div className="w-64 bg-[#FAFAFA] border-r border-slate-200/60 flex flex-col">
+        <div className="p-4 border-b border-slate-200/60">
+          <h2 className="text-[11px] font-semibold text-gray-500 uppercase tracking-widest">
             Administration
           </h2>
         </div>
-        <nav className="flex-1 overflow-y-auto p-2 space-y-1">
+        <nav className="flex-1 overflow-y-auto p-3 space-y-0.5">
           {navItems.map((item) => (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-[8px] transition-colors ${
-                activeTab === item.id
-                  ? 'bg-white text-indigo-700 shadow-sm border border-gray-200'
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
+              className={`w-full flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-[6px] transition-all duration-200 ${activeTab === item.id
+                ? 'bg-white text-gray-900 shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-slate-200/60'
+                : 'text-gray-500 hover:text-gray-900 hover:bg-slate-100/50 border border-transparent'
+                }`}
             >
               <item.icon
-                className={`w-4 h-4 ${activeTab === item.id ? 'text-indigo-600' : 'text-gray-400'}`}
+                className={`w-4 h-4 ${activeTab === item.id ? 'text-gray-900' : 'text-gray-400'}`}
               />
               {item.label}
             </button>
           ))}
         </nav>
       </div>
-      <div className="flex-1 overflow-auto bg-gray-50/30 p-8">
+      <div className="flex-1 overflow-auto bg-white p-8">
         <div className="max-w-6xl mx-auto h-full flex flex-col">{renderContent()}</div>
       </div>
     </div>

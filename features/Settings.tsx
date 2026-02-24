@@ -635,7 +635,7 @@ export const Settings: React.FC = () => {
                       type="text"
                       value={clinicInfo.name}
                       onChange={(e) => setClinicInfo({ ...clinicInfo, name: e.target.value })}
-                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[30px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
                     />
                   </div>
 
@@ -647,7 +647,7 @@ export const Settings: React.FC = () => {
                       rows={2}
                       value={clinicInfo.address}
                       onChange={(e) => setClinicInfo({ ...clinicInfo, address: e.target.value })}
-                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[30px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] resize-none"
+                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] resize-none"
                     />
                   </div>
 
@@ -659,7 +659,7 @@ export const Settings: React.FC = () => {
                       type="text"
                       value={clinicInfo.phone}
                       onChange={(e) => setClinicInfo({ ...clinicInfo, phone: e.target.value })}
-                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[30px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
                     />
                   </div>
 
@@ -671,7 +671,7 @@ export const Settings: React.FC = () => {
                       type="email"
                       value={clinicInfo.email}
                       onChange={(e) => setClinicInfo({ ...clinicInfo, email: e.target.value })}
-                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[30px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
                     />
                   </div>
 
@@ -695,7 +695,7 @@ export const Settings: React.FC = () => {
                       type="text"
                       value={clinicInfo.website}
                       onChange={(e) => setClinicInfo({ ...clinicInfo, website: e.target.value })}
-                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[30px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
                     />
                   </div>
                 </div>
@@ -758,7 +758,7 @@ export const Settings: React.FC = () => {
                       <select
                         value={reminderTime}
                         onChange={(e) => setReminderTime(e.target.value)}
-                        className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[30px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] appearance-none"
+                        className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] appearance-none"
                       >
                         <option value="2">2 heures avant</option>
                         <option value="24">24 heures avant (recommandé)</option>
@@ -775,7 +775,7 @@ export const Settings: React.FC = () => {
                           rows={4}
                           value={messageTemplate}
                           onChange={(e) => setMessageTemplate(e.target.value)}
-                          className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[30px] text-[0.875rem] font-medium text-slate-700 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] resize-none leading-relaxed"
+                          className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-medium text-slate-700 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] resize-none leading-relaxed"
                         />
                       </div>
                       <p className="mt-2 text-[0.75rem] font-medium text-slate-500">
@@ -1121,7 +1121,7 @@ export const Settings: React.FC = () => {
                       type="text"
                       value={widgetTitle}
                       onChange={(e) => setWidgetTitle(e.target.value)}
-                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[30px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
                     />
                   </div>
                   <div className="space-y-2">
@@ -1327,7 +1327,7 @@ export const Settings: React.FC = () => {
                       <select
                         value={defaultCalendarView}
                         onChange={(e) => setDefaultCalendarView(e.target.value as any)}
-                        className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[30px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] appearance-none"
+                        className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] appearance-none"
                       >
                         <option value="day">Jour</option>
                         <option value="week">Semaine</option>
@@ -1342,7 +1342,7 @@ export const Settings: React.FC = () => {
                       <select
                         value={defaultSlotDuration}
                         onChange={(e) => setDefaultSlotDuration(Number(e.target.value))}
-                        className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[30px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] appearance-none"
+                        className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] appearance-none"
                       >
                         <option value={15}>15 min</option>
                         <option value={30}>30 min</option>

@@ -125,7 +125,7 @@ export const PatientList: React.FC = () => {
                 <div className="flex gap-3 w-full sm:w-auto">
                     <button
                         onClick={() => setIsImportOpen(true)}
-                        className="btn-secondary h-10 px-4 text-[13px] font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-[30px] flex items-center justify-center gap-2"
+                        className="btn-secondary h-10 px-4 text-[13px] font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-[8px] flex items-center justify-center gap-2"
                     >
                         <IconDownload className="w-4 h-4" /> Import CSV
                     </button>
@@ -147,7 +147,7 @@ export const PatientList: React.FC = () => {
                         placeholder="Rechercher par nom, téléphone..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full text-[14px] font-medium rounded-[30px] pl-9 pr-4 py-2.5 bg-white border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-100 transition-all shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
+                        className="w-full text-[14px] font-medium rounded-[8px] pl-9 pr-4 py-2.5 bg-white border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-100 transition-all shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
                     />
                 </div>
             </div>
@@ -415,7 +415,7 @@ export const PatientList: React.FC = () => {
                                                                 required
                                                                 value={editData.firstName}
                                                                 onChange={(e) => setEditData({ ...editData, firstName: e.target.value })}
-                                                                className="w-full h-9 rounded-[30px] border border-slate-200 bg-white px-3 text-[13px] font-medium focus:ring-2 focus:ring-slate-100 focus:border-slate-500 transition-all outline-none"
+                                                                className="w-full h-9 rounded-[8px] border border-slate-200 bg-white px-3 text-[13px] font-medium focus:ring-2 focus:ring-slate-100 focus:border-slate-500 transition-all outline-none"
                                                             />
                                                         </div>
                                                         <div>
@@ -427,7 +427,7 @@ export const PatientList: React.FC = () => {
                                                                 required
                                                                 value={editData.lastName}
                                                                 onChange={(e) => setEditData({ ...editData, lastName: e.target.value })}
-                                                                className="w-full h-9 rounded-[30px] border border-slate-200 bg-white px-3 text-[13px] font-medium focus:ring-2 focus:ring-slate-100 focus:border-slate-500 transition-all outline-none"
+                                                                className="w-full h-9 rounded-[8px] border border-slate-200 bg-white px-3 text-[13px] font-medium focus:ring-2 focus:ring-slate-100 focus:border-slate-500 transition-all outline-none"
                                                             />
                                                         </div>
                                                     </div>
@@ -440,7 +440,7 @@ export const PatientList: React.FC = () => {
                                                                 type="tel"
                                                                 value={editData.phone}
                                                                 onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
-                                                                className="w-full h-9 rounded-[30px] border border-slate-200 bg-white px-3 text-[13px] font-medium focus:ring-2 focus:ring-slate-100 focus:border-slate-500 transition-all outline-none"
+                                                                className="w-full h-9 rounded-[8px] border border-slate-200 bg-white px-3 text-[13px] font-medium focus:ring-2 focus:ring-slate-100 focus:border-slate-500 transition-all outline-none"
                                                             />
                                                         </div>
                                                         <div>
@@ -451,7 +451,7 @@ export const PatientList: React.FC = () => {
                                                                 type="email"
                                                                 value={editData.email}
                                                                 onChange={(e) => setEditData({ ...editData, email: e.target.value })}
-                                                                className="w-full h-9 rounded-[30px] border border-slate-200 bg-white px-3 text-[13px] font-medium focus:ring-2 focus:ring-slate-100 focus:border-slate-500 transition-all outline-none"
+                                                                className="w-full h-9 rounded-[8px] border border-slate-200 bg-white px-3 text-[13px] font-medium focus:ring-2 focus:ring-slate-100 focus:border-slate-500 transition-all outline-none"
                                                             />
                                                         </div>
                                                     </div>
@@ -555,7 +555,7 @@ export const PatientList: React.FC = () => {
                                     required
                                     value={newPatient.firstName}
                                     onChange={e => setNewPatient({ ...newPatient, firstName: e.target.value })}
-                                    className="w-full h-9 rounded-[30px] border border-slate-200 bg-white px-3 text-[13px] focus:ring-2 focus:ring-slate-100 focus:border-slate-500 outline-none"
+                                    className="w-full h-9 rounded-[8px] border border-slate-200 bg-white px-3 text-[13px] focus:ring-2 focus:ring-slate-100 focus:border-slate-500 outline-none"
                                 />
                             </div>
                             <div>
@@ -565,7 +565,7 @@ export const PatientList: React.FC = () => {
                                     required
                                     value={newPatient.lastName}
                                     onChange={e => setNewPatient({ ...newPatient, lastName: e.target.value })}
-                                    className="w-full h-9 rounded-[30px] border border-slate-200 bg-white px-3 text-[13px] focus:ring-2 focus:ring-slate-100 focus:border-slate-500 outline-none"
+                                    className="w-full h-9 rounded-[8px] border border-slate-200 bg-white px-3 text-[13px] focus:ring-2 focus:ring-slate-100 focus:border-slate-500 outline-none"
                                 />
                             </div>
                         </div>
@@ -575,7 +575,7 @@ export const PatientList: React.FC = () => {
                                 type="tel"
                                 value={newPatient.phone}
                                 onChange={e => setNewPatient({ ...newPatient, phone: e.target.value })}
-                                className="w-full h-9 rounded-[30px] border border-slate-200 bg-white px-3 text-[13px] focus:ring-2 focus:ring-slate-100 focus:border-slate-500 outline-none"
+                                className="w-full h-9 rounded-[8px] border border-slate-200 bg-white px-3 text-[13px] focus:ring-2 focus:ring-slate-100 focus:border-slate-500 outline-none"
                             />
                         </div>
                         <div>
@@ -584,7 +584,7 @@ export const PatientList: React.FC = () => {
                                 type="email"
                                 value={newPatient.email}
                                 onChange={e => setNewPatient({ ...newPatient, email: e.target.value })}
-                                className="w-full h-9 rounded-[30px] border border-slate-200 bg-white px-3 text-[13px] focus:ring-2 focus:ring-slate-100 focus:border-slate-500 outline-none"
+                                className="w-full h-9 rounded-[8px] border border-slate-200 bg-white px-3 text-[13px] focus:ring-2 focus:ring-slate-100 focus:border-slate-500 outline-none"
                             />
                         </div>
                     </div>

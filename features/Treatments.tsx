@@ -263,7 +263,7 @@ export const Treatments = () => {
                 placeholder="Rechercher..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="block w-full pl-9 pr-3 py-1.5 border-none rounded-[30px] leading-5 bg-transparent placeholder-gray-400 focus:outline-none focus:ring-0 text-sm"
+                className="block w-full pl-9 pr-3 py-1.5 border-none rounded-[8px] leading-5 bg-transparent placeholder-gray-400 focus:outline-none focus:ring-0 text-sm"
               />
             </div>
           </div>
@@ -430,7 +430,7 @@ export const Treatments = () => {
               {phases.map((phase, idx) => (
                 <div
                   key={phase.id}
-                  className="bg-white border border-slate-200 rounded-[30px] p-4 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                  className="bg-white border border-slate-200 rounded-[8px] p-4 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
                 >
                   <div className="flex justify-between items-center mb-3">
                     <input

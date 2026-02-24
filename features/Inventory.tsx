@@ -378,7 +378,7 @@ export const Inventory = () => {
                   placeholder="Rechercher..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-1.5 text-sm border border-slate-300 rounded-[30px] focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full pl-9 pr-3 py-1.5 text-sm border border-slate-300 rounded-[8px] focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
             </div>

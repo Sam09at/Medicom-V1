@@ -125,9 +125,12 @@ export function useAppointments(options?: UseAppointmentsOptions) {
 
   useEffect(() => {
     const client = supabase;
-    if (!currentTenant || !client) return;
+    // In real mode, require currentTenant. In mock mode (!client), allow it.
+    if (client && !currentTenant) return;
 
     fetchAppointments();
+
+    if (!client) return;
 
     const channel = client
       .channel('public:appointments')
@@ -137,7 +140,7 @@ export function useAppointments(options?: UseAppointmentsOptions) {
           event: '*',
           schema: 'public',
           table: 'appointments',
-          filter: `tenant_id=eq.${currentTenant.id}`,
+          filter: `tenant_id=eq.${currentTenant!.id}`,
         },
         () => {
           fetchAppointments();

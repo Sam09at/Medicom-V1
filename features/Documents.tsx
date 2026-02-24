@@ -340,7 +340,7 @@ export const Documents = () => {
                 <button
                   key={tmpl}
                   onClick={() => handleTemplateChange(tmpl, genData.patientId)}
-                  className={`text-left px-3 py-2 rounded-[30px] text-sm border transition-colors ${genData.template === tmpl ? 'bg-blue-50 border-blue-200 text-blue-700 font-medium' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+                  className={`text-left px-3 py-2 rounded-[8px] text-sm border transition-colors ${genData.template === tmpl ? 'bg-blue-50 border-blue-200 text-blue-700 font-medium' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
                 >
                   {tmpl}
                 </button>
@@ -385,7 +385,7 @@ export const Documents = () => {
         <div className="flex gap-2">
           <button
             onClick={() => setIsGeneratorOpen(true)}
-            className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-[30px] text-sm font-medium transition-colors shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+            className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-[8px] text-sm font-medium transition-colors shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
           >
             <IconWand className="w-4 h-4" />
             Nouveau Document

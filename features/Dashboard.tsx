@@ -132,7 +132,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats }) => {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-[13px] font-semibold bg-white border border-slate-100 px-4 py-2 rounded-[30px] shadow-[0_2px_12px_-4px_rgba(0,0,0,0.03)] text-slate-600 tracking-tight">
+          <span className="text-[13px] font-semibold bg-white border border-slate-100 px-4 py-2 rounded-[8px] shadow-[0_2px_12px_-4px_rgba(0,0,0,0.03)] text-slate-600 tracking-tight">
             {new Date().toLocaleDateString('fr-FR', {
               weekday: 'long',
               day: 'numeric',

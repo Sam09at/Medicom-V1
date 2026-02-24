@@ -299,7 +299,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
         {/* AI Modal */}
         {showAiModal && (
           <div className="absolute inset-0 bg-white/90 backdrop-blur-sm z-50 flex items-center justify-center p-8">
-            <div className="bg-white border border-slate-200 shadow-2xl rounded-[30px] max-w-lg w-full p-6 text-center animate-in zoom-in-95 duration-200">
+            <div className="bg-white border border-slate-200 shadow-2xl rounded-[8px] max-w-lg w-full p-6 text-center animate-in zoom-in-95 duration-200">
               <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
                 <IconWand className="w-6 h-6" />
               </div>
@@ -495,7 +495,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
                       Acte
                     </label>
                     <select
-                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[30px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] appearance-none"
+                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] appearance-none"
                       value={selectedActId}
                       onChange={(e) => setSelectedActId(e.target.value)}
                     >
@@ -514,7 +514,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
                     <input
                       type="text"
                       placeholder="Ex: 16"
-                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[30px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
                       value={selectedTeethForAct}
                       onChange={(e) => setSelectedTeethForAct(e.target.value)}
                     />
@@ -712,7 +712,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
                 {noteTemplates.length > 0 && (
                   <div>
                     <select
-                      className="w-full sm:w-auto px-5 py-3.5 bg-white border border-slate-100/80 rounded-[30px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] appearance-none"
+                      className="w-full sm:w-auto px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] appearance-none"
                       onChange={(e) => {
                         const template = noteTemplates.find((t: any) => t.id === e.target.value);
                         if (template) {

@@ -222,7 +222,7 @@ export const AppLayout: React.FC = () => {
                       <button
                         key={item.path}
                         onClick={() => navigate(item.path)}
-                        className={`w-full flex items-center justify-between h-10 px-4 mx-2 rounded-[30px] text-[14px] transition-all duration-300 ease-out group relative ${isActive(item.path)
+                        className={`w-full flex items-center justify-between h-10 px-4 mx-2 rounded-[8px] text-[14px] transition-all duration-300 ease-out group relative ${isActive(item.path)
                           ? 'bg-[#0F0F0F] text-white font-medium'
                           : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
                           }`}

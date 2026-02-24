@@ -34,16 +34,14 @@ import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 
 const KPICard = ({ label, value, trend, icon: Icon, bgClass, textClass }: any) => (
-  <div className="card p-6 h-full flex flex-col justify-between hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] group hover:-translate-y-1">
-    <div className="flex items-center justify-between mb-6">
-      <div
-        className={`w-11 h-11 rounded-2xl flex items-center justify-center ${bgClass} ${textClass} transition-transform group-hover:scale-110 duration-300`}
-      >
-        <Icon className="w-5.5 h-5.5" />
+  <div className="card p-5 h-full flex flex-col justify-between group">
+    <div className="flex items-start justify-between mb-4">
+      <div className="w-8 h-8 rounded-[6px] bg-slate-50 border border-slate-100 flex items-center justify-center text-gray-500 group-hover:bg-gray-100 transition-colors">
+        <Icon className="w-4 h-4" />
       </div>
       {trend !== undefined && (
         <div
-          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${trend >= 0 ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'} text-[0.65rem] font-bold uppercase tracking-wider`}
+          className={`badge ${trend >= 0 ? 'badge-green' : 'badge-red'} gap-1 font-semibold`}
         >
           {trend >= 0 ? (
             <IconTrendingUp className="w-3 h-3" />
@@ -55,10 +53,10 @@ const KPICard = ({ label, value, trend, icon: Icon, bgClass, textClass }: any) =
       )}
     </div>
     <div>
-      <div className="text-[0.65rem] font-bold tracking-[0.1em] text-gray-400 uppercase mb-1">
+      <div className="text-[13px] font-medium text-gray-500 mb-1">
         {label}
       </div>
-      <div className="text-[1.875rem] font-bold text-gray-900 tracking-tight leading-none">
+      <div className="text-2xl font-semibold text-gray-900 tracking-tight">
         {value}
       </div>
     </div>
@@ -154,41 +152,41 @@ export const SuperAdminDashboard: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h2 className="text-[2.5rem] leading-[1.1] font-bold tracking-[-0.03em] text-gray-900">
+          <h2 className="text-2xl font-semibold text-gray-900 tracking-tight">
             Command Center
           </h2>
-          <p className="text-[1rem] text-gray-500 font-medium mt-2">
-            Vue temps réel de la performance SaaS.
+          <p className="text-[13px] text-gray-500 mt-1">
+            Vue temps réel de la performance SaaS
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <span className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-1.5 rounded-[8px] shadow-sm font-semibold text-[0.75rem] text-gray-600">
-            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+          <span className="badge badge-gray gap-2 px-3 py-1.5 shadow-sm">
+            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
             Système Opérationnel
           </span>
-          <span className="text-[0.75rem] text-gray-400 font-mono">v0.15.0</span>
+          <span className="text-[11px] text-gray-400 font-mono">v0.15.0</span>
         </div>
       </div>
 
       {/* Quick Actions Row */}
-      <div className="flex gap-6">
+      <div className="flex gap-4">
         <button
           onClick={() => navigate('/admin/cabinets/new')}
-          className="flex-1 btn-indigo flex items-center justify-center gap-2 h-10 rounded-[8px] shadow-sm"
+          className="btn-primary flex-1 py-2"
         >
           <IconPlus className="w-4 h-4" />
           Nouveau cabinet
         </button>
         <button
           onClick={() => navigate('/admin/crm')}
-          className="flex-1 btn-secondary flex items-center justify-center gap-2 h-10 rounded-[8px] shadow-sm"
+          className="btn-secondary flex-1 py-2"
         >
           <IconUsers className="w-4 h-4" />
           Voir leads
         </button>
         <button
           onClick={() => navigate('/admin/support?priority=high')}
-          className="flex-1 btn-danger flex items-center justify-center gap-2 h-10 rounded-[8px] shadow-sm"
+          className="btn-secondary flex-1 py-2 text-rose-600 hover:text-rose-700 hover:bg-rose-50"
         >
           <IconAlertTriangle className="w-4 h-4" />
           Tickets urgents
@@ -240,14 +238,14 @@ export const SuperAdminDashboard: React.FC = () => {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Chart: MRR Growth (Line Chart based on history) */}
-        <div className="lg:col-span-2 card p-5">
-          <div className="flex justify-between items-center mb-6">
+        <div className="lg:col-span-2 card p-6">
+          <div className="flex justify-between items-start mb-6">
             <div>
-              <h3 className="text-[1.125rem] font-bold text-gray-900 tracking-tight">
+              <h3 className="text-[14px] font-semibold text-gray-900">
                 Croissance MRR (12 Mois)
               </h3>
-              <p className="text-[0.875rem] text-gray-500 mt-0.5">
-                Évolution du revenue mensuel récurrent.
+              <p className="text-[13px] text-gray-500 mt-1">
+                Évolution du revenue mensuel récurrent
               </p>
             </div>
           </div>
@@ -295,11 +293,11 @@ export const SuperAdminDashboard: React.FC = () => {
         </div>
 
         {/* Live Activity Feed */}
-        <div className="card p-5 flex flex-col h-[410px]">
-          <h3 className="text-[1.125rem] font-semibold text-gray-900 tracking-tight mb-4 flex items-center gap-2">
-            <IconActivity className="w-4 h-4 text-indigo-500" /> Flux d'Activité
+        <div className="card p-6 flex flex-col h-[410px]">
+          <h3 className="text-[14px] font-semibold text-gray-900 mb-6 flex items-center gap-2">
+            <IconActivity className="w-4 h-4 text-gray-400" /> Flux d'Activité
           </h3>
-          <div className="flex-1 overflow-y-auto space-y-4 pr-1">
+          <div className="flex-1 overflow-y-auto space-y-4 pr-1 scrollbar-hide">
             {activityFeed.length === 0 ? (
               <div className="text-[0.875rem] text-gray-500 text-center mt-10">
                 Aucune activité récente.

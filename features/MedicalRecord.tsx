@@ -114,7 +114,7 @@ export const MedicalRecord = () => {
             placeholder="Rechercher par nom, téléphone..."
             value={patientSearch}
             onChange={(e) => setPatientSearch(e.target.value)}
-            className="w-full pl-14 pr-5 py-4 bg-white border border-slate-100/80 rounded-[30px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] placeholder:font-medium placeholder:text-slate-400"
+            className="w-full pl-14 pr-5 py-4 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] placeholder:font-medium placeholder:text-slate-400"
             autoFocus
           />
         </div>
@@ -177,7 +177,7 @@ export const MedicalRecord = () => {
         <div className="flex items-center gap-5 flex-1">
           <button
             onClick={() => setSelectedPatient(null)}
-            className="w-10 h-10 bg-white border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 text-slate-500 rounded-[30px] flex items-center justify-center transition-all"
+            className="w-10 h-10 bg-white border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 text-slate-500 rounded-[8px] flex items-center justify-center transition-all"
           >
             <IconArrowLeft className="w-5 h-5" />
           </button>

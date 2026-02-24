@@ -138,7 +138,7 @@ const ActionQueue = ({ leads, onLogAction }: { leads: Prospect[], onLogAction: (
 };
 
 export const CRM = () => {
-  const { prospects, activities, loadActivities, moveLead, logActivity, scheduleDemo, loading, refresh } =
+  const { prospects, activities, loadActivities, moveLead, logActivity, scheduleDemo, loading, refresh, addLead } =
     useCRM();
   const [activeTab, setActiveTab] = useState<'tower' | 'sales' | 'onboarding' | 'partners' | 'campaigns'>(
     'tower'
@@ -149,6 +149,12 @@ export const CRM = () => {
   const [activeScript, setActiveScript] = useState<'pitch' | 'price' | 'timing'>('pitch');
   const [partners, setPartners] = useState<Partner[]>(MOCK_PARTNERS);
   const [campaigns, setCampaigns] = useState<Campaign[]>(MOCK_CAMPAIGNS);
+  const [isAddLeadOpen, setIsAddLeadOpen] = useState(false);
+  const [newLead, setNewLead] = useState({
+    clinicName: '', contactName: '', city: '',
+    email: '', phone: '',
+    doctors: '1', currentSystem: 'Paper', timeline: 'Just browsing'
+  });
 
   // Load activities when prospect selected
   useEffect(() => {
@@ -256,6 +262,39 @@ export const CRM = () => {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const handleCreateLead = async () => {
+    let score = 20;
+    if (newLead.doctors === '5+') score += 40;
+    else if (newLead.doctors === '2-5') score += 20;
+
+    if (newLead.currentSystem === 'None' || newLead.currentSystem === 'Paper') score += 20;
+    else score += 10;
+
+    if (newLead.timeline === 'Immediate') score += 20;
+    else if (newLead.timeline === '1-3 months') score += 10;
+
+    const estValue = score * 100;
+
+    await addLead({
+      name: newLead.clinicName,
+      contactPerson: newLead.contactName,
+      email: newLead.email,
+      phone: newLead.phone,
+      city: newLead.city,
+      source: 'Direct Form',
+      status: 'New',
+      estValue,
+      notes: `Taille du cabinet: ${newLead.doctors} | Système actuel: ${newLead.currentSystem} | Timing: ${newLead.timeline}`
+    });
+
+    setIsAddLeadOpen(false);
+    setNewLead({
+      clinicName: '', contactName: '', city: '',
+      email: '', phone: '',
+      doctors: '1', currentSystem: 'Paper', timeline: 'Just browsing'
+    });
   };
 
   const ControlTowerView = () => (
@@ -416,7 +455,7 @@ export const CRM = () => {
 
   const OnboardingView = () => (
     <div className="space-y-4">
-      <div className="bg-white border border-slate-200 rounded-[30px] overflow-hidden shadow-sm">
+      <div className="bg-white border border-slate-200 rounded-[8px] overflow-hidden shadow-sm">
         <table className="min-w-full divide-y divide-slate-100">
           <thead className="bg-slate-50">
             <tr>
@@ -483,16 +522,24 @@ export const CRM = () => {
           </p>
         </div>
         <div>
-          <SegmentedTabs
-            activeTab={activeTab}
-            onChange={(id) => setActiveTab(id as any)}
-            tabs={[
-              { id: 'tower', label: 'Control Tower', icon: IconZap as any },
-              { id: 'sales', label: 'Pipeline', icon: IconBriefcase as any },
-              { id: 'onboarding', label: 'Onboarding', icon: IconCheckCircle as any },
-              { id: 'partners', label: 'Partenaires', icon: IconUsers as any },
-            ]}
-          />
+          <div className="flex gap-4 items-center">
+            <SegmentedTabs
+              activeTab={activeTab}
+              onChange={(id) => setActiveTab(id as any)}
+              tabs={[
+                { id: 'tower', label: 'Control Tower', icon: IconZap as any },
+                { id: 'sales', label: 'Pipeline', icon: IconBriefcase as any },
+                { id: 'onboarding', label: 'Onboarding', icon: IconCheckCircle as any },
+                { id: 'partners', label: 'Partenaires', icon: IconUsers as any },
+              ]}
+            />
+            <button
+              onClick={() => setIsAddLeadOpen(true)}
+              className="px-4 py-2 bg-slate-900 border border-transparent rounded-[6px] text-[13px] font-bold text-white shadow-sm hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900/50 transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              <IconPlus className="w-4 h-4" />Nouveau
+            </button>
+          </div>
         </div>
       </div>
 
@@ -547,7 +594,7 @@ export const CRM = () => {
           {partners.map((partner) => (
             <div
               key={partner.id}
-              className="bg-white border border-slate-200 rounded-[30px] p-6 shadow-sm hover:border-blue-400 transition-all"
+              className="bg-white border border-slate-200 rounded-[8px] p-6 shadow-sm hover:border-blue-400 transition-all"
             >
               <div className="flex justify-between items-start mb-6">
                 <div className="p-3 bg-blue-50 text-blue-600 rounded-[8px] border border-blue-100">
@@ -791,6 +838,92 @@ export const CRM = () => {
             </div>
           </div>
         )}
+      </SlideOver>
+
+      <SlideOver
+        isOpen={isAddLeadOpen}
+        onClose={() => setIsAddLeadOpen(false)}
+        title="Nouveau Prospect"
+        subtitle="Saisie rapide d'un nouveau lead"
+      >
+        <div className="p-8 space-y-6">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-[13px] font-bold text-slate-900 mb-1.5">Nom du Cabinet</label>
+              <input type="text" className="w-full h-10 px-3 bg-white border border-slate-200 rounded-[6px] text-[13px] shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all placeholder:text-slate-400"
+                value={newLead.clinicName} onChange={(e) => setNewLead({ ...newLead, clinicName: e.target.value })} />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[13px] font-bold text-slate-900 mb-1.5">Contact</label>
+                <input type="text" className="w-full h-10 px-3 bg-white border border-slate-200 rounded-[6px] text-[13px] shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+                  value={newLead.contactName} onChange={(e) => setNewLead({ ...newLead, contactName: e.target.value })} />
+              </div>
+              <div>
+                <label className="block text-[13px] font-bold text-slate-900 mb-1.5">Ville</label>
+                <input type="text" className="w-full h-10 px-3 bg-white border border-slate-200 rounded-[6px] text-[13px] shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+                  value={newLead.city} onChange={(e) => setNewLead({ ...newLead, city: e.target.value })} />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[13px] font-bold text-slate-900 mb-1.5">Email</label>
+                <input type="email" className="w-full h-10 px-3 bg-white border border-slate-200 rounded-[6px] text-[13px] shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+                  value={newLead.email} onChange={(e) => setNewLead({ ...newLead, email: e.target.value })} />
+              </div>
+              <div>
+                <label className="block text-[13px] font-bold text-slate-900 mb-1.5">Téléphone</label>
+                <input type="text" className="w-full h-10 px-3 bg-white border border-slate-200 rounded-[6px] text-[13px] shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+                  value={newLead.phone} onChange={(e) => setNewLead({ ...newLead, phone: e.target.value })} />
+              </div>
+            </div>
+
+            <div className="h-px bg-slate-100 my-6" />
+
+            <div>
+              <label className="block text-[13px] font-bold text-slate-900 mb-1.5">Taille du Cabinet</label>
+              <select className="w-full h-10 px-3 bg-white border border-slate-200 rounded-[6px] text-[13px] shadow-sm outline-none"
+                value={newLead.doctors} onChange={(e) => setNewLead({ ...newLead, doctors: e.target.value })}>
+                <option value="1">1 Médecin (Solo)</option>
+                <option value="2-5">2 à 5 Médecins</option>
+                <option value="5+">Plus de 5 Médecins</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-[13px] font-bold text-slate-900 mb-1.5">Système Actuel</label>
+              <select className="w-full h-10 px-3 bg-white border border-slate-200 rounded-[6px] text-[13px] shadow-sm outline-none"
+                value={newLead.currentSystem} onChange={(e) => setNewLead({ ...newLead, currentSystem: e.target.value })}>
+                <option value="Paper">Format Papier / Classeur</option>
+                <option value="None">Excel / Aucun logiciel spécialisé</option>
+                <option value="Competitor">Logiciel concurrent</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-[13px] font-bold text-slate-900 mb-1.5">Urgence du projet</label>
+              <select className="w-full h-10 px-3 bg-white border border-slate-200 rounded-[6px] text-[13px] shadow-sm outline-none"
+                value={newLead.timeline} onChange={(e) => setNewLead({ ...newLead, timeline: e.target.value })}>
+                <option value="Immediate">Urgent / Immédiat</option>
+                <option value="1-3 months">D'ici 1 à 3 mois</option>
+                <option value="Just browsing">Pas pour le moment (Curieux)</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="pt-8 border-t border-slate-100">
+            <button
+              onClick={handleCreateLead}
+              disabled={!newLead.clinicName}
+              className="w-full h-11 bg-slate-900 text-white rounded-[6px] font-bold shadow-sm hover:bg-slate-800 disabled:opacity-50 transition-colors"
+            >
+              Enregistrer le prospect
+            </button>
+            <p className="text-center text-[11px] text-slate-400 mt-3">Le Score Qualité sera calculé automatiquement</p>
+          </div>
+        </div>
       </SlideOver>
     </div>
   );

@@ -189,7 +189,7 @@ export const Layout: React.FC<LayoutProps> = ({
                 value={searchQuery}
                 onChange={handleSearch}
                 placeholder="Recherche..."
-                className="w-full pl-9 pr-4 py-1.5 text-[14px] font-medium bg-white border border-slate-100 shadow-sm rounded-[30px] focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all cursor-pointer"
+                className="w-full pl-9 pr-4 py-1.5 text-[14px] font-medium bg-white border border-slate-100 shadow-sm rounded-[8px] focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all cursor-pointer"
               />
             </div>
           </div>

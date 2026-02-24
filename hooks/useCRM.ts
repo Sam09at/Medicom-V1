@@ -6,6 +6,7 @@ import {
   addActivity,
   type Lead,
   type LeadActivity,
+  createLead,
 } from '../lib/api/saas/crm';
 import { Prospect } from '../types';
 
@@ -211,6 +212,35 @@ export const useCRM = () => {
     }
   };
 
+  const addLead = async (leadData: Omit<Lead, 'id' | 'createdAt' | 'updatedAt'>) => {
+    try {
+      setLoading(true);
+      await createLead(leadData);
+      await loadLeads(); // Refresh leads
+    } catch (err: any) {
+      console.error('[CRM] Failed to add lead:', err);
+      setError(err.message);
+
+      // Fallback: Add locally
+      const mockLead: Prospect = {
+        id: `mock-${Date.now()}`,
+        clinicName: leadData.name,
+        contactName: leadData.contactPerson,
+        email: leadData.email,
+        phone: leadData.phone,
+        city: leadData.city,
+        source: leadData.source,
+        status: (DB_TO_UI_STATUS[leadData.status] || 'New') as any,
+        leadScore: Math.min(100, Math.round((leadData.estValue || 0) / 100)),
+        priority: leadData.estValue > 5000 ? 'High' : leadData.estValue > 2000 ? 'Medium' : 'Low',
+        date: new Date().toLocaleDateString('fr-FR'),
+      };
+      setProspects(prev => [mockLead, ...prev]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     prospects,
     activities,
@@ -221,6 +251,7 @@ export const useCRM = () => {
     moveLead,
     logActivity,
     scheduleDemo,
+    addLead,
     refresh: loadLeads,
   };
 };
