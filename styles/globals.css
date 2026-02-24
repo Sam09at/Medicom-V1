@@ -1,0 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-heading: 'Aspekta', 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* Force the requested 7px radius for common radius classes */
+  --radius-sm: 7px;
+  --radius-md: 7px;
+  --radius-lg: 7px;
+  --radius-xl: 7px;
+  --radius-2xl: 7px;
+  --radius-3xl: 7px;
+}
+
+@layer base {
+  @font-face {
+    font-family: 'Aspekta';
+    src: local('Aspekta'), local('Inter');
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  html {
+    font-size: 16px;
+    /* User specified body: 16px */
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: #111827;
+    background: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em;
+  }
+
+  h1 {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: 48px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  * {
+    border-color: #f1f5f9;
+    /* Very light slate-100 for linear minimalist style */
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white border border-slate-100 rounded-[7px] transition-all duration-200;
+    box-shadow: 0 2px 12px -4px rgba(0, 0, 0, 0.03);
+    /* Subtle, elegant shadow */
+  }
+
+  .btn-primary {
+    @apply px-5 py-2.5 text-[0.875rem] font-medium rounded-[7px] bg-[#0F0F0F] text-white hover:bg-black transition-all flex items-center justify-center gap-2;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .btn-secondary {
+    @apply px-5 py-2.5 text-[0.875rem] font-medium rounded-[30px] bg-white text-gray-700 border border-slate-200 hover:bg-slate-50 transition-all flex items-center justify-center gap-2;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  }
+
+  .btn-ghost {
+    @apply px-4 py-2 text-[0.875rem] font-medium rounded-[30px] text-gray-500 hover:bg-slate-50 hover:text-gray-900 transition-all flex items-center justify-center gap-2;
+  }
+
+  .input {
+    @apply w-full text-[0.875rem] font-medium rounded-[7px] px-4 py-2.5 bg-white border border-slate-200 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  }
+
+  .badge {
+    @apply inline-flex items-center text-[0.75rem] font-medium px-2.5 py-1 rounded-[30px] mix-blend-multiply;
+  }
+
+  .badge-blue {
+    @apply inline-flex items-center text-[0.75rem] font-medium px-2.5 py-1 rounded-[30px] bg-blue-50 text-blue-700 border border-blue-100/50 mix-blend-multiply;
+  }
+
+  .badge-green {
+    @apply inline-flex items-center text-[0.75rem] font-medium px-2.5 py-1 rounded-[30px] bg-emerald-50 text-emerald-700 border border-emerald-100/50 mix-blend-multiply;
+  }
+
+  .badge-orange {
+    @apply inline-flex items-center text-[0.75rem] font-medium px-2.5 py-1 rounded-[30px] bg-orange-50 text-orange-700 border border-orange-100/50 mix-blend-multiply;
+  }
+
+  .badge-red {
+    @apply inline-flex items-center text-[0.75rem] font-medium px-2.5 py-1 rounded-[30px] bg-rose-50 text-rose-700 border border-rose-100/50 mix-blend-multiply;
+  }
+
+  .badge-gray {
+    @apply inline-flex items-center text-[0.75rem] font-medium px-2.5 py-1 rounded-[30px] bg-slate-100 text-slate-700 border border-slate-200/50 mix-blend-multiply;
+  }
+}
+
+/* ── Scrollbar Utilities ── */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

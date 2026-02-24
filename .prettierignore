@@ -1,0 +1,6 @@
+dist
+node_modules
+node_modules_old
+src_backup
+package-lock.json
+*.md
