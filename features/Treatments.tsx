@@ -176,7 +176,7 @@ export const Treatments = () => {
           </p>
         </div>
         <div className="flex gap-3">
-          <div className="bg-slate-100 p-1 rounded-[7px] flex text-sm font-medium">
+          <div className="bg-slate-100 p-1 rounded-[8px] flex text-sm font-medium">
             <button
               onClick={() => setActiveTab('list')}
               className={`px-3 py-1.5 rounded-sm transition-colors ${activeTab === 'list' ? 'bg-white text-slate-900 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]' : 'text-slate-500 hover:text-slate-900'}`}
@@ -192,7 +192,7 @@ export const Treatments = () => {
           </div>
           <button
             onClick={() => setIsCreateOpen(true)}
-            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-[7px] text-sm font-medium transition-colors shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-[8px] text-sm font-medium transition-colors shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
           >
             <IconPlus className="w-4 h-4" />
             Nouveau Plan
@@ -202,11 +202,11 @@ export const Treatments = () => {
 
       {/* Main Content */}
       {activeTab === 'chart' ? (
-        <div className="bg-white rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] p-6 sm:p-8">
+        <div className="bg-white rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] p-6 sm:p-8">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-semibold text-slate-800">Visualisation Clinique</h3>
             <select
-              className="border-slate-300 rounded-[7px] text-sm p-2"
+              className="border-slate-300 rounded-[8px] text-sm p-2"
               value={selectedPatientId}
               onChange={(e) => setSelectedPatientId(e.target.value)}
             >
@@ -253,7 +253,7 @@ export const Treatments = () => {
       ) : (
         <div className="space-y-4">
           {/* Filters */}
-          <div className="bg-white p-2 rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex items-center justify-between">
+          <div className="bg-white p-2 rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex items-center justify-between">
             <div className="relative flex-1 max-w-sm">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <IconSearch className="h-4 w-4 text-slate-400" />
@@ -263,13 +263,13 @@ export const Treatments = () => {
                 placeholder="Rechercher..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="block w-full pl-9 pr-3 py-1.5 border-none rounded-[7px] leading-5 bg-transparent placeholder-gray-400 focus:outline-none focus:ring-0 text-sm"
+                className="block w-full pl-9 pr-3 py-1.5 border-none rounded-[30px] leading-5 bg-transparent placeholder-gray-400 focus:outline-none focus:ring-0 text-sm"
               />
             </div>
           </div>
 
           {/* Plan List */}
-          <div className="bg-white rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] overflow-hidden">
+          <div className="bg-white rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] overflow-hidden">
             <table className="min-w-full divide-y divide-gray-100">
               <thead className="bg-slate-50/50">
                 <tr>
@@ -353,7 +353,7 @@ export const Treatments = () => {
         <form onSubmit={handleCreatePlan} className="flex flex-col h-full bg-slate-50">
           <div className="flex-1 overflow-y-auto p-6 space-y-8">
             {/* Step 1: Patient & Basics */}
-            <div className="space-y-4 bg-white p-4 rounded-[7px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-slate-200">
+            <div className="space-y-4 bg-white p-4 rounded-[8px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-slate-200">
               <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                 <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs">
                   1
@@ -365,7 +365,7 @@ export const Treatments = () => {
                   <label className="block text-xs font-medium text-slate-700 mb-1">Patient</label>
                   <select
                     required
-                    className="w-full border-slate-300 rounded-[7px] text-sm p-2"
+                    className="w-full border-slate-300 rounded-[8px] text-sm p-2"
                     value={selectedPatientId}
                     onChange={(e) => setSelectedPatientId(e.target.value)}
                   >
@@ -385,7 +385,7 @@ export const Treatments = () => {
                     type="text"
                     required
                     placeholder="Ex: Prothèse complète"
-                    className="w-full border-slate-300 rounded-[7px] text-sm p-2"
+                    className="w-full border-slate-300 rounded-[8px] text-sm p-2"
                     value={newPlanName}
                     onChange={(e) => setNewPlanName(e.target.value)}
                   />
@@ -394,14 +394,14 @@ export const Treatments = () => {
             </div>
 
             {/* Step 2: Visualization */}
-            <div className="bg-white p-4 rounded-[7px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-slate-200">
+            <div className="bg-white p-4 rounded-[8px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-slate-200">
               <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2 mb-4">
                 <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs">
                   2
                 </span>
                 État Actuel & Planification
               </h4>
-              <div className="border border-slate-100 rounded-[7px] p-2 bg-slate-50">
+              <div className="border border-slate-100 rounded-[8px] p-2 bg-slate-50">
                 <Odontogram statusMap={odontogramState} onToothUpdate={handleToothUpdate} />
                 <p className="text-xs text-center text-slate-400 mt-2">
                   Cliquez sur une dent pour modifier son statut
@@ -430,7 +430,7 @@ export const Treatments = () => {
               {phases.map((phase, idx) => (
                 <div
                   key={phase.id}
-                  className="bg-white border border-slate-200 rounded-[7px] p-4 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                  className="bg-white border border-slate-200 rounded-[30px] p-4 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
                 >
                   <div className="flex justify-between items-center mb-3">
                     <input
@@ -510,13 +510,13 @@ export const Treatments = () => {
               <button
                 type="button"
                 onClick={() => setIsCreateOpen(false)}
-                className="px-4 py-2 text-slate-600 hover:bg-slate-50 rounded-[7px] text-sm font-medium"
+                className="px-4 py-2 text-slate-600 hover:bg-slate-50 rounded-[30px] text-sm font-medium"
               >
                 Annuler
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-blue-600 text-white rounded-[7px] text-sm font-medium hover:bg-blue-700 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                className="px-4 py-2 bg-blue-600 text-white rounded-[8px] text-sm font-medium hover:bg-blue-700 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
               >
                 Créer le plan
               </button>
@@ -536,7 +536,7 @@ export const Treatments = () => {
           <div className="flex flex-col h-full bg-slate-50">
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
               {/* Summary Card */}
-              <div className="bg-white p-4 rounded-[7px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-slate-200">
+              <div className="bg-white p-4 rounded-[8px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-slate-200">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <div className="text-xs text-slate-500 uppercase tracking-wider font-bold">
@@ -587,7 +587,7 @@ export const Treatments = () => {
                               session.status === 'Completed' ? 'bg-green-500' : 'bg-blue-400'
                             }`}
                           ></div>
-                          <div className="bg-white p-4 rounded-[7px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-slate-200 hover:border-blue-200 transition-colors">
+                          <div className="bg-white p-4 rounded-[8px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-slate-200 hover:border-blue-200 transition-colors">
                             <div className="flex justify-between items-start">
                               <div>
                                 <div className="text-xs font-bold text-slate-400 mb-1">
@@ -622,11 +622,11 @@ export const Treatments = () => {
                               <div className="mt-4 flex gap-2 pt-3 border-t border-slate-50">
                                 <button
                                   onClick={() => handleCompleteSession(session.id)}
-                                  className="flex-1 bg-green-50 text-green-600 hover:bg-green-100 py-1.5 rounded-[7px] text-xs font-bold transition-colors flex items-center justify-center gap-1"
+                                  className="flex-1 bg-green-50 text-green-600 hover:bg-green-100 py-1.5 rounded-[30px] text-xs font-bold transition-colors flex items-center justify-center gap-1"
                                 >
                                   <IconCheck className="w-3 h-3" /> Terminer
                                 </button>
-                                <button className="flex-1 bg-blue-50 text-blue-600 hover:bg-blue-100 py-1.5 rounded-[7px] text-xs font-bold transition-colors flex items-center justify-center gap-1">
+                                <button className="flex-1 bg-blue-50 text-blue-600 hover:bg-blue-100 py-1.5 rounded-[30px] text-xs font-bold transition-colors flex items-center justify-center gap-1">
                                   <IconCalendar className="w-3 h-3" /> Planifier
                                 </button>
                               </div>
@@ -639,7 +639,7 @@ export const Treatments = () => {
               </div>
 
               {/* Odontogram Snapshot */}
-              <div className="bg-white p-4 rounded-[7px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-slate-200">
+              <div className="bg-white p-4 rounded-[8px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-slate-200">
                 <h4 className="text-sm font-bold text-slate-900 mb-4">Schéma du plan</h4>
                 <div className="scale-[0.6] origin-top h-[180px]">
                   <Odontogram statusMap={selectedPlan.odontogramSnapshot || {}} readOnly />
@@ -648,12 +648,12 @@ export const Treatments = () => {
             </div>
 
             <div className="p-4 bg-white border-t border-slate-200 flex gap-3">
-              <button className="flex-1 bg-slate-100 text-slate-600 hover:bg-slate-200 py-2.5 rounded-[7px] text-sm font-bold transition-colors">
+              <button className="flex-1 bg-slate-100 text-slate-600 hover:bg-slate-200 py-2.5 rounded-[8px] text-sm font-bold transition-colors">
                 Imprimer Devis
               </button>
               <button
                 onClick={() => setSelectedPlan(null)}
-                className="flex-1 bg-slate-900 text-white hover:bg-slate-800 py-2.5 rounded-[7px] text-sm font-bold shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] transition-all"
+                className="flex-1 bg-slate-900 text-white hover:bg-slate-800 py-2.5 rounded-[8px] text-sm font-bold shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] transition-all"
               >
                 Fermer
               </button>

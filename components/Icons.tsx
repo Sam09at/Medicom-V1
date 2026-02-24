@@ -1165,22 +1165,6 @@ export const IconLockOpen = ({ className }: { className?: string }) => (
   </svg>
 );
 
-export const IconZap = ({ className }: { className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-  </svg>
-);
 
 export const IconShoppingBag = ({ className }: { className?: string }) => (
   <svg
@@ -1848,5 +1832,22 @@ export const IconToggleLeft = ({ className }: { className?: string }) => (
   >
     <rect x="1" y="5" width="22" height="14" rx="7" ry="7" />
     <circle cx="8" cy="12" r="3" />
+  </svg>
+);
+
+export const IconZap = ({ className }: { className?: string }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
   </svg>
 );

@@ -265,7 +265,7 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
                   {Math.round(totalRevenue / 1000)}k{' '}
                   <span className="text-xl text-slate-400 font-bold ml-1">MAD</span>
                 </div>
-                <div className="text-[0.75rem] text-emerald-600 font-bold bg-emerald-50 inline-flex items-center px-2 py-1 rounded-lg">
+                <div className="text-[0.75rem] text-emerald-600 font-bold bg-emerald-50 inline-flex items-center px-2 py-1 rounded-[8px]">
                   ↑ 12% vs période préc.
                 </div>
               </div>

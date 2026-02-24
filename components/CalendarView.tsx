@@ -482,7 +482,7 @@ export const CalendarView: React.FC = () => {
                     <div
                       key={apt.id}
                       onClick={(e) => handleEventClick(e, apt)}
-                      className={`text-[0.625rem] px-2 py-1 rounded-lg font-bold truncate transition-transform hover:scale-[1.02] active:scale-[0.98] ${TYPE_STYLES[apt.type]?.bg || 'bg-gray-100'} ${TYPE_STYLES[apt.type]?.text || 'text-gray-700'}`}
+                      className={`text-[0.625rem] px-2 py-1 rounded-[8px] font-bold truncate transition-transform hover:scale-[1.02] active:scale-[0.98] ${TYPE_STYLES[apt.type]?.bg || 'bg-gray-100'} ${TYPE_STYLES[apt.type]?.text || 'text-gray-700'}`}
                     >
                       {new Date(apt.start).toLocaleTimeString([], {
                         hour: '2-digit',
@@ -540,7 +540,7 @@ export const CalendarView: React.FC = () => {
                   className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-semibold transition-all hover:bg-gray-50 group"
                 >
                   <div
-                    className={`w-5 h-5 rounded-md flex items-center justify-center transition-all ${isActive ? colorClass : 'border border-gray-200 bg-white group-hover:border-gray-300'}`}
+                    className={`w-5 h-5 rounded-[8px] flex items-center justify-center transition-all ${isActive ? colorClass : 'border border-gray-200 bg-white group-hover:border-gray-300'}`}
                   >
                     {isActive && <IconCheck className="w-3.5 h-3.5 text-white" />}
                   </div>

@@ -39,6 +39,7 @@ export const FALLBACK_PROSPECTS: Prospect[] = [
     leadScore: 85,
     priority: 'High',
     email: 'contact@targa.ma',
+    phone: '+212600112233',
   },
   {
     id: '2',
@@ -50,6 +51,8 @@ export const FALLBACK_PROSPECTS: Prospect[] = [
     date: '22 Jan 2024',
     leadScore: 60,
     priority: 'Medium',
+    email: 'bennani@cliniquealazhar.ma',
+    phone: '+212600223344',
   },
   {
     id: '3',
@@ -61,6 +64,8 @@ export const FALLBACK_PROSPECTS: Prospect[] = [
     date: '20 Jan 2024',
     leadScore: 45,
     priority: 'Low',
+    email: 'contact@orthofes.ma',
+    phone: '+212600334455',
   },
   {
     id: '4',
@@ -72,6 +77,8 @@ export const FALLBACK_PROSPECTS: Prospect[] = [
     date: '15 Jan 2024',
     leadScore: 95,
     priority: 'High',
+    email: 'drkarim@cabinet.ma',
+    phone: '+212600445566',
   },
   {
     id: '5',
@@ -83,6 +90,8 @@ export const FALLBACK_PROSPECTS: Prospect[] = [
     date: '10 Jan 2024',
     leadScore: 20,
     priority: 'Low',
+    email: 'nord@centremed.ma',
+    phone: '+212600556677',
   },
 ];
 

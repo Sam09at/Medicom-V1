@@ -148,7 +148,7 @@ export const WaitingRoom: React.FC = () => {
                 waiting.slice(0, 5).map((apt, i) => (
                   <div
                     key={apt.id}
-                    className="flex items-center gap-4 p-4 bg-slate-700/50 rounded-[7px]"
+                    className="flex items-center gap-4 p-4 bg-slate-700/50 rounded-[8px]"
                   >
                     <div className="w-12 h-12 bg-slate-600 rounded-full flex items-center justify-center font-bold text-xl">
                       {i + 1}
@@ -175,10 +175,10 @@ export const WaitingRoom: React.FC = () => {
   return (
     <div className="h-full flex flex-col font-sans">
       {/* Header Toolbar */}
-      <div className="flex items-center justify-between mb-4 bg-white p-2 rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
+      <div className="flex items-center justify-between mb-4 bg-white p-2 rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
         <div className="flex items-center gap-4 px-2">
           <div className="flex items-center gap-2">
-            <span className="p-1.5 bg-indigo-50 text-indigo-600 rounded-[7px]">
+            <span className="p-1.5 bg-indigo-50 text-indigo-600 rounded-[8px]">
               <IconMonitor className="w-4 h-4" />
             </span>
             <span className="font-bold text-sm text-slate-900">File d'Attente</span>
@@ -199,10 +199,10 @@ export const WaitingRoom: React.FC = () => {
           {currentUser?.role === 'doctor' && (
             <>
               <div className="h-4 w-px bg-slate-200 mx-2"></div>
-              <div className="flex bg-slate-100 p-0.5 rounded-[7px] border border-slate-200">
+              <div className="flex bg-slate-100 p-0.5 rounded-[8px] border border-slate-200">
                 <button
                   onClick={() => setWaitingRoomFilter('all')}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-[7px] transition-all ${
+                  className={`px-3 py-1.5 text-xs font-medium rounded-[30px] transition-all ${
                     waitingRoomFilter === 'all'
                       ? 'bg-white text-slate-900 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]'
                       : 'text-slate-500 hover:text-slate-700'
@@ -212,7 +212,7 @@ export const WaitingRoom: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setWaitingRoomFilter('my_patients')}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-[7px] transition-all ${
+                  className={`px-3 py-1.5 text-xs font-medium rounded-[30px] transition-all ${
                     waitingRoomFilter === 'my_patients'
                       ? 'bg-white text-slate-900 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]'
                       : 'text-slate-500 hover:text-slate-700'
@@ -226,7 +226,7 @@ export const WaitingRoom: React.FC = () => {
         </div>
         <button
           onClick={() => setIsTvMode(true)}
-          className="flex items-center gap-2 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-[7px] transition-colors shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+          className="flex items-center gap-2 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-[30px] transition-colors shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
         >
           <IconMonitor className="w-3.5 h-3.5" /> Mode TV
         </button>
@@ -262,7 +262,7 @@ export const WaitingRoom: React.FC = () => {
 
                 {/* Drop Zone Visual */}
                 {draggedApt && (
-                  <div className="border-2 border-dashed border-indigo-200 rounded-[7px] h-12 mb-3 bg-indigo-50/30 flex items-center justify-center">
+                  <div className="border-2 border-dashed border-indigo-200 rounded-[8px] h-12 mb-3 bg-indigo-50/30 flex items-center justify-center">
                     <span className="text-xs text-indigo-400 font-medium">Déposer ici</span>
                   </div>
                 )}
@@ -284,12 +284,12 @@ export const WaitingRoom: React.FC = () => {
                         key={apt.id}
                         draggable
                         onDragStart={(e) => handleDragStart(e, apt)}
-                        className={`bg-white p-4 rounded-[7px] border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] cursor-grab active:cursor-grabbing transition-all group relative flex flex-col ${draggedApt?.id === apt.id ? 'opacity-50 rotate-3 scale-95' : ''}`}
+                        className={`bg-white p-4 rounded-[8px] border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] cursor-grab active:cursor-grabbing transition-all group relative flex flex-col ${draggedApt?.id === apt.id ? 'opacity-50 rotate-3 scale-95' : ''}`}
                       >
                         {/* Header: Type Tag & Options */}
                         <div className="flex justify-between items-start mb-3">
                           <span
-                            className={`px-2 py-1 rounded-[7px] text-[10px] font-bold uppercase tracking-wide ${
+                            className={`px-2 py-1 rounded-[30px] text-[10px] font-bold uppercase tracking-wide ${
                               apt.type === 'Consultation'
                                 ? 'bg-blue-50 text-blue-600'
                                 : apt.type === 'Urgence'
@@ -384,7 +384,7 @@ export const WaitingRoom: React.FC = () => {
                     );
                   })}
                   {items.length === 0 && (
-                    <div className="h-24 border-2 border-dashed border-slate-100 rounded-[7px] flex flex-col items-center justify-center text-xs text-slate-300 gap-1">
+                    <div className="h-24 border-2 border-dashed border-slate-100 rounded-[30px] flex flex-col items-center justify-center text-xs text-slate-300 gap-1">
                       <IconMonitor className="w-5 h-5 opacity-50" />
                       <span>Aucun patient</span>
                     </div>

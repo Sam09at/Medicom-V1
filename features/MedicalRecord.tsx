@@ -114,7 +114,7 @@ export const MedicalRecord = () => {
             placeholder="Rechercher par nom, téléphone..."
             value={patientSearch}
             onChange={(e) => setPatientSearch(e.target.value)}
-            className="w-full pl-14 pr-5 py-4 bg-white border border-slate-100/80 rounded-[7px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] placeholder:font-medium placeholder:text-slate-400"
+            className="w-full pl-14 pr-5 py-4 bg-white border border-slate-100/80 rounded-[30px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] placeholder:font-medium placeholder:text-slate-400"
             autoFocus
           />
         </div>
@@ -126,7 +126,7 @@ export const MedicalRecord = () => {
               onClick={() => handleSelectPatient(patient)}
               className="bg-white p-5 rounded-3xl border border-slate-100/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:border-blue-100 cursor-pointer transition-all flex items-center gap-5 group"
             >
-              <div className="w-14 h-14 rounded-[7px] bg-slate-50 border border-slate-100/80 text-slate-500 font-bold text-lg flex items-center justify-center group-hover:bg-blue-50 group-hover:border-blue-100 group-hover:text-blue-600 transition-colors">
+              <div className="w-14 h-14 rounded-[8px] bg-slate-50 border border-slate-100/80 text-slate-500 font-bold text-lg flex items-center justify-center group-hover:bg-blue-50 group-hover:border-blue-100 group-hover:text-blue-600 transition-colors">
                 {patient.firstName[0]}
                 {patient.lastName[0]}
               </div>
@@ -138,7 +138,7 @@ export const MedicalRecord = () => {
                   {patient.age} ans • {patient.phone}
                 </div>
               </div>
-              <div className="w-8 h-8 rounded-[7px] bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
+              <div className="w-8 h-8 rounded-[8px] bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
                 <svg
                   className="w-4 h-4 text-blue-500"
                   fill="none"
@@ -157,7 +157,7 @@ export const MedicalRecord = () => {
           ))}
           {filteredPatients.length === 0 && (
             <div className="col-span-full flex flex-col items-center justify-center py-20 bg-slate-50/50 rounded-3xl border border-dashed border-slate-200">
-              <div className="w-16 h-16 bg-white rounded-[7px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex items-center justify-center mb-4">
+              <div className="w-16 h-16 bg-white rounded-[8px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex items-center justify-center mb-4">
                 <IconSearch className="w-8 h-8 text-slate-300" />
               </div>
               <p className="text-[0.875rem] font-bold text-slate-400">
@@ -177,7 +177,7 @@ export const MedicalRecord = () => {
         <div className="flex items-center gap-5 flex-1">
           <button
             onClick={() => setSelectedPatient(null)}
-            className="w-10 h-10 bg-white border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 text-slate-500 rounded-[7px] flex items-center justify-center transition-all"
+            className="w-10 h-10 bg-white border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 text-slate-500 rounded-[30px] flex items-center justify-center transition-all"
           >
             <IconArrowLeft className="w-5 h-5" />
           </button>
@@ -186,7 +186,7 @@ export const MedicalRecord = () => {
               {selectedPatient.firstName} {selectedPatient.lastName}
             </h2>
             <div className="flex flex-wrap items-center gap-2 mt-1.5 align-middle">
-              <span className="inline-flex px-2 py-0.5 rounded-[7px] bg-slate-100 text-slate-600 text-[0.75rem] font-bold">
+              <span className="inline-flex px-2 py-0.5 rounded-[30px] bg-slate-100 text-slate-600 text-[0.75rem] font-bold">
                 {selectedPatient.age} ans
               </span>
               <span className="text-slate-300">•</span>
@@ -201,16 +201,16 @@ export const MedicalRecord = () => {
           </div>
         </div>
 
-        <div className="flex bg-slate-100/50 p-1.5 rounded-[7px] border border-slate-200/50 shadow-inner">
+        <div className="flex bg-slate-100/50 p-1.5 rounded-[8px] border border-slate-200/50 shadow-inner">
           <button
             onClick={() => setActiveTab('history')}
-            className={`flex items-center gap-2 px-5 py-2.5 text-[0.875rem] font-bold rounded-[7px] transition-all ${activeTab === 'history' ? 'bg-white text-blue-600 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)]' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}
+            className={`flex items-center gap-2 px-5 py-2.5 text-[0.875rem] font-bold rounded-[30px] transition-all ${activeTab === 'history' ? 'bg-white text-blue-600 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)]' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}
           >
             <IconClock className="w-4 h-4" /> Historique
           </button>
           <button
             onClick={() => setActiveTab('chart')}
-            className={`flex items-center gap-2 px-5 py-2.5 text-[0.875rem] font-bold rounded-[7px] transition-all ${activeTab === 'chart' ? 'bg-white text-blue-600 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)]' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}
+            className={`flex items-center gap-2 px-5 py-2.5 text-[0.875rem] font-bold rounded-[30px] transition-all ${activeTab === 'chart' ? 'bg-white text-blue-600 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)]' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}
           >
             <IconTooth className="w-4 h-4" /> Schéma Dentaire
           </button>
@@ -235,7 +235,7 @@ export const MedicalRecord = () => {
                 timeline.map((event) => (
                   <div key={event.id} className="relative flex gap-6 group">
                     <div
-                      className={`absolute left-0 w-16 h-16 rounded-[7px] border flex items-center justify-center z-10 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] transition-transform group-hover:scale-110 group-hover:shadow-md ${
+                      className={`absolute left-0 w-16 h-16 rounded-[8px] border flex items-center justify-center z-10 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] transition-transform group-hover:scale-110 group-hover:shadow-md ${
                         event.type === 'Consultation'
                           ? 'bg-blue-50 border-blue-100 text-blue-600'
                           : event.type === 'Ordonnance'
@@ -249,7 +249,7 @@ export const MedicalRecord = () => {
                       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-4 gap-2">
                         <div>
                           <span
-                            className={`inline-block px-2.5 py-1 rounded-[7px] text-[0.65rem] font-bold uppercase tracking-widest mb-2 ${
+                            className={`inline-block px-2.5 py-1 rounded-[30px] text-[0.65rem] font-bold uppercase tracking-widest mb-2 ${
                               event.type === 'Consultation'
                                 ? 'bg-blue-50 text-blue-600'
                                 : 'bg-purple-50 text-purple-600'
@@ -262,7 +262,7 @@ export const MedicalRecord = () => {
                           </h4>
                         </div>
                         <div className="text-left sm:text-right mt-1 sm:mt-0">
-                          <div className="inline-flex px-3 py-1.5 rounded-[7px] bg-slate-50 border border-slate-100 text-[0.75rem] font-bold text-slate-500">
+                          <div className="inline-flex px-3 py-1.5 rounded-[30px] bg-slate-50 border border-slate-100 text-[0.75rem] font-bold text-slate-500">
                             {new Date(event.date).toLocaleDateString('fr-FR', {
                               day: 'numeric',
                               month: 'long',
@@ -271,7 +271,7 @@ export const MedicalRecord = () => {
                           </div>
                         </div>
                       </div>
-                      <p className="text-[0.875rem] font-medium text-slate-600 mb-6 leading-relaxed bg-slate-50/50 p-4 rounded-[7px] border border-slate-100/50">
+                      <p className="text-[0.875rem] font-medium text-slate-600 mb-6 leading-relaxed bg-slate-50/50 p-4 rounded-[8px] border border-slate-100/50">
                         {event.details}
                       </p>
                       <div className="flex justify-between items-center pt-4 border-t border-slate-100/80">
@@ -297,7 +297,7 @@ export const MedicalRecord = () => {
           {activeTab === 'chart' && (
             <div className="bg-white rounded-3xl border border-slate-100/80 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
               <h3 className="text-[1rem] font-bold text-slate-900 mb-8 flex items-center gap-3 tracking-tight">
-                <div className="w-10 h-10 rounded-[7px] bg-blue-50 flex items-center justify-center text-blue-600">
+                <div className="w-10 h-10 rounded-[8px] bg-blue-50 flex items-center justify-center text-blue-600">
                   <IconTooth className="w-5 h-5" />
                 </div>
                 Odontogramme Actuel
@@ -313,13 +313,13 @@ export const MedicalRecord = () => {
         <div className="w-full lg:w-80 shrink-0 space-y-6 overflow-y-auto pb-10">
           <div className="bg-white p-6 rounded-3xl border border-slate-100/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
             <h3 className="text-[1rem] font-bold text-slate-900 mb-6 tracking-tight flex items-center gap-3">
-              <div className="w-10 h-10 rounded-[7px] bg-slate-50 flex items-center justify-center text-slate-500">
+              <div className="w-10 h-10 rounded-[8px] bg-slate-50 flex items-center justify-center text-slate-500">
                 <IconFileText className="w-5 h-5" />
               </div>
               Informations Générales
             </h3>
             <div className="space-y-5">
-              <div className="bg-slate-50/50 p-4 rounded-[7px] border border-slate-100/50">
+              <div className="bg-slate-50/50 p-4 rounded-[8px] border border-slate-100/50">
                 <div className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-1">
                   Email
                 </div>
@@ -327,7 +327,7 @@ export const MedicalRecord = () => {
                   {selectedPatient.email || 'Non renseigné'}
                 </div>
               </div>
-              <div className="bg-slate-50/50 p-4 rounded-[7px] border border-slate-100/50">
+              <div className="bg-slate-50/50 p-4 rounded-[8px] border border-slate-100/50">
                 <div className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-1">
                   Assurance
                 </div>
@@ -337,7 +337,7 @@ export const MedicalRecord = () => {
               </div>
               {/* Actions placeholder */}
               <div className="pt-2">
-                <button className="w-full py-3.5 bg-white border border-slate-200 hover:border-blue-200 text-slate-600 hover:text-blue-600 text-[0.875rem] font-bold rounded-[7px] transition-all shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex items-center justify-center gap-2 group">
+                <button className="w-full py-3.5 bg-white border border-slate-200 hover:border-blue-200 text-slate-600 hover:text-blue-600 text-[0.875rem] font-bold rounded-[30px] transition-all shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex items-center justify-center gap-2 group">
                   <IconDownload className="w-4 h-4 text-slate-400 group-hover:text-blue-500" />
                   Exporter le dossier
                 </button>

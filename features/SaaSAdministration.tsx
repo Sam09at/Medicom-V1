@@ -175,22 +175,22 @@ export const ContentManagementPage = () => {
             Gérez les communications, pages légales et traductions.
           </p>
         </div>
-        <div className="flex bg-gray-100 p-1 rounded-md">
+        <div className="flex bg-gray-100 p-1 rounded-[8px]">
           <button
             onClick={() => setActiveTab('templates')}
-            className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${activeTab === 'templates' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            className={`px-4 py-1.5 text-sm font-medium rounded-[8px] transition-all ${activeTab === 'templates' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
           >
             Templates (Email/SMS)
           </button>
           <button
             onClick={() => setActiveTab('pages')}
-            className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${activeTab === 'pages' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            className={`px-4 py-1.5 text-sm font-medium rounded-[8px] transition-all ${activeTab === 'pages' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
           >
             Pages Légales
           </button>
           <button
             onClick={() => setActiveTab('translations')}
-            className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${activeTab === 'translations' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            className={`px-4 py-1.5 text-sm font-medium rounded-[8px] transition-all ${activeTab === 'translations' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
           >
             Traductions
           </button>
@@ -203,11 +203,11 @@ export const ContentManagementPage = () => {
           {templates.map((tmpl) => (
             <div
               key={tmpl.id}
-              className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-all group"
+              className="bg-white border border-gray-200 rounded-[8px] p-5 shadow-sm hover:shadow-md transition-all group"
             >
               <div className="flex justify-between items-start mb-4">
                 <div
-                  className={`p-2 rounded-lg ${tmpl.type === 'Email' ? 'bg-blue-50 text-blue-600' : 'bg-green-50 text-green-600'}`}
+                  className={`p-2 rounded-[8px] ${tmpl.type === 'Email' ? 'bg-blue-50 text-blue-600' : 'bg-green-50 text-green-600'}`}
                 >
                   {tmpl.type === 'Email' ? (
                     <IconMail className="w-5 h-5" />
@@ -232,7 +232,7 @@ export const ContentManagementPage = () => {
               </div>
             </div>
           ))}
-          <button className="border-2 border-dashed border-gray-200 rounded-lg p-6 flex flex-col items-center justify-center text-gray-400 hover:border-indigo-300 hover:text-indigo-600 transition-all">
+          <button className="border-2 border-dashed border-gray-200 rounded-[8px] p-6 flex flex-col items-center justify-center text-gray-400 hover:border-indigo-300 hover:text-indigo-600 transition-all">
             <IconPlus className="w-8 h-8 mb-2" />
             <span className="font-medium text-sm">Nouveau Modèle</span>
           </button>
@@ -241,7 +241,7 @@ export const ContentManagementPage = () => {
 
       {/* PAGES TAB */}
       {activeTab === 'pages' && (
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+        <div className="bg-white border border-gray-200 rounded-[8px] shadow-sm overflow-hidden">
           <table className="min-w-full divide-y divide-gray-100">
             <thead className="bg-gray-50">
               <tr>
@@ -304,7 +304,7 @@ export const ContentManagementPage = () => {
             {translations.map((mod) => (
               <div
                 key={mod.id}
-                className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm"
+                className="bg-white border border-gray-200 rounded-[8px] p-5 shadow-sm"
               >
                 <div className="flex justify-between items-center mb-3">
                   <h4 className="font-bold text-gray-900">{mod.name}</h4>
@@ -345,7 +345,7 @@ export const ContentManagementPage = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">Sujet</label>
               <input
                 type="text"
-                className="w-full border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                className="w-full border border-gray-300 rounded-[8px] p-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
                 defaultValue={editingTemplate.subject}
               />
             </div>
@@ -355,7 +355,7 @@ export const ContentManagementPage = () => {
               </label>
               <textarea
                 rows={15}
-                className="w-full border border-gray-300 rounded-md p-3 text-sm font-mono focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-50"
+                className="w-full border border-gray-300 rounded-[8px] p-3 text-sm font-mono focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-50"
                 value={templateBody}
                 onChange={(e) => setTemplateBody(e.target.value)}
               />
@@ -369,13 +369,13 @@ export const ContentManagementPage = () => {
             <div className="pt-4 flex gap-3 border-t border-gray-100">
               <button
                 onClick={() => setEditingTemplate(null)}
-                className="flex-1 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50"
+                className="flex-1 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-[8px] hover:bg-gray-50"
               >
                 Annuler
               </button>
               <button
                 onClick={handleSaveTemplate}
-                className="flex-1 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 shadow-sm flex justify-center items-center gap-2"
+                className="flex-1 py-2 text-sm font-medium text-white bg-indigo-600 rounded-[8px] hover:bg-indigo-700 shadow-sm flex justify-center items-center gap-2"
               >
                 <IconCheckCircle className="w-4 h-4" /> Sauvegarder
               </button>
@@ -412,7 +412,7 @@ export const FinancePage = () => {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white p-5 rounded-lg border border-gray-200 shadow-sm flex flex-col justify-between h-32">
+        <div className="bg-white p-5 rounded-[8px] border border-gray-200 shadow-sm flex flex-col justify-between h-32">
           <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">
             MRR (Mensuel)
           </div>
@@ -427,7 +427,7 @@ export const FinancePage = () => {
           </div>
           <div className="text-xs text-gray-400">MAD Recurring Revenue</div>
         </div>
-        <div className="bg-white p-5 rounded-lg border border-gray-200 shadow-sm flex flex-col justify-between h-32">
+        <div className="bg-white p-5 rounded-[8px] border border-gray-200 shadow-sm flex flex-col justify-between h-32">
           <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">ARPU</div>
           <div className="flex items-end justify-between">
             <span className="text-3xl font-bold text-gray-900">{arpu.toLocaleString()}</span>
@@ -439,7 +439,7 @@ export const FinancePage = () => {
             Revenu moyen par cabinet ({activeTenants} actifs)
           </div>
         </div>
-        <div className="bg-white p-5 rounded-lg border border-gray-200 shadow-sm flex flex-col justify-between h-32">
+        <div className="bg-white p-5 rounded-[8px] border border-gray-200 shadow-sm flex flex-col justify-between h-32">
           <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Churn Rate</div>
           <div className="flex items-end justify-between">
             <span className="text-3xl font-bold text-gray-900">1.2%</span>
@@ -451,13 +451,13 @@ export const FinancePage = () => {
         </div>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+      <div className="bg-white border border-gray-200 rounded-[8px] shadow-sm p-6">
         <h3 className="text-sm font-bold text-gray-900 mb-4">Plans d'abonnement</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {MOCK_PLANS.map((plan) => (
             <div
               key={plan.id}
-              className="border border-gray-200 rounded-lg p-5 hover:border-indigo-300 transition-colors relative group bg-gray-50/30"
+              className="border border-gray-200 rounded-[8px] p-5 hover:border-indigo-300 transition-colors relative group bg-gray-50/30"
             >
               {plan.isPopular && (
                 <span className="absolute top-0 right-0 bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-1 rounded-bl-lg border-l border-b border-indigo-200">
@@ -516,7 +516,7 @@ export const MarketplacePage = () => {
             Gérez les modules additionnels vendus aux cliniques.
           </p>
         </div>
-        <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 shadow-sm">
+        <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-[8px] text-sm font-medium hover:bg-blue-700 shadow-sm">
           <IconPlus className="w-4 h-4" /> Créer un Add-on
         </button>
       </div>
@@ -525,10 +525,10 @@ export const MarketplacePage = () => {
         {addons.map((addon) => (
           <div
             key={addon.id}
-            className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow"
+            className="bg-white border border-gray-200 rounded-[8px] p-5 shadow-sm hover:shadow-md transition-shadow"
           >
             <div className="flex justify-between items-start mb-4">
-              <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+              <div className="p-2 bg-indigo-50 text-indigo-600 rounded-[8px]">
                 {addon.icon === 'message' ? (
                   <IconMail className="w-6 h-6" />
                 ) : addon.icon === 'wand' ? (
@@ -631,7 +631,7 @@ export const BroadcastsPage = () => {
         </div>
         <button
           onClick={() => setIsComposeOpen(true)}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 shadow-sm"
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-[8px] text-sm font-medium hover:bg-blue-700 shadow-sm"
         >
           <IconPlus className="w-4 h-4" /> Nouvelle Annonce
         </button>
@@ -680,7 +680,7 @@ export const BroadcastsPage = () => {
             className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm"
             onClick={() => setIsComposeOpen(false)}
           ></div>
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md relative z-10 p-6 space-y-4">
+          <div className="bg-white rounded-[8px] shadow-xl w-full max-w-md relative z-10 p-6 space-y-4">
             <h3 className="text-lg font-bold">Nouvelle Annonce</h3>
             <input
               type="text"
@@ -727,7 +727,7 @@ export const AiOpsPage = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+        <div className="lg:col-span-2 bg-white p-6 rounded-[8px] border border-gray-200 shadow-sm">
           <h4 className="text-sm font-bold mb-6">Usage & Rentabilité</h4>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -743,7 +743,7 @@ export const AiOpsPage = () => {
         </div>
         <div className="space-y-4">
           {MOCK_AI_CONFIGS.map((config) => (
-            <div key={config.id} className="bg-white p-4 rounded-lg border border-gray-200">
+            <div key={config.id} className="bg-white p-4 rounded-[8px] border border-gray-200">
               <div className="font-bold">{config.name}</div>
               <div className="text-xs text-gray-500">
                 {config.provider} • ${config.costPer1kTokens}/1k tk
@@ -776,11 +776,11 @@ export const CustomerSuccessPage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-lg p-6 text-white shadow-lg flex justify-between">
+      <div className="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-[8px] p-6 text-white shadow-lg flex justify-between">
         <h3 className="text-xl font-bold">Santé du Parc Clients</h3>
         <div className="text-3xl font-bold">92/100</div>
       </div>
-      <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded-[8px] shadow-sm overflow-hidden">
         <table className="min-w-full divide-y divide-gray-100">
           <thead>
             <tr className="bg-gray-50">
@@ -818,7 +818,7 @@ export const BackupManagerPage = () => (
   <div className="space-y-6">
     <h3 className="text-lg font-bold">Data & Backups</h3>
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 rounded-[8px] border border-gray-200 shadow-sm">
         <h4 className="text-sm font-bold mb-4">Derniers Snapshots</h4>
         <div className="divide-y">
           {MOCK_BACKUPS.map((bk) => (
@@ -840,14 +840,14 @@ export const InfrastructurePage = () => (
     <h3 className="text-lg font-bold">Infrastructure & Scaling</h3>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {MOCK_REGIONS.map((region) => (
-        <div key={region.id} className="bg-gray-900 rounded-lg p-5 text-white">
+        <div key={region.id} className="bg-gray-900 rounded-[8px] p-5 text-white">
           <div className="text-xs font-bold text-gray-400 uppercase">{region.code}</div>
           <div className="text-xl font-bold">{region.name}</div>
           <div className="text-sm text-gray-400 mt-2">{region.activeTenants} Tenants</div>
         </div>
       ))}
     </div>
-    <div className="bg-white p-6 rounded-lg border border-gray-200">
+    <div className="bg-white p-6 rounded-[8px] border border-gray-200">
       <h4 className="font-bold mb-4">Cache Hit Rates</h4>
       {MOCK_CACHE_METRICS.map((c) => (
         <div key={c.name} className="mb-4">
@@ -867,7 +867,7 @@ export const InfrastructurePage = () => (
 export const CompliancePage = () => (
   <div className="space-y-6">
     <h3 className="text-lg font-bold">Compliance Center</h3>
-    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+    <div className="bg-white border border-gray-200 rounded-[8px] overflow-hidden">
       <table className="min-w-full divide-y divide-gray-100">
         <thead className="bg-gray-50">
           <tr>
@@ -918,12 +918,12 @@ export const RoadmapPage = () => (
 export const SecurityPage = () => (
   <div className="space-y-6">
     <div className="grid grid-cols-4 gap-4">
-      <div className="bg-gray-900 p-4 rounded-lg text-white">
+      <div className="bg-gray-900 p-4 rounded-[8px] text-white">
         <div className="text-xs opacity-60">Threat Level</div>
         <div className="text-xl font-bold text-green-400">Low</div>
       </div>
     </div>
-    <div className="bg-white border rounded-lg overflow-hidden">
+    <div className="bg-white border rounded-[8px] overflow-hidden">
       <table className="min-w-full divide-y">
         <thead className="bg-gray-50">
           <tr>
@@ -950,7 +950,7 @@ export const SystemHealthPage = () => (
   <div className="space-y-6">
     <h2 className="text-lg font-bold">System Health</h2>
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2 bg-white p-6 border rounded-lg">
+      <div className="lg:col-span-2 bg-white p-6 border rounded-[8px]">
         <h4 className="mb-4">Latency (ms)</h4>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
@@ -963,7 +963,7 @@ export const SystemHealthPage = () => (
           </ResponsiveContainer>
         </div>
       </div>
-      <div className="bg-white p-6 border rounded-lg">
+      <div className="bg-white p-6 border rounded-[8px]">
         <h4 className="mb-4">Active Jobs</h4>
         {MOCK_JOBS.map((j) => (
           <div key={j.id} className="flex justify-between py-2 border-b">
@@ -992,7 +992,7 @@ export const DevelopersPage = () => {
         ))}
       </div>
       {subTab === 'webhooks' && (
-        <div className="bg-white border rounded-lg">
+        <div className="bg-white border rounded-[8px]">
           {MOCK_WEBHOOKS.map((w) => (
             <div key={w.id} className="p-4 flex justify-between border-b last:border-0">
               <div className="font-mono text-sm">{w.url}</div>
@@ -1066,7 +1066,7 @@ export const SaaSAdministration = () => {
   };
 
   return (
-    <div className="flex h-full bg-white rounded-md border border-gray-200 shadow-sm overflow-hidden font-sans">
+    <div className="flex h-full bg-white rounded-[8px] border border-gray-200 shadow-sm overflow-hidden font-sans">
       <div className="w-64 bg-gray-50 border-r border-gray-200 flex flex-col">
         <div className="p-4 border-b border-gray-200">
           <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
@@ -1078,7 +1078,7 @@ export const SaaSAdministration = () => {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+              className={`w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-[8px] transition-colors ${
                 activeTab === item.id
                   ? 'bg-white text-indigo-700 shadow-sm border border-gray-200'
                   : 'text-gray-600 hover:bg-gray-100'

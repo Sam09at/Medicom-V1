@@ -54,7 +54,7 @@ const StatCard = ({ label, value, trend, trendValue, icon: Icon, colorClass, bgC
   <div className="card p-6 h-full flex flex-col justify-between group">
     <div className="flex items-center justify-between mb-6">
       <div
-        className={`w-10 h-10 rounded-[7px] flex items-center justify-center ${bgClass} ${colorClass} transition-transform group-hover:scale-105 duration-300`}
+        className={`w-10 h-10 rounded-[8px] flex items-center justify-center ${bgClass} ${colorClass} transition-transform group-hover:scale-105 duration-300`}
       >
         <Icon className="w-5 h-5" />
       </div>
@@ -132,7 +132,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats }) => {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-[13px] font-semibold bg-white border border-slate-100 px-4 py-2 rounded-[7px] shadow-[0_2px_12px_-4px_rgba(0,0,0,0.03)] text-slate-600 tracking-tight">
+          <span className="text-[13px] font-semibold bg-white border border-slate-100 px-4 py-2 rounded-[30px] shadow-[0_2px_12px_-4px_rgba(0,0,0,0.03)] text-slate-600 tracking-tight">
             {new Date().toLocaleDateString('fr-FR', {
               weekday: 'long',
               day: 'numeric',
@@ -267,7 +267,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats }) => {
               </h3>
               <p className="text-[13px] font-medium text-slate-500 mt-1">Comparatif sur 7 jours</p>
             </div>
-            <select className="text-[12px] font-medium border border-slate-200 rounded-[7px] px-3 py-2 bg-slate-50 text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all cursor-pointer">
+            <select className="text-[12px] font-medium border border-slate-200 rounded-[8px] px-3 py-2 bg-slate-50 text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all cursor-pointer">
               <option>Cette semaine</option>
               <option>Semaine dernière</option>
             </select>
@@ -334,10 +334,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats }) => {
                     <div
                       key={patient.id}
                       onClick={() => navigate(`/app/consultation/${patient.id}`)}
-                      className="flex items-center justify-between p-3 bg-white rounded-[7px] border border-slate-100 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.02)] hover:border-slate-200 transition-colors cursor-pointer group"
+                      className="flex items-center justify-between p-3 bg-white rounded-[8px] border border-slate-100 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.02)] hover:border-slate-200 transition-colors cursor-pointer group"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-9 h-9 rounded-[7px] bg-slate-50 text-slate-600 flex items-center justify-center font-semibold text-[12px] border border-slate-100">
+                        <div className="w-9 h-9 rounded-[30px] bg-slate-50 text-slate-600 flex items-center justify-center font-semibold text-[12px] border border-slate-100">
                           {patient.patientName
                             ? patient.patientName.substring(0, 2).toUpperCase()
                             : 'PT'}
@@ -355,9 +355,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats }) => {
                     </div>
                   ))
                 ) : (
-                  <div className="flex items-center justify-between p-3 bg-white rounded-[7px] border border-slate-100 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.02)] transition-colors cursor-pointer group">
+                  <div className="flex items-center justify-between p-3 bg-white rounded-[8px] border border-slate-100 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.02)] transition-colors cursor-pointer group">
                     <div className="flex items-center gap-4">
-                      <div className="w-9 h-9 rounded-[7px] bg-slate-50 text-slate-600 flex items-center justify-center font-semibold text-[12px] border border-slate-100">
+                      <div className="w-9 h-9 rounded-[30px] bg-slate-50 text-slate-600 flex items-center justify-center font-semibold text-[12px] border border-slate-100">
                         KB
                       </div>
                       <div>
@@ -373,7 +373,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats }) => {
                 )}
               </div>
             ) : (
-              <div className="py-10 flex flex-col items-center justify-center text-slate-400 text-sm text-center bg-slate-50/50 rounded-[7px] border border-dashed border-slate-200">
+              <div className="py-10 flex flex-col items-center justify-center text-slate-400 text-sm text-center bg-slate-50/50 rounded-[30px] border border-dashed border-slate-200">
                 <IconUsers className="w-6 h-6 mb-3 text-slate-300" />
                 <div className="text-[13px] font-medium">Aucun patient en attente</div>
               </div>
@@ -396,7 +396,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats }) => {
               {tasks.map((task) => (
                 <div
                   key={task.id}
-                  className="flex items-start group p-3 border border-transparent hover:border-slate-100 hover:bg-slate-50/50 rounded-[7px] transition-all"
+                  className="flex items-start group p-3 border border-transparent hover:border-slate-100 hover:bg-slate-50/50 rounded-[30px] transition-all"
                 >
                   <button
                     onClick={() => toggleTask(task.id)}
@@ -423,7 +423,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats }) => {
                   </div>
                   <button
                     onClick={() => removeTask(task.id)}
-                    className="text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 bg-white rounded-[7px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                    className="text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 bg-white rounded-[8px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
                   >
                     <IconTrash className="w-3.5 h-3.5" />
                   </button>

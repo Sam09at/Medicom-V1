@@ -178,7 +178,7 @@ export const Cabinets = () => {
         </div>
         <button
           onClick={() => setIsProvisioning(true)}
-          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-[13px] font-bold transition-all shadow-sm active:scale-95"
+          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-[8px] text-[13px] font-bold transition-all shadow-sm active:scale-95"
         >
           <IconPlus className="w-4 h-4" /> Provisionner
         </button>
@@ -200,7 +200,7 @@ export const Cabinets = () => {
           </div>
 
           {selectedIds.size > 0 ? (
-            <div className="flex items-center gap-2 bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 animate-in fade-in">
+            <div className="flex items-center gap-2 bg-indigo-50 px-3 py-1.5 rounded-[8px] border border-indigo-100 animate-in fade-in">
               <span className="text-xs font-medium text-indigo-700">
                 {selectedIds.size} sélectionné(s)
               </span>
@@ -232,7 +232,7 @@ export const Cabinets = () => {
                 placeholder="Rechercher..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100"
+                className="w-full pl-9 pr-3 py-1.5 text-sm border border-gray-200 rounded-[8px] focus:outline-none focus:ring-2 focus:ring-blue-100"
               />
             </div>
           )}
@@ -313,7 +313,7 @@ export const Cabinets = () => {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center">
-                      <div className="h-9 w-9 flex-shrink-0 bg-gradient-to-br from-blue-50 to-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-bold text-xs border border-indigo-100 shadow-sm">
+                      <div className="h-9 w-9 flex-shrink-0 bg-gradient-to-br from-blue-50 to-indigo-50 text-indigo-600 rounded-[8px] flex items-center justify-center font-bold text-xs border border-indigo-100 shadow-sm">
                         {tenant.name.substring(0, 2).toUpperCase()}
                       </div>
                       <div className="ml-3">
@@ -521,7 +521,7 @@ export const Cabinets = () => {
                 <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 animate-in fade-in">
                   <h3 className="font-bold text-gray-900 text-sm mb-4">Utilisateurs du Cabinet</h3>
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-[8px] border border-gray-100">
                       <div className="flex items-center gap-3">
                         <div className="h-8 w-8 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center font-bold text-xs">
                           MA
@@ -548,7 +548,7 @@ export const Cabinets = () => {
                     {MOCK_AUDIT_LOGS.map((log) => (
                       <div
                         key={log.id}
-                        className="flex gap-4 p-3 hover:bg-gray-50 border border-transparent hover:border-gray-100 rounded-lg transition-colors"
+                        className="flex gap-4 p-3 hover:bg-gray-50 border border-transparent hover:border-gray-100 rounded-[8px] transition-colors"
                       >
                         <IconActivity className="w-4 h-4 text-gray-400 mt-0.5" />
                         <div>
@@ -568,7 +568,7 @@ export const Cabinets = () => {
                   <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 flex flex-col gap-4">
                     <h3 className="font-bold text-gray-900 text-sm">Actions Rapides</h3>
 
-                    <button className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 transition-colors group">
+                    <button className="flex items-center justify-between p-4 rounded-[8px] border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 transition-colors group">
                       <div className="flex items-center gap-3">
                         <IconUsers className="w-5 h-5 text-indigo-500" />
                         <div className="text-left">
@@ -584,7 +584,7 @@ export const Cabinets = () => {
 
                     <button
                       onClick={() => alert('Changement de plan')}
-                      className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors group"
+                      className="flex items-center justify-between p-4 rounded-[8px] border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors group"
                     >
                       <div className="flex items-center gap-3">
                         <IconSettings className="w-5 h-5 text-blue-500" />
@@ -601,7 +601,7 @@ export const Cabinets = () => {
 
                     <button
                       onClick={() => alert('Export')}
-                      className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:border-emerald-300 hover:bg-emerald-50 transition-colors group"
+                      className="flex items-center justify-between p-4 rounded-[8px] border border-gray-200 hover:border-emerald-300 hover:bg-emerald-50 transition-colors group"
                     >
                       <div className="flex items-center gap-3">
                         <IconDownload className="w-5 h-5 text-emerald-500" />
@@ -627,13 +627,13 @@ export const Cabinets = () => {
                     <div className="flex gap-4">
                       <button
                         onClick={() => handleSuspendToggle(selectedTenant)}
-                        className="flex-1 bg-white border border-rose-200 text-rose-700 hover:bg-rose-100 py-2 rounded-lg text-sm font-bold transition-colors"
+                        className="flex-1 bg-white border border-rose-200 text-rose-700 hover:bg-rose-100 py-2 rounded-[8px] text-sm font-bold transition-colors"
                       >
                         {selectedTenant.status === 'Active'
                           ? "Suspendre l'accès"
                           : "Réactiver l'accès"}
                       </button>
-                      <button className="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-2 rounded-lg text-sm font-bold transition-colors shadow-sm">
+                      <button className="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-2 rounded-[8px] text-sm font-bold transition-colors shadow-sm">
                         Supprimer définitivement
                       </button>
                     </div>

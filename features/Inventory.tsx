@@ -129,7 +129,7 @@ export const Inventory = () => {
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
             onClick={() => setIsOrderModalOpen(false)}
           ></div>
-          <div className="bg-white rounded-[7px] shadow-xl w-full max-w-sm relative z-10 p-6 space-y-4">
+          <div className="bg-white rounded-[8px] shadow-xl w-full max-w-sm relative z-10 p-6 space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-bold text-slate-900">Commander Article</h3>
               <button onClick={() => setIsOrderModalOpen(false)}>
@@ -157,7 +157,7 @@ export const Inventory = () => {
             </div>
             <button
               onClick={submitOrder}
-              className="w-full bg-blue-600 text-white py-2 rounded-[7px] font-medium hover:bg-blue-700"
+              className="w-full bg-blue-600 text-white py-2 rounded-[8px] font-medium hover:bg-blue-700"
             >
               Confirmer la commande
             </button>
@@ -178,7 +178,7 @@ export const Inventory = () => {
             <input
               type="text"
               required
-              className="w-full border border-slate-300 rounded-[7px] p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full border border-slate-300 rounded-[8px] p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
               placeholder="Ex: Anesthésique Septanest"
               value={newItem.name}
               onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
@@ -189,7 +189,7 @@ export const Inventory = () => {
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Catégorie</label>
               <select
-                className="w-full border border-slate-300 rounded-[7px] p-2 text-sm bg-white outline-none"
+                className="w-full border border-slate-300 rounded-[8px] p-2 text-sm bg-white outline-none"
                 value={newItem.category}
                 onChange={(e) => setNewItem({ ...newItem, category: e.target.value })}
               >
@@ -202,7 +202,7 @@ export const Inventory = () => {
               <label className="block text-sm font-medium text-slate-700 mb-1">Fournisseur</label>
               <input
                 type="text"
-                className="w-full border border-slate-300 rounded-[7px] p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full border border-slate-300 rounded-[8px] p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                 placeholder="Ex: DentalPro"
                 value={newItem.supplier}
                 onChange={(e) => setNewItem({ ...newItem, supplier: e.target.value })}
@@ -216,7 +216,7 @@ export const Inventory = () => {
               <input
                 type="number"
                 min="0"
-                className="w-full border border-slate-300 rounded-[7px] p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full border border-slate-300 rounded-[8px] p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                 value={newItem.quantity}
                 onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
               />
@@ -226,7 +226,7 @@ export const Inventory = () => {
               <input
                 type="number"
                 min="1"
-                className="w-full border border-slate-300 rounded-[7px] p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full border border-slate-300 rounded-[8px] p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                 value={newItem.minThreshold}
                 onChange={(e) => setNewItem({ ...newItem, minThreshold: e.target.value })}
               />
@@ -234,7 +234,7 @@ export const Inventory = () => {
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Unité</label>
               <select
-                className="w-full border border-slate-300 rounded-[7px] p-2 text-sm bg-white outline-none"
+                className="w-full border border-slate-300 rounded-[8px] p-2 text-sm bg-white outline-none"
                 value={newItem.unit}
                 onChange={(e) => setNewItem({ ...newItem, unit: e.target.value })}
               >
@@ -251,13 +251,13 @@ export const Inventory = () => {
             <button
               type="button"
               onClick={() => setIsCreateOpen(false)}
-              className="flex-1 py-2 border border-slate-300 rounded-[7px] text-slate-700 font-medium hover:bg-slate-50"
+              className="flex-1 py-2 border border-slate-300 rounded-[30px] text-slate-700 font-medium hover:bg-slate-50"
             >
               Annuler
             </button>
             <button
               type="submit"
-              className="flex-1 py-2 bg-blue-600 text-white rounded-[7px] font-medium hover:bg-blue-700 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+              className="flex-1 py-2 bg-blue-600 text-white rounded-[8px] font-medium hover:bg-blue-700 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
             >
               Créer Référence
             </button>
@@ -271,7 +271,7 @@ export const Inventory = () => {
           <p className="text-sm text-slate-500 mt-1">Suivi des consommables et réassorts.</p>
         </div>
         <div className="flex gap-3">
-          <div className="flex bg-slate-100 p-1 rounded-[7px]">
+          <div className="flex bg-slate-100 p-1 rounded-[8px]">
             <button
               onClick={() => setActiveTab('stock')}
               className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-all ${activeTab === 'stock' ? 'bg-white text-slate-900 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]' : 'text-slate-500'}`}
@@ -288,7 +288,7 @@ export const Inventory = () => {
           {activeTab === 'stock' && (
             <button
               onClick={() => setIsCreateOpen(true)}
-              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-[7px] text-sm font-medium transition-colors shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-[8px] text-sm font-medium transition-colors shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
             >
               <IconPlus className="w-4 h-4" />
               Ajouter Article
@@ -300,7 +300,7 @@ export const Inventory = () => {
       {activeTab === 'stock' ? (
         <>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-            <div className="bg-white p-5 rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
+            <div className="bg-white p-5 rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
               <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
                 <IconArchive className="w-4 h-4 text-blue-500" /> Consommation (30j)
               </h3>
@@ -321,7 +321,7 @@ export const Inventory = () => {
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col">
+            <div className="bg-white p-5 rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col">
               <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
                 <IconAlertTriangle className="w-4 h-4 text-orange-500" /> Alertes Stock
               </h3>
@@ -349,7 +349,7 @@ export const Inventory = () => {
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col justify-center items-center text-center">
+            <div className="bg-white p-5 rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col justify-center items-center text-center">
               <div className="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center text-green-600 mb-3">
                 <IconCheckCircle className="w-8 h-8" />
               </div>
@@ -358,7 +358,7 @@ export const Inventory = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] overflow-hidden">
+          <div className="bg-white rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
               <div className="flex gap-2">
                 {['All', 'Consumable', 'Instrument'].map((cat) => (
@@ -378,7 +378,7 @@ export const Inventory = () => {
                   placeholder="Rechercher..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-1.5 text-sm border border-slate-300 rounded-[7px] focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full pl-9 pr-3 py-1.5 text-sm border border-slate-300 rounded-[30px] focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -452,7 +452,7 @@ export const Inventory = () => {
           </div>
         </>
       ) : (
-        <div className="bg-white rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] overflow-hidden">
+        <div className="bg-white rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] overflow-hidden">
           <table className="min-w-full divide-y divide-gray-100">
             <thead className="bg-slate-50">
               <tr>

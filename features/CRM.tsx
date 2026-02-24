@@ -146,6 +146,7 @@ export const CRM = () => {
   const [dailyMetrics, setDailyMetrics] = useState({ calls: 0, emails: 0, meetings: 0 });
   const [draggedItem, setDraggedItem] = useState<Prospect | null>(null);
   const [selectedProspect, setSelectedProspect] = useState<Prospect | null>(null);
+  const [activeScript, setActiveScript] = useState<'pitch' | 'price' | 'timing'>('pitch');
   const [partners, setPartners] = useState<Partner[]>(MOCK_PARTNERS);
   const [campaigns, setCampaigns] = useState<Campaign[]>(MOCK_CAMPAIGNS);
 
@@ -228,6 +229,14 @@ export const CRM = () => {
   const logRapidAction = async (type: 'call' | 'email' | 'meeting') => {
     if (!selectedProspect) return;
     try {
+      if (type === 'call' && selectedProspect.phone) {
+        window.open(`tel:${selectedProspect.phone}`, '_self');
+      } else if (type === 'email' && selectedProspect.email) {
+        const subject = encodeURIComponent('Medicom - Votre cabinet digital');
+        const body = encodeURIComponent(`Bonjour ${selectedProspect.contactName},\n\nJ'aimerais discuter de la plateforme Medicom SaaS avec vous...`);
+        window.open(`mailto:${selectedProspect.email}?subject=${subject}&body=${body}`, '_blank');
+      }
+
       await logActivity(selectedProspect.id, type, `Rapid action logged: ${type}`);
 
       setDailyMetrics(prev => ({
@@ -302,7 +311,7 @@ export const CRM = () => {
         {COLUMNS.map((col) => (
           <div
             key={col}
-            className={`flex-1 flex flex-col min-w-[280px] bg-[#FAFAFA] rounded-[7px] p-2 transition-colors ${draggedItem ? 'bg-slate-100/80 ring-2 ring-[#EAEAEA]' : ''}`}
+            className={`flex-1 flex flex-col min-w-[280px] bg-[#FAFAFA] rounded-[8px] p-2 transition-colors ${draggedItem ? 'bg-slate-100/80 ring-2 ring-[#EAEAEA]' : ''}`}
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, col)}
           >
@@ -331,15 +340,15 @@ export const CRM = () => {
                     draggable
                     onDragStart={(e: any) => handleDragStart(e, prospect)}
                     onClick={() => setSelectedProspect(prospect)}
-                    className={`bg-white rounded-[7px] p-4 border border-[#EAEAEA] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_16px_-4px_rgba(0,0,0,0.08)] cursor-grab active:cursor-grabbing active:scale-[0.98] transition-all duration-200 group ${draggedItem?.id === prospect.id ? 'opacity-40 scale-[0.98]' : ''}`}
+                    className={`bg-white rounded-[8px] p-4 border border-[#EAEAEA] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_16px_-4px_rgba(0,0,0,0.08)] cursor-grab active:cursor-grabbing active:scale-[0.98] transition-all duration-200 group ${draggedItem?.id === prospect.id ? 'opacity-40 scale-[0.98]' : ''}`}
                   >
                     <div className="flex justify-between items-start mb-2">
                       <span
                         className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 ${prospect.priority === 'High'
-                            ? 'bg-red-50 text-red-600'
-                            : prospect.priority === 'Medium'
-                              ? 'bg-orange-50 text-orange-600'
-                              : 'bg-slate-50 text-slate-500'
+                          ? 'bg-red-50 text-red-600'
+                          : prospect.priority === 'Medium'
+                            ? 'bg-orange-50 text-orange-600'
+                            : 'bg-slate-50 text-slate-500'
                           }`}
                       >
                         {prospect.priority || 'Low'}
@@ -369,10 +378,10 @@ export const CRM = () => {
                         <div className="w-full bg-slate-100 rounded-full h-1">
                           <div
                             className={`h-1 rounded-full transition-all duration-500 ${prospect.leadScore > 80
-                                ? 'bg-green-500'
-                                : prospect.leadScore > 50
-                                  ? 'bg-blue-500'
-                                  : 'bg-slate-400'
+                              ? 'bg-green-500'
+                              : prospect.leadScore > 50
+                                ? 'bg-blue-500'
+                                : 'bg-slate-400'
                               }`}
                             style={{ width: `${prospect.leadScore}%` }}
                           ></div>
@@ -407,7 +416,7 @@ export const CRM = () => {
 
   const OnboardingView = () => (
     <div className="space-y-4">
-      <div className="bg-white border border-slate-200 rounded-[7px] overflow-hidden shadow-sm">
+      <div className="bg-white border border-slate-200 rounded-[30px] overflow-hidden shadow-sm">
         <table className="min-w-full divide-y divide-slate-100">
           <thead className="bg-slate-50">
             <tr>
@@ -489,7 +498,7 @@ export const CRM = () => {
 
       {activeTab !== 'tower' && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white p-5 rounded-[7px] border border-slate-200 shadow-sm">
+          <div className="bg-white p-5 rounded-[8px] border border-slate-200 shadow-sm">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
               Conversion Rate
             </div>
@@ -498,7 +507,7 @@ export const CRM = () => {
               <IconTrendingUp className="w-3 h-3" /> +2.1%
             </div>
           </div>
-          <div className="bg-white p-5 rounded-[7px] border border-slate-200 shadow-sm">
+          <div className="bg-white p-5 rounded-[8px] border border-slate-200 shadow-sm">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
               Active Trials
             </div>
@@ -507,7 +516,7 @@ export const CRM = () => {
               Cabinets en démo
             </div>
           </div>
-          <div className="bg-white p-5 rounded-[7px] border border-slate-200 shadow-sm">
+          <div className="bg-white p-5 rounded-[8px] border border-slate-200 shadow-sm">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
               Pipeline Value
             </div>
@@ -518,7 +527,7 @@ export const CRM = () => {
               Potentiel MRR
             </div>
           </div>
-          <div className="bg-white p-5 rounded-[7px] border border-slate-200 shadow-sm">
+          <div className="bg-white p-5 rounded-[8px] border border-slate-200 shadow-sm">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
               Days to Close
             </div>
@@ -538,10 +547,10 @@ export const CRM = () => {
           {partners.map((partner) => (
             <div
               key={partner.id}
-              className="bg-white border border-slate-200 rounded-[7px] p-6 shadow-sm hover:border-blue-400 transition-all"
+              className="bg-white border border-slate-200 rounded-[30px] p-6 shadow-sm hover:border-blue-400 transition-all"
             >
               <div className="flex justify-between items-start mb-6">
-                <div className="p-3 bg-blue-50 text-blue-600 rounded-[7px] border border-blue-100">
+                <div className="p-3 bg-blue-50 text-blue-600 rounded-[8px] border border-blue-100">
                   <IconBriefcase className="w-6 h-6" />
                 </div>
                 <span
@@ -575,7 +584,7 @@ export const CRM = () => {
           ))}
           <button
             onClick={handleAddPartner}
-            className="border-2 border-dashed border-slate-200 rounded-[7px] p-6 flex flex-col items-center justify-center text-slate-400 hover:border-blue-400 hover:text-blue-600 transition-all bg-white hover:bg-blue-50/20"
+            className="border-2 border-dashed border-slate-200 rounded-[8px] p-6 flex flex-col items-center justify-center text-slate-400 hover:border-blue-400 hover:text-blue-600 transition-all bg-white hover:bg-blue-50/20"
           >
             <IconPlus className="w-10 h-10 mb-2" />
             <span className="font-bold text-sm">Ajouter un Partenaire</span>
@@ -608,8 +617,42 @@ export const CRM = () => {
               </div>
             </div>
 
+            <div className="bg-white border-b border-slate-200 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-[13px] font-bold text-slate-900 tracking-tight">Guided Playbook</h3>
+                <div className="flex bg-slate-100 rounded-[6px] p-1">
+                  <button
+                    onClick={() => setActiveScript('pitch')}
+                    className={`text-[12px] px-3 py-1 rounded-[4px] font-medium transition-colors ${activeScript === 'pitch' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700 cursor-pointer'}`}
+                  >
+                    Elevator Pitch
+                  </button>
+                  <button
+                    onClick={() => setActiveScript('price')}
+                    className={`text-[12px] px-3 py-1 rounded-[4px] font-medium transition-colors ${activeScript === 'price' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700 cursor-pointer'}`}
+                  >
+                    Objection: Prix
+                  </button>
+                  <button
+                    onClick={() => setActiveScript('timing')}
+                    className={`text-[12px] px-3 py-1 rounded-[4px] font-medium transition-colors ${activeScript === 'timing' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700 cursor-pointer'}`}
+                  >
+                    Objection: Pas le temps
+                  </button>
+                </div>
+              </div>
+
+              <div className="bg-slate-50 border border-slate-100 rounded-[8px] p-4 font-mono text-[13px] text-slate-700 leading-relaxed whitespace-pre-wrap">
+                {activeScript === 'pitch' && `Bonjour ${selectedProspect.contactName},\n\nJe suis de Medicom. J'appelle car nous aidons les cabinets à ${selectedProspect.city || 'votre région'} à digitaliser leur gestion sans changer la manière dont le médecin travaille.\n\nEtes-vous la bonne personne pour parler d'une plateforme qui gère les dossiers et RDV automatiquement ?`}
+
+                {activeScript === 'price' && `Je comprends. Si on regarde le temps gagné sur les RDV manqués et la paperasse, le système s'autofinance en récupérant 2 consultations par mois.\n\nSeriez-vous ouvert à une démo de 10 min juste pour voir si ça s'applique à votre cabinet ?`}
+
+                {activeScript === 'timing' && `Justement, la raison de mon appel est de vous faire GAGNER du temps. Je sais que vous êtes occupé. \n\nEst-ce que je peux vous bloquer 10 min mardi prochain à 14h ? Si à 14h10 vous n'êtes pas convaincu, on s'arrête là.`}
+              </div>
+            </div>
+
             <div className="p-8 space-y-8">
-              <div className="bg-slate-50 p-6 rounded-[7px] border border-slate-100">
+              <div className="bg-slate-50 p-6 rounded-[8px] border border-slate-100">
                 <div className="grid grid-cols-2 gap-6">
                   <div>
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
@@ -646,14 +689,14 @@ export const CRM = () => {
                       onClick={() =>
                         logActivity(selectedProspect.id, 'call', 'Appel téléphonique de suivi')
                       }
-                      className="p-1.5 text-green-600 bg-green-50 rounded-md hover:bg-green-100 transition-colors"
+                      className="p-1.5 text-green-600 bg-green-50 rounded-[8px] hover:bg-green-100 transition-colors"
                       title="Ajouter un appel"
                     >
                       <IconMessage className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => logActivity(selectedProspect.id, 'email', 'Email envoyé')}
-                      className="p-1.5 text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors"
+                      className="p-1.5 text-blue-600 bg-blue-50 rounded-[8px] hover:bg-blue-100 transition-colors"
                       title="Ajouter un email"
                     >
                       <IconSend className="w-4 h-4" />
@@ -663,7 +706,7 @@ export const CRM = () => {
                         const note = prompt('Saisir une note :');
                         if (note) logActivity(selectedProspect.id, 'note', note);
                       }}
-                      className="p-1.5 text-slate-600 bg-slate-100 rounded-md hover:bg-slate-200 transition-colors"
+                      className="p-1.5 text-slate-600 bg-slate-100 rounded-[8px] hover:bg-slate-200 transition-colors"
                       title="Ajouter une note"
                     >
                       <IconActivity className="w-4 h-4" />

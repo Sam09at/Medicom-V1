@@ -190,7 +190,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
             {allItems.map((command, index) => (
               <li
                 key={command.id}
-                className={`group flex cursor-pointer select-none items-center rounded-md px-3 py-2.5 ${
+                className={`group flex cursor-pointer select-none items-center rounded-[8px] px-3 py-2.5 ${
                   index === selectedIndex
                     ? 'bg-blue-600 text-white'
                     : 'text-gray-700 hover:bg-gray-100'
@@ -199,7 +199,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                 onMouseEnter={() => setSelectedIndex(index)}
               >
                 <div
-                  className={`flex h-8 w-8 flex-none items-center justify-center rounded-md ${
+                  className={`flex h-8 w-8 flex-none items-center justify-center rounded-[8px] ${
                     index === selectedIndex
                       ? 'bg-white/20 text-white'
                       : 'bg-gray-50 text-gray-500 border border-gray-200'

@@ -162,7 +162,7 @@ export const SuperAdminDashboard: React.FC = () => {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <span className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-1.5 rounded-lg shadow-sm font-semibold text-[0.75rem] text-gray-600">
+          <span className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-1.5 rounded-[8px] shadow-sm font-semibold text-[0.75rem] text-gray-600">
             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
             Système Opérationnel
           </span>
@@ -174,21 +174,21 @@ export const SuperAdminDashboard: React.FC = () => {
       <div className="flex gap-6">
         <button
           onClick={() => navigate('/admin/cabinets/new')}
-          className="flex-1 btn-indigo flex items-center justify-center gap-2 h-10 rounded-lg shadow-sm"
+          className="flex-1 btn-indigo flex items-center justify-center gap-2 h-10 rounded-[8px] shadow-sm"
         >
           <IconPlus className="w-4 h-4" />
           Nouveau cabinet
         </button>
         <button
           onClick={() => navigate('/admin/crm')}
-          className="flex-1 btn-secondary flex items-center justify-center gap-2 h-10 rounded-lg shadow-sm"
+          className="flex-1 btn-secondary flex items-center justify-center gap-2 h-10 rounded-[8px] shadow-sm"
         >
           <IconUsers className="w-4 h-4" />
           Voir leads
         </button>
         <button
           onClick={() => navigate('/admin/support?priority=high')}
-          className="flex-1 btn-danger flex items-center justify-center gap-2 h-10 rounded-lg shadow-sm"
+          className="flex-1 btn-danger flex items-center justify-center gap-2 h-10 rounded-[8px] shadow-sm"
         >
           <IconAlertTriangle className="w-4 h-4" />
           Tickets urgents

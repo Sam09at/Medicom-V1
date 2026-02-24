@@ -26,7 +26,7 @@ export const ModernUserTable: React.FC<ModernUserTableProps> = ({ users, onToggl
   );
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col h-full">
+    <div className="bg-white border border-gray-200 rounded-[8px] shadow-sm flex flex-col h-full">
       {/* Table Header / Toolbar */}
       <div className="px-5 py-4 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white rounded-t-lg">
         <div>
@@ -43,10 +43,10 @@ export const ModernUserTable: React.FC<ModernUserTableProps> = ({ users, onToggl
               placeholder="Filtrer..."
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="pl-9 pr-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm w-full sm:w-64"
+              className="pl-9 pr-3 py-1.5 text-sm border border-gray-300 rounded-[8px] focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm w-full sm:w-64"
             />
           </div>
-          <button className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 shadow-sm">
+          <button className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 rounded-[8px] text-sm font-medium text-gray-700 hover:bg-gray-50 shadow-sm">
             <IconFilter className="w-4 h-4" /> Filtres
           </button>
         </div>

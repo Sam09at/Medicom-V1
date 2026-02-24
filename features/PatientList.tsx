@@ -125,13 +125,13 @@ export const PatientList: React.FC = () => {
                 <div className="flex gap-3 w-full sm:w-auto">
                     <button
                         onClick={() => setIsImportOpen(true)}
-                        className="btn-secondary h-10 px-4 text-[13px] font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-[7px] flex items-center justify-center gap-2"
+                        className="btn-secondary h-10 px-4 text-[13px] font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-[30px] flex items-center justify-center gap-2"
                     >
                         <IconDownload className="w-4 h-4" /> Import CSV
                     </button>
                     <button
                         onClick={() => setIsCreateOpen(true)}
-                        className="h-10 px-5 text-[13px] font-medium rounded-[7px] bg-[#0F0F0F] text-white hover:bg-black transition-all flex items-center justify-center gap-2"
+                        className="h-10 px-5 text-[13px] font-medium rounded-[30px] bg-[#0F0F0F] text-white hover:bg-black transition-all flex items-center justify-center gap-2"
                     >
                         <IconUserPlus className="w-4 h-4" /> Nouveau Patient
                     </button>
@@ -147,13 +147,13 @@ export const PatientList: React.FC = () => {
                         placeholder="Rechercher par nom, téléphone..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full text-[14px] font-medium rounded-[7px] pl-9 pr-4 py-2.5 bg-white border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-100 transition-all shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
+                        className="w-full text-[14px] font-medium rounded-[30px] pl-9 pr-4 py-2.5 bg-white border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-100 transition-all shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
                     />
                 </div>
             </div>
 
             {/* Data Table */}
-            <div className="bg-white rounded-[7px] border border-slate-100 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)] flex-1 overflow-hidden flex flex-col">
+            <div className="bg-white rounded-[8px] border border-slate-100 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)] flex-1 overflow-hidden flex flex-col">
                 <div className="overflow-auto flex-1 scrollbar-hide">
                     <table className="min-w-full text-left">
                         <thead className="bg-[#FAFAFA] sticky top-0 z-10 border-b border-slate-100">
@@ -234,7 +234,7 @@ export const PatientList: React.FC = () => {
                                                     e.stopPropagation();
                                                     navigate(`/app/patients/${patient.id}`);
                                                 }}
-                                                className="text-slate-400 hover:text-slate-900 transition-colors p-2 rounded-[7px] hover:bg-slate-100"
+                                                className="text-slate-400 hover:text-slate-900 transition-colors p-2 rounded-[8px] hover:bg-slate-100"
                                                 title="Voir dossier complet"
                                             >
                                                 <IconEye className="w-4 h-4" />
@@ -252,8 +252,8 @@ export const PatientList: React.FC = () => {
                         Affichage de 1 à {filteredPatients.length} patients
                     </span>
                     <div className="flex gap-2">
-                        <button disabled className="px-3 py-1.5 bg-white border border-slate-200 rounded-[7px] hover:bg-slate-50 disabled:opacity-50 text-[13px]">Précédent</button>
-                        <button className="px-3 py-1.5 bg-white border border-slate-200 rounded-[7px] hover:bg-slate-50 text-[13px]">Suivant</button>
+                        <button disabled className="px-3 py-1.5 bg-white border border-slate-200 rounded-[30px] hover:bg-slate-50 disabled:opacity-50 text-[13px]">Précédent</button>
+                        <button className="px-3 py-1.5 bg-white border border-slate-200 rounded-[30px] hover:bg-slate-50 text-[13px]">Suivant</button>
                     </div>
                 </div>
             </div>
@@ -354,11 +354,11 @@ export const PatientList: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    <div className="bg-white rounded-[7px] border border-slate-200 shadow-sm p-8">
+                                    <div className="bg-white rounded-[8px] border border-slate-200 shadow-sm p-8">
                                         {!isEditing ? (
                                             <>
                                                 <div className="flex items-center gap-6 mb-8">
-                                                    <div className="w-20 h-20 bg-slate-50 border border-slate-200 rounded-[7px] flex items-center justify-center text-3xl font-bold text-slate-400">
+                                                    <div className="w-20 h-20 bg-slate-50 border border-slate-200 rounded-[8px] flex items-center justify-center text-3xl font-bold text-slate-400">
                                                         {selectedPatient.firstName[0]}
                                                         {selectedPatient.lastName[0]}
                                                     </div>
@@ -373,10 +373,10 @@ export const PatientList: React.FC = () => {
                                                             </span>
                                                         </div>
                                                         <div className="flex gap-2 mt-4">
-                                                            <button className="h-8 px-3 text-[12px] font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-[7px] flex items-center gap-1.5 transition-colors">
+                                                            <button className="h-8 px-3 text-[12px] font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-[30px] flex items-center gap-1.5 transition-colors">
                                                                 <IconMessage className="w-3.5 h-3.5" /> SMS
                                                             </button>
-                                                            <button className="h-8 px-3 text-[12px] font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-[7px] flex items-center gap-1.5 transition-colors">
+                                                            <button className="h-8 px-3 text-[12px] font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-[30px] flex items-center gap-1.5 transition-colors">
                                                                 <IconPhone className="w-3.5 h-3.5" /> Appeler
                                                             </button>
                                                         </div>
@@ -415,7 +415,7 @@ export const PatientList: React.FC = () => {
                                                                 required
                                                                 value={editData.firstName}
                                                                 onChange={(e) => setEditData({ ...editData, firstName: e.target.value })}
-                                                                className="w-full h-9 rounded-[7px] border border-slate-200 bg-white px-3 text-[13px] font-medium focus:ring-2 focus:ring-slate-100 focus:border-slate-500 transition-all outline-none"
+                                                                className="w-full h-9 rounded-[30px] border border-slate-200 bg-white px-3 text-[13px] font-medium focus:ring-2 focus:ring-slate-100 focus:border-slate-500 transition-all outline-none"
                                                             />
                                                         </div>
                                                         <div>
@@ -427,7 +427,7 @@ export const PatientList: React.FC = () => {
                                                                 required
                                                                 value={editData.lastName}
                                                                 onChange={(e) => setEditData({ ...editData, lastName: e.target.value })}
-                                                                className="w-full h-9 rounded-[7px] border border-slate-200 bg-white px-3 text-[13px] font-medium focus:ring-2 focus:ring-slate-100 focus:border-slate-500 transition-all outline-none"
+                                                                className="w-full h-9 rounded-[30px] border border-slate-200 bg-white px-3 text-[13px] font-medium focus:ring-2 focus:ring-slate-100 focus:border-slate-500 transition-all outline-none"
                                                             />
                                                         </div>
                                                     </div>
@@ -440,7 +440,7 @@ export const PatientList: React.FC = () => {
                                                                 type="tel"
                                                                 value={editData.phone}
                                                                 onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
-                                                                className="w-full h-9 rounded-[7px] border border-slate-200 bg-white px-3 text-[13px] font-medium focus:ring-2 focus:ring-slate-100 focus:border-slate-500 transition-all outline-none"
+                                                                className="w-full h-9 rounded-[30px] border border-slate-200 bg-white px-3 text-[13px] font-medium focus:ring-2 focus:ring-slate-100 focus:border-slate-500 transition-all outline-none"
                                                             />
                                                         </div>
                                                         <div>
@@ -451,7 +451,7 @@ export const PatientList: React.FC = () => {
                                                                 type="email"
                                                                 value={editData.email}
                                                                 onChange={(e) => setEditData({ ...editData, email: e.target.value })}
-                                                                className="w-full h-9 rounded-[7px] border border-slate-200 bg-white px-3 text-[13px] font-medium focus:ring-2 focus:ring-slate-100 focus:border-slate-500 transition-all outline-none"
+                                                                className="w-full h-9 rounded-[30px] border border-slate-200 bg-white px-3 text-[13px] font-medium focus:ring-2 focus:ring-slate-100 focus:border-slate-500 transition-all outline-none"
                                                             />
                                                         </div>
                                                     </div>
@@ -465,14 +465,14 @@ export const PatientList: React.FC = () => {
                             {/* Tab: Medical */}
                             {activeTab === 'medical' && (
                                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                    <div className="bg-red-50 border border-red-200 rounded-[7px] p-5 shadow-sm">
+                                    <div className="bg-red-50 border border-red-200 rounded-[8px] p-5 shadow-sm">
                                         <h4 className="text-[13px] font-bold text-red-700 flex items-center gap-2 mb-4 uppercase tracking-wide">
                                             <IconAlertOctagon className="w-4 h-4" /> Allergies
                                         </h4>
                                         {/* Simplified for recreation */}
                                         <p className="text-[13px] text-slate-600 italic">Gérez les allergies depuis le dossier Patient détaillé.</p>
                                     </div>
-                                    <div className="bg-orange-50 border border-orange-200 rounded-[7px] p-5 shadow-sm">
+                                    <div className="bg-orange-50 border border-orange-200 rounded-[8px] p-5 shadow-sm">
                                         <h4 className="text-[13px] font-bold text-orange-700 flex items-center gap-2 mb-4 uppercase tracking-wide">
                                             <IconFileText className="w-4 h-4" /> Pathologies
                                         </h4>
@@ -495,9 +495,9 @@ export const PatientList: React.FC = () => {
                                     {getPatientAppointments(selectedPatient.id).length > 0 ? (
                                         <div className="space-y-3">
                                             {getPatientAppointments(selectedPatient.id).map((apt) => (
-                                                <div key={apt.id} className="bg-white p-4 rounded-[7px] border border-slate-200 shadow-sm flex justify-between items-center group">
+                                                <div key={apt.id} className="bg-white p-4 rounded-[8px] border border-slate-200 shadow-sm flex justify-between items-center group">
                                                     <div className="flex items-center gap-4">
-                                                        <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-[7px] flex items-center justify-center shrink-0 border border-blue-100">
+                                                        <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-[8px] flex items-center justify-center shrink-0 border border-blue-100">
                                                             <IconCalendar className="w-5 h-5" />
                                                         </div>
                                                         <div>
@@ -517,7 +517,7 @@ export const PatientList: React.FC = () => {
                                             ))}
                                         </div>
                                     ) : (
-                                        <div className="py-20 flex flex-col items-center justify-center bg-white rounded-[7px] border-2 border-dashed border-slate-100 opacity-60">
+                                        <div className="py-20 flex flex-col items-center justify-center bg-white rounded-[8px] border-2 border-dashed border-slate-100 opacity-60">
                                             <IconCalendar className="w-10 h-10 text-slate-300 mb-3" />
                                             <p className="text-[13px] text-slate-500 font-medium">Aucun rendez-vous enregistré.</p>
                                         </div>
@@ -527,7 +527,7 @@ export const PatientList: React.FC = () => {
 
                             {/* Tab: Finance & Docs Placeholder */}
                             {['finance', 'docs'].includes(activeTab) && (
-                                <div className="py-20 flex flex-col items-center justify-center bg-white rounded-[7px] border-2 border-dashed border-slate-100 opacity-60 animate-in fade-in duration-300">
+                                <div className="py-20 flex flex-col items-center justify-center bg-white rounded-[8px] border-2 border-dashed border-slate-100 opacity-60 animate-in fade-in duration-300">
                                     {activeTab === 'finance' ? <IconCreditCard className="w-10 h-10 text-slate-300 mb-4" /> : <IconFolder className="w-10 h-10 text-slate-300 mb-4" />}
                                     <h5 className="text-[16px] font-bold text-slate-900 tracking-tight">Prochainement</h5>
                                     <p className="text-[13px] text-slate-500 mt-1 font-medium">Le module est en cours de développement.</p>
@@ -546,7 +546,7 @@ export const PatientList: React.FC = () => {
                 subtitle="Démarrer la création du dossier patient"
             >
                 <form onSubmit={handleCreatePatient} className="p-8 space-y-8 bg-slate-50/50 h-full overflow-y-auto scrollbar-hide">
-                    <div className="bg-white rounded-[7px] border border-slate-200 shadow-sm p-8 space-y-6">
+                    <div className="bg-white rounded-[8px] border border-slate-200 shadow-sm p-8 space-y-6">
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="text-[13px] font-semibold text-slate-700 mb-1 block">Prénom *</label>
@@ -555,7 +555,7 @@ export const PatientList: React.FC = () => {
                                     required
                                     value={newPatient.firstName}
                                     onChange={e => setNewPatient({ ...newPatient, firstName: e.target.value })}
-                                    className="w-full h-9 rounded-[7px] border border-slate-200 bg-white px-3 text-[13px] focus:ring-2 focus:ring-slate-100 focus:border-slate-500 outline-none"
+                                    className="w-full h-9 rounded-[30px] border border-slate-200 bg-white px-3 text-[13px] focus:ring-2 focus:ring-slate-100 focus:border-slate-500 outline-none"
                                 />
                             </div>
                             <div>
@@ -565,7 +565,7 @@ export const PatientList: React.FC = () => {
                                     required
                                     value={newPatient.lastName}
                                     onChange={e => setNewPatient({ ...newPatient, lastName: e.target.value })}
-                                    className="w-full h-9 rounded-[7px] border border-slate-200 bg-white px-3 text-[13px] focus:ring-2 focus:ring-slate-100 focus:border-slate-500 outline-none"
+                                    className="w-full h-9 rounded-[30px] border border-slate-200 bg-white px-3 text-[13px] focus:ring-2 focus:ring-slate-100 focus:border-slate-500 outline-none"
                                 />
                             </div>
                         </div>
@@ -575,7 +575,7 @@ export const PatientList: React.FC = () => {
                                 type="tel"
                                 value={newPatient.phone}
                                 onChange={e => setNewPatient({ ...newPatient, phone: e.target.value })}
-                                className="w-full h-9 rounded-[7px] border border-slate-200 bg-white px-3 text-[13px] focus:ring-2 focus:ring-slate-100 focus:border-slate-500 outline-none"
+                                className="w-full h-9 rounded-[30px] border border-slate-200 bg-white px-3 text-[13px] focus:ring-2 focus:ring-slate-100 focus:border-slate-500 outline-none"
                             />
                         </div>
                         <div>
@@ -584,15 +584,15 @@ export const PatientList: React.FC = () => {
                                 type="email"
                                 value={newPatient.email}
                                 onChange={e => setNewPatient({ ...newPatient, email: e.target.value })}
-                                className="w-full h-9 rounded-[7px] border border-slate-200 bg-white px-3 text-[13px] focus:ring-2 focus:ring-slate-100 focus:border-slate-500 outline-none"
+                                className="w-full h-9 rounded-[30px] border border-slate-200 bg-white px-3 text-[13px] focus:ring-2 focus:ring-slate-100 focus:border-slate-500 outline-none"
                             />
                         </div>
                     </div>
                     <div className="flex gap-4">
-                        <button type="button" onClick={() => setIsCreateOpen(false)} className="h-10 px-4 text-[13px] font-bold text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 rounded-[7px] flex-1">
+                        <button type="button" onClick={() => setIsCreateOpen(false)} className="h-10 px-4 text-[13px] font-bold text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 rounded-[30px] flex-1">
                             Annuler
                         </button>
-                        <button type="submit" className="h-10 px-4 text-[13px] font-bold text-white bg-[#0F0F0F] hover:bg-black rounded-[7px] flex-1">
+                        <button type="submit" className="h-10 px-4 text-[13px] font-bold text-white bg-[#0F0F0F] hover:bg-black rounded-[30px] flex-1">
                             Créer Dossier
                         </button>
                     </div>

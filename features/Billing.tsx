@@ -79,7 +79,7 @@ const StatCard = ({
   subtitle: string;
   type?: 'primary' | 'warning' | 'default';
 }) => (
-  <div className="bg-white p-5 rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col justify-between h-32">
+  <div className="bg-white p-5 rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col justify-between h-32">
     <div className="flex justify-between items-start">
       <h3 className="text-xs font-medium uppercase tracking-wide text-slate-500">{title}</h3>
       {type === 'primary' && (
@@ -337,7 +337,7 @@ export const Billing = () => {
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
             onClick={() => setIsPaymentModalOpen(false)}
           ></div>
-          <div className="bg-white rounded-[7px] shadow-xl w-full max-w-md relative z-10 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-[8px] shadow-xl w-full max-w-md relative z-10 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
               <h3 className="font-semibold text-slate-900">Enregistrer un paiement</h3>
               <button
@@ -348,7 +348,7 @@ export const Billing = () => {
               </button>
             </div>
             <div className="p-6 space-y-6">
-              <div className="bg-blue-50 p-4 rounded-[7px] border border-blue-100">
+              <div className="bg-blue-50 p-4 rounded-[8px] border border-blue-100">
                 <div className="text-xs text-blue-600 uppercase font-bold tracking-wide">
                   Reste à payer
                 </div>
@@ -371,7 +371,7 @@ export const Billing = () => {
                   type="number"
                   value={paymentAmount}
                   onChange={(e) => setPaymentAmount(e.target.value)}
-                  className="block w-full text-lg p-3 border border-slate-300 rounded-[7px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full text-lg p-3 border border-slate-300 rounded-[8px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
 
@@ -399,13 +399,13 @@ export const Billing = () => {
             <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
               <button
                 onClick={() => setIsPaymentModalOpen(false)}
-                className="px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-[7px]"
+                className="px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-[8px]"
               >
                 Annuler
               </button>
               <button
                 onClick={submitPayment}
-                className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-[7px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-[8px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
               >
                 Valider
               </button>
@@ -417,7 +417,7 @@ export const Billing = () => {
       {/* Print Modal */}
       {isPrintModalOpen && selectedInvoice && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-2xl h-[85vh] flex flex-col rounded-[7px] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white w-full max-w-2xl h-[85vh] flex flex-col rounded-[8px] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
               <h3 className="font-bold text-slate-900">Aperçu Facture {selectedInvoice.id}</h3>
               <div className="flex gap-2">
@@ -533,7 +533,7 @@ export const Billing = () => {
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
             onClick={() => setIsExpenseModalOpen(false)}
           ></div>
-          <div className="bg-white rounded-[7px] shadow-xl w-full max-w-sm relative z-10 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-[8px] shadow-xl w-full max-w-sm relative z-10 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
               <h3 className="font-semibold text-slate-900">Ajouter une dépense</h3>
               <button
@@ -552,7 +552,7 @@ export const Billing = () => {
                   <input
                     type="text"
                     required
-                    className="w-full border border-slate-300 rounded-[7px] p-2 text-sm outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full border border-slate-300 rounded-[8px] p-2 text-sm outline-none focus:ring-2 focus:ring-red-500"
                     placeholder="Ex: Facture d'électricité"
                     value={newExpense.description}
                     onChange={(e) => setNewExpense({ ...newExpense, description: e.target.value })}
@@ -561,7 +561,7 @@ export const Billing = () => {
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Catégorie</label>
                   <select
-                    className="w-full border border-slate-300 rounded-[7px] p-2 text-sm outline-none focus:ring-2 focus:ring-red-500 bg-white"
+                    className="w-full border border-slate-300 rounded-[8px] p-2 text-sm outline-none focus:ring-2 focus:ring-red-500 bg-white"
                     value={newExpense.category}
                     onChange={(e) => setNewExpense({ ...newExpense, category: e.target.value })}
                   >
@@ -579,7 +579,7 @@ export const Billing = () => {
                   <input
                     type="number"
                     required
-                    className="w-full border border-slate-300 rounded-[7px] p-2 text-sm outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full border border-slate-300 rounded-[8px] p-2 text-sm outline-none focus:ring-2 focus:ring-red-500"
                     value={newExpense.amount}
                     onChange={(e) => setNewExpense({ ...newExpense, amount: e.target.value })}
                   />
@@ -589,7 +589,7 @@ export const Billing = () => {
                   <input
                     type="date"
                     required
-                    className="w-full border border-slate-300 rounded-[7px] p-2 text-sm outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full border border-slate-300 rounded-[8px] p-2 text-sm outline-none focus:ring-2 focus:ring-red-500"
                     value={newExpense.date}
                     onChange={(e) => setNewExpense({ ...newExpense, date: e.target.value })}
                   />
@@ -599,13 +599,13 @@ export const Billing = () => {
                 <button
                   type="button"
                   onClick={() => setIsExpenseModalOpen(false)}
-                  className="px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-[7px]"
+                  className="px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-[8px]"
                 >
                   Annuler
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-[7px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                  className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-[8px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
                 >
                   Enregistrer
                 </button>
@@ -636,7 +636,7 @@ export const Billing = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4">
         <div className="flex gap-4 items-center">
           <h2 className="text-lg font-semibold text-slate-900">Finance</h2>
-          <div className="flex bg-slate-100 p-1 rounded-[7px]">
+          <div className="flex bg-slate-100 p-1 rounded-[8px]">
             <button
               onClick={() => setActiveTab('invoices')}
               className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-all ${activeTab === 'invoices' ? 'bg-white text-blue-700 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]' : 'text-slate-500'}`}
@@ -670,14 +670,14 @@ export const Billing = () => {
           </div>
         </div>
         <div className="flex gap-3">
-          <button className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-[7px] text-sm font-medium transition-colors shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
+          <button className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-[30px] text-sm font-medium transition-colors shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
             <IconDownload className="w-4 h-4" />
             Exporter
           </button>
           {activeTab !== 'expenses' && activeTab !== 'closing' ? (
             <button
               onClick={() => setIsCreateOpen(true)}
-              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-[7px] text-sm font-medium transition-colors shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-[8px] text-sm font-medium transition-colors shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
             >
               <IconPlus className="w-4 h-4" />
               Créer {activeTab === 'invoices' ? 'Facture' : 'Devis'}
@@ -685,7 +685,7 @@ export const Billing = () => {
           ) : activeTab === 'expenses' ? (
             <button
               onClick={() => setIsExpenseModalOpen(true)}
-              className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-[7px] text-sm font-medium transition-colors shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+              className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-[8px] text-sm font-medium transition-colors shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
             >
               <IconTrendingDown className="w-4 h-4" />
               Ajouter Dépense
@@ -696,14 +696,14 @@ export const Billing = () => {
 
       {activeTab === 'invoices' && (
         /* Invoice List */
-        <div className="bg-white rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col">
+        <div className="bg-white rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col">
           <div className="px-4 py-3 border-b border-slate-200 flex items-center gap-4">
             <div className="relative flex-1 max-w-xs">
               <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
               <input
                 type="text"
                 placeholder="Rechercher facture..."
-                className="w-full pl-9 pr-3 py-1.5 text-sm border border-slate-200 rounded-[7px] focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full pl-9 pr-3 py-1.5 text-sm border border-slate-200 rounded-[30px] focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -806,7 +806,7 @@ export const Billing = () => {
       )}
 
       {activeTab === 'quotes' && (
-        <div className="bg-white rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col">
+        <div className="bg-white rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-100">
               <thead className="bg-slate-50/50">
@@ -892,7 +892,7 @@ export const Billing = () => {
 
       {activeTab === 'expenses' && (
         /* Expenses List */
-        <div className="bg-white rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col">
+        <div className="bg-white rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-100">
               <thead className="bg-slate-50/50">
@@ -944,7 +944,7 @@ export const Billing = () => {
 
       {activeTab === 'closing' && (
         <div className="max-w-4xl mx-auto space-y-6">
-          <div className="bg-gradient-to-br from-indigo-900 to-gray-800 rounded-[7px] p-8 text-white shadow-lg">
+          <div className="bg-gradient-to-br from-indigo-900 to-gray-800 rounded-[8px] p-8 text-white shadow-lg">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">Clôture de Caisse</h2>
               <div className="text-sm bg-white/10 px-3 py-1 rounded-full border border-white/20">
@@ -988,7 +988,7 @@ export const Billing = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-6">
-            <div className="bg-white p-6 rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
+            <div className="bg-white p-6 rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
               <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
                 <IconCheck className="w-4 h-4 text-green-500" /> Validation des Encaissements
               </h3>
@@ -1012,7 +1012,7 @@ export const Billing = () => {
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col justify-between">
+            <div className="bg-white p-6 rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col justify-between">
               <div>
                 <h3 className="font-bold text-slate-900 mb-2">Actions de Clôture</h3>
                 <p className="text-xs text-slate-500 mb-4">
@@ -1025,7 +1025,7 @@ export const Billing = () => {
               </div>
               <button
                 onClick={() => alert('Journée clôturée avec succès. Rapport envoyé par email.')}
-                className="w-full py-3 bg-green-600 text-white font-bold rounded-[7px] hover:bg-green-700 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex items-center justify-center gap-2"
+                className="w-full py-3 bg-green-600 text-white font-bold rounded-[8px] hover:bg-green-700 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex items-center justify-center gap-2"
               >
                 <IconCheck className="w-5 h-5" /> Valider et Clôturer
               </button>
@@ -1037,7 +1037,7 @@ export const Billing = () => {
       {activeTab === 'intelligence' && analytics && (
         <div className="space-y-6 animate-in fade-in duration-300">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-white p-5 rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col justify-between h-32">
+            <div className="bg-white p-5 rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col justify-between h-32">
               <h3 className="text-xs font-medium uppercase tracking-wide text-slate-500">
                 Revenu Mensuel
               </h3>
@@ -1053,7 +1053,7 @@ export const Billing = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white p-5 rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col justify-between h-32">
+            <div className="bg-white p-5 rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col justify-between h-32">
               <h3 className="text-xs font-medium uppercase tracking-wide text-slate-500">Impayés</h3>
               <div>
                 <div className="text-2xl font-bold text-amber-600">
@@ -1062,7 +1062,7 @@ export const Billing = () => {
                 <div className="text-xs mt-1 font-medium text-slate-500">Reste à recouvrer</div>
               </div>
             </div>
-            <div className="bg-white p-5 rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col justify-between h-32">
+            <div className="bg-white p-5 rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col justify-between h-32">
               <h3 className="text-xs font-medium uppercase tracking-wide text-slate-500">
                 Taux de Recouvrement
               </h3>
@@ -1076,7 +1076,7 @@ export const Billing = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white p-5 rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col justify-between h-32">
+            <div className="bg-white p-5 rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col justify-between h-32">
               <h3 className="text-xs font-medium uppercase tracking-wide text-slate-500">
                 Objectif Mensuel
               </h3>
@@ -1092,7 +1092,7 @@ export const Billing = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 bg-white p-6 rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
+            <div className="lg:col-span-2 bg-white p-6 rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
               <h3 className="font-bold text-slate-900 mb-6">
                 Évolution des Revenus (6 derniers mois)
               </h3>
@@ -1145,7 +1145,7 @@ export const Billing = () => {
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col">
+            <div className="bg-white p-6 rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col">
               <h3 className="font-bold text-slate-900 mb-6">Répartition des Dépenses</h3>
               <div className="flex-1 min-h-[250px] relative">
                 <ResponsiveContainer width="100%" height="100%">
@@ -1212,7 +1212,7 @@ export const Billing = () => {
             <select
               value={selectedPatientId}
               onChange={(e) => setSelectedPatientId(e.target.value)}
-              className="block w-full rounded-[7px] border-slate-300 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] focus:border-blue-500 focus:ring-blue-500 p-2.5 border"
+              className="block w-full rounded-[8px] border-slate-300 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] focus:border-blue-500 focus:ring-blue-500 p-2.5 border"
             >
               <option value="">Sélectionner un patient...</option>
               {MOCK_PATIENTS.map((p) => (
@@ -1245,7 +1245,7 @@ export const Billing = () => {
               </div>
             </div>
 
-            <div className="bg-slate-50 border border-slate-200 rounded-[7px] overflow-hidden">
+            <div className="bg-slate-50 border border-slate-200 rounded-[8px] overflow-hidden">
               {invoiceItems.length === 0 ? (
                 <div className="p-8 text-center text-sm text-slate-400 italic">
                   Aucun acte ajouté.
@@ -1292,7 +1292,7 @@ export const Billing = () => {
               </label>
               <input
                 type="date"
-                className="block w-full rounded-[7px] border-slate-300 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                className="block w-full rounded-[8px] border-slate-300 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] focus:border-blue-500 focus:ring-blue-500 p-2 border"
                 defaultValue={new Date().toISOString().split('T')[0]}
               />
             </div>
@@ -1300,7 +1300,7 @@ export const Billing = () => {
               <label className="block text-sm font-medium text-slate-700 mb-2">
                 {activeTab === 'quotes' ? 'Validité' : 'Échéance'}
               </label>
-              <select className="block w-full rounded-[7px] border-slate-300 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] focus:border-blue-500 focus:ring-blue-500 p-2 border">
+              <select className="block w-full rounded-[8px] border-slate-300 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] focus:border-blue-500 focus:ring-blue-500 p-2 border">
                 <option>15 jours</option>
                 <option>30 jours</option>
                 <option>60 jours</option>
@@ -1312,13 +1312,13 @@ export const Billing = () => {
           <div className="pt-6 flex gap-3 border-t border-slate-100">
             <button
               onClick={() => setIsCreateOpen(false)}
-              className="flex-1 py-2.5 border border-slate-300 rounded-[7px] text-slate-700 font-medium hover:bg-slate-50 transition-colors"
+              className="flex-1 py-2.5 border border-slate-300 rounded-[30px] text-slate-700 font-medium hover:bg-slate-50 transition-colors"
             >
               Annuler
             </button>
             <button
               onClick={() => handleCreateDocument(activeTab === 'quotes' ? 'Quote' : 'Invoice')}
-              className="flex-1 py-2.5 bg-blue-600 text-white rounded-[7px] font-medium hover:bg-blue-700 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] transition-colors flex justify-center items-center gap-2"
+              className="flex-1 py-2.5 bg-blue-600 text-white rounded-[8px] font-medium hover:bg-blue-700 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] transition-colors flex justify-center items-center gap-2"
             >
               <IconCheck className="w-4 h-4" /> Enregistrer{' '}
               {activeTab === 'quotes' ? 'le devis' : 'la facture'}

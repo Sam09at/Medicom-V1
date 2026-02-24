@@ -156,7 +156,7 @@ export const Layout: React.FC<LayoutProps> = ({
 
         <div className="p-3 border-t border-slate-100">
           <div
-            className={`flex items-center gap-3 p-2 rounded-[7px] hover:bg-slate-50 cursor-pointer ${isSidebarCollapsed ? 'justify-center' : ''}`}
+            className={`flex items-center gap-3 p-2 rounded-[30px] hover:bg-slate-50 cursor-pointer ${isSidebarCollapsed ? 'justify-center' : ''}`}
           >
             <img src={user.avatar} alt="" className="w-8 h-8 rounded-full border border-slate-200" />
             {!isSidebarCollapsed && (
@@ -177,7 +177,7 @@ export const Layout: React.FC<LayoutProps> = ({
           <div className="flex items-center gap-4 flex-1">
             <button
               onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-              className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-[7px] transition-colors"
+              className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-[30px] transition-colors"
             >
               <IconMenu className="w-5 h-5" />
             </button>
@@ -189,7 +189,7 @@ export const Layout: React.FC<LayoutProps> = ({
                 value={searchQuery}
                 onChange={handleSearch}
                 placeholder="Recherche..."
-                className="w-full pl-9 pr-4 py-1.5 text-[14px] font-medium bg-white border border-slate-100 shadow-sm rounded-[7px] focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all cursor-pointer"
+                className="w-full pl-9 pr-4 py-1.5 text-[14px] font-medium bg-white border border-slate-100 shadow-sm rounded-[30px] focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all cursor-pointer"
               />
             </div>
           </div>
@@ -212,7 +212,7 @@ export const Layout: React.FC<LayoutProps> = ({
               </button>
 
               {isNotificationsOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-white rounded-[7px] shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-1">
+                <div className="absolute right-0 mt-2 w-80 bg-white rounded-[8px] shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-1">
                   <div className="px-4 py-3 border-b border-slate-100 flex justify-between items-center bg-white">
                     <span className="text-[11px] font-bold tracking-widest text-slate-400 uppercase">
                       Notifications

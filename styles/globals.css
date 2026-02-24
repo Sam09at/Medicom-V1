@@ -7,13 +7,13 @@
   --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --font-heading: 'Aspekta', 'Inter', ui-sans-serif, system-ui, sans-serif;
 
-  /* Force the requested 7px radius for common radius classes */
-  --radius-sm: 7px;
-  --radius-md: 7px;
-  --radius-lg: 7px;
-  --radius-xl: 7px;
-  --radius-2xl: 7px;
-  --radius-3xl: 7px;
+  /* Force the requested 8px radius for common radius classes */
+  --radius-sm: 8px;
+  --radius-md: 8px;
+  --radius-lg: 8px;
+  --radius-xl: 8px;
+  --radius-2xl: 8px;
+  --radius-3xl: 8px;
 }
 
 @layer base {
@@ -70,13 +70,13 @@
 
 @layer components {
   .card {
-    @apply bg-white border border-slate-100 rounded-[7px] transition-all duration-200;
+    @apply bg-white border border-slate-100 rounded-[8px] transition-all duration-200;
     box-shadow: 0 2px 12px -4px rgba(0, 0, 0, 0.03);
     /* Subtle, elegant shadow */
   }
 
   .btn-primary {
-    @apply px-5 py-2.5 text-[0.875rem] font-medium rounded-[7px] bg-[#0F0F0F] text-white hover:bg-black transition-all flex items-center justify-center gap-2;
+    @apply px-5 py-2.5 text-[0.875rem] font-medium rounded-[8px] bg-[#0F0F0F] text-white hover:bg-black transition-all flex items-center justify-center gap-2;
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.1),
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -92,7 +92,7 @@
   }
 
   .input {
-    @apply w-full text-[0.875rem] font-medium rounded-[7px] px-4 py-2.5 bg-white border border-slate-200 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all;
+    @apply w-full text-[0.875rem] font-medium rounded-[8px] px-4 py-2.5 bg-white border border-slate-200 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
   }
 

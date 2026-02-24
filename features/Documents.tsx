@@ -217,7 +217,7 @@ export const Documents = () => {
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
             onClick={() => setIsUploadModalOpen(false)}
           ></div>
-          <div className="bg-white rounded-[7px] shadow-xl w-full max-w-md relative z-10 p-6 space-y-6 animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-[8px] shadow-xl w-full max-w-md relative z-10 p-6 space-y-6 animate-in fade-in zoom-in-95 duration-200">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-bold text-slate-900">Importer un document</h3>
               <button onClick={() => setIsUploadModalOpen(false)}>
@@ -230,7 +230,7 @@ export const Documents = () => {
               <div
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleFileDrop}
-                className={`border-2 border-dashed rounded-[7px] p-8 text-center transition-colors ${uploadData.file ? 'border-green-300 bg-green-50' : 'border-slate-300 hover:border-blue-400 hover:bg-slate-50'}`}
+                className={`border-2 border-dashed rounded-[30px] p-8 text-center transition-colors ${uploadData.file ? 'border-green-300 bg-green-50' : 'border-slate-300 hover:border-blue-400 hover:bg-slate-50'}`}
               >
                 {uploadData.file ? (
                   <div>
@@ -266,7 +266,7 @@ export const Documents = () => {
                 </label>
                 <select
                   required
-                  className="w-full border-slate-300 rounded-[7px] p-2.5 text-sm border focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+                  className="w-full border-slate-300 rounded-[8px] p-2.5 text-sm border focus:ring-2 focus:ring-blue-500 outline-none bg-white"
                   value={uploadData.patientId}
                   onChange={(e) => setUploadData({ ...uploadData, patientId: e.target.value })}
                 >
@@ -300,7 +300,7 @@ export const Documents = () => {
               <button
                 type="submit"
                 disabled={!uploadData.file}
-                className="w-full py-2.5 bg-blue-600 text-white rounded-[7px] font-medium hover:bg-blue-700 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full py-2.5 bg-blue-600 text-white rounded-[8px] font-medium hover:bg-blue-700 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Importer le fichier
               </button>
@@ -320,7 +320,7 @@ export const Documents = () => {
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Patient</label>
             <select
-              className="w-full border-slate-300 rounded-[7px] p-2 text-sm border bg-white"
+              className="w-full border-slate-300 rounded-[8px] p-2 text-sm border bg-white"
               value={genData.patientId}
               onChange={(e) => handleTemplateChange(genData.template, e.target.value)}
             >
@@ -340,7 +340,7 @@ export const Documents = () => {
                 <button
                   key={tmpl}
                   onClick={() => handleTemplateChange(tmpl, genData.patientId)}
-                  className={`text-left px-3 py-2 rounded-[7px] text-sm border transition-colors ${genData.template === tmpl ? 'bg-blue-50 border-blue-200 text-blue-700 font-medium' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+                  className={`text-left px-3 py-2 rounded-[30px] text-sm border transition-colors ${genData.template === tmpl ? 'bg-blue-50 border-blue-200 text-blue-700 font-medium' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
                 >
                   {tmpl}
                 </button>
@@ -352,7 +352,7 @@ export const Documents = () => {
             <label className="block text-sm font-medium text-slate-700 mb-1">Aperçu & Édition</label>
             <textarea
               rows={8}
-              className="w-full border-slate-300 rounded-[7px] p-3 text-sm border font-mono bg-slate-50 focus:bg-white transition-colors"
+              className="w-full border-slate-300 rounded-[8px] p-3 text-sm border font-mono bg-slate-50 focus:bg-white transition-colors"
               value={genData.content}
               onChange={(e) => setGenData({ ...genData, content: e.target.value })}
             />
@@ -361,13 +361,13 @@ export const Documents = () => {
           <div className="pt-4 flex gap-3">
             <button
               onClick={() => setIsGeneratorOpen(false)}
-              className="flex-1 py-2 text-sm font-medium text-slate-700 border border-slate-300 rounded-[7px] hover:bg-slate-50"
+              className="flex-1 py-2 text-sm font-medium text-slate-700 border border-slate-300 rounded-[30px] hover:bg-slate-50"
             >
               Annuler
             </button>
             <button
               onClick={handleGenerate}
-              className="flex-1 py-2 text-sm font-medium text-white bg-blue-600 rounded-[7px] hover:bg-blue-700 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex justify-center items-center gap-2"
+              className="flex-1 py-2 text-sm font-medium text-white bg-blue-600 rounded-[8px] hover:bg-blue-700 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex justify-center items-center gap-2"
             >
               <IconCheck className="w-4 h-4" /> Générer & Enregistrer
             </button>
@@ -385,14 +385,14 @@ export const Documents = () => {
         <div className="flex gap-2">
           <button
             onClick={() => setIsGeneratorOpen(true)}
-            className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-[7px] text-sm font-medium transition-colors shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+            className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-[30px] text-sm font-medium transition-colors shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
           >
             <IconWand className="w-4 h-4" />
             Nouveau Document
           </button>
           <button
             onClick={() => setIsUploadModalOpen(true)}
-            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-[7px] text-sm font-medium transition-colors shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-[8px] text-sm font-medium transition-colors shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
           >
             <IconCloudUpload className="w-4 h-4" />
             Uploader
@@ -401,7 +401,7 @@ export const Documents = () => {
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-white p-3 rounded-[7px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="bg-white p-3 rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="relative flex-1 w-full sm:max-w-md">
           <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
@@ -409,7 +409,7 @@ export const Documents = () => {
             placeholder="Rechercher par nom de patient ou fichier..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-[7px] focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-[8px] focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
         <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto">
@@ -431,7 +431,7 @@ export const Documents = () => {
 
       {/* Documents Grid */}
       {filteredDocs.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-64 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[7px]">
+        <div className="flex flex-col items-center justify-center h-64 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[8px]">
           <IconFolder className="w-12 h-12 text-slate-300 mb-3" />
           <p className="text-slate-500 font-medium">Aucun document trouvé</p>
           <p className="text-xs text-slate-400">
@@ -445,7 +445,7 @@ export const Documents = () => {
             return (
               <div
                 key={doc.id}
-                className="group bg-white rounded-[7px] border border-slate-200 hover:border-blue-300 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] hover:shadow-md transition-all flex flex-col overflow-hidden"
+                className="group bg-white rounded-[8px] border border-slate-200 hover:border-blue-300 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] hover:shadow-md transition-all flex flex-col overflow-hidden"
               >
                 <div className="aspect-[4/3] bg-slate-50 flex items-center justify-center border-b border-slate-100 relative">
                   {getIconForCategory(doc.category)}

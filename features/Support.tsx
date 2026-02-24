@@ -215,7 +215,7 @@ const UserSupport = ({ user }: { user: User }) => {
 
   if (view === 'new') {
     return (
-      <div className="max-w-2xl mx-auto bg-white rounded-md border border-gray-200 shadow-sm p-8 font-sans">
+      <div className="max-w-2xl mx-auto bg-white rounded-[8px] border border-gray-200 shadow-sm p-8 font-sans">
         <button
           onClick={() => setView('list')}
           className="flex items-center text-sm text-gray-500 hover:text-gray-900 mb-6 transition-colors"
@@ -235,7 +235,7 @@ const UserSupport = ({ user }: { user: User }) => {
               value={newSubject}
               onChange={(e) => setNewSubject(e.target.value)}
               placeholder="Ex: Problème d'impression..."
-              className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 border"
+              className="w-full border-gray-300 rounded-[8px] shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 border"
             />
           </div>
 
@@ -245,7 +245,7 @@ const UserSupport = ({ user }: { user: User }) => {
               <select
                 value={newCategory}
                 onChange={(e) => setNewCategory(e.target.value)}
-                className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 border"
+                className="w-full border-gray-300 rounded-[8px] shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 border"
               >
                 <option value="Technical">Technique</option>
                 <option value="Billing">Facturation</option>
@@ -258,7 +258,7 @@ const UserSupport = ({ user }: { user: User }) => {
               <select
                 value={newPriority}
                 onChange={(e) => setNewPriority(e.target.value)}
-                className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 border"
+                className="w-full border-gray-300 rounded-[8px] shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 border"
               >
                 <option value="Low">Basse (Information)</option>
                 <option value="Normal">Normale (Gênant)</option>
@@ -277,21 +277,21 @@ const UserSupport = ({ user }: { user: User }) => {
               value={newDesc}
               onChange={(e) => setNewDesc(e.target.value)}
               placeholder="Décrivez les étapes pour reproduire le problème..."
-              className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-3 border"
+              className="w-full border-gray-300 rounded-[8px] shadow-sm focus:border-blue-500 focus:ring-blue-500 p-3 border"
             />
           </div>
 
           <div className="pt-4 flex items-center justify-end gap-3">
             <button
               onClick={() => setView('list')}
-              className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-300 rounded-md transition-colors"
+              className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-300 rounded-[8px] transition-colors"
             >
               Annuler
             </button>
             <button
               onClick={handleCreateTicket}
               disabled={!newSubject || !newDesc}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-[8px] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Envoyer le ticket
             </button>
@@ -303,7 +303,7 @@ const UserSupport = ({ user }: { user: User }) => {
 
   if (view === 'detail' && activeTicket) {
     return (
-      <div className="flex flex-col h-[calc(100vh-140px)] bg-white rounded-md border border-gray-200 shadow-sm overflow-hidden font-sans">
+      <div className="flex flex-col h-[calc(100vh-140px)] bg-white rounded-[8px] border border-gray-200 shadow-sm overflow-hidden font-sans">
         <div className="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-gray-50/50">
           <div className="flex items-center gap-4">
             <button
@@ -334,7 +334,7 @@ const UserSupport = ({ user }: { user: User }) => {
                   alt=""
                 />
                 <div
-                  className={`max-w-[70%] ${msg.senderId === user.id ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-800'} p-4 rounded-lg shadow-sm text-sm`}
+                  className={`max-w-[70%] ${msg.senderId === user.id ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-800'} p-4 rounded-[8px] shadow-sm text-sm`}
                 >
                   <div
                     className={`font-bold text-xs mb-1 ${msg.senderId === user.id ? 'text-blue-100' : 'text-gray-500'}`}
@@ -379,7 +379,7 @@ const UserSupport = ({ user }: { user: User }) => {
         </div>
         <button
           onClick={() => setView('new')}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium shadow-sm transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-[8px] text-sm font-medium shadow-sm transition-colors"
         >
           <IconPlus className="w-4 h-4" /> Nouveau Ticket
         </button>
@@ -388,7 +388,7 @@ const UserSupport = ({ user }: { user: User }) => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
           {tickets.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-md border border-gray-200 border-dashed">
+            <div className="text-center py-12 bg-white rounded-[8px] border border-gray-200 border-dashed">
               <IconTicket className="w-12 h-12 text-gray-300 mx-auto mb-3" />
               <h3 className="text-lg font-medium text-gray-900">Aucun ticket</h3>
               <p className="text-gray-500">Vous n'avez pas encore de demande de support.</p>
@@ -401,7 +401,7 @@ const UserSupport = ({ user }: { user: User }) => {
                   setActiveTicket(ticket);
                   setView('detail');
                 }}
-                className="bg-white p-4 rounded-md border border-gray-200 hover:border-blue-300 hover:shadow-md cursor-pointer transition-all group"
+                className="bg-white p-4 rounded-[8px] border border-gray-200 hover:border-blue-300 hover:shadow-md cursor-pointer transition-all group"
               >
                 <div className="flex justify-between items-start mb-2">
                   <div className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">
@@ -426,7 +426,7 @@ const UserSupport = ({ user }: { user: User }) => {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-md p-6 text-white shadow-md">
+          <div className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-[8px] p-6 text-white shadow-md">
             <h3 className="font-bold text-lg mb-2">Besoin d'une réponse rapide ?</h3>
             <p className="text-indigo-100 text-sm mb-4">
               Notre base de connaissances contient des guides détaillés pour la plupart des
@@ -442,7 +442,7 @@ const UserSupport = ({ user }: { user: User }) => {
             </div>
           </div>
 
-          <div className="bg-white rounded-md border border-gray-200 p-5 shadow-sm">
+          <div className="bg-white rounded-[8px] border border-gray-200 p-5 shadow-sm">
             <h3 className="font-bold text-gray-900 mb-4 text-sm uppercase tracking-wide">
               Articles populaires
             </h3>
