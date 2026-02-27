@@ -1,5 +1,5 @@
-
 import React, { useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { IconX } from './Icons';
 
 interface SlideOverProps {
@@ -8,18 +8,27 @@ interface SlideOverProps {
   title: string;
   subtitle?: string;
   children: React.ReactNode;
+  footer?: React.ReactNode;
   width?: 'md' | 'lg' | 'xl' | '2xl' | 'full';
 }
 
 const WIDTH_CLASSES = {
-  'md': 'max-w-md',
-  'lg': 'max-w-lg',
-  'xl': 'max-w-xl',
+  md: 'max-w-md',
+  lg: 'max-w-lg',
+  xl: 'max-w-xl',
   '2xl': 'max-w-2xl',
-  'full': 'max-w-full'
+  full: 'max-w-full',
 };
 
-export const SlideOver: React.FC<SlideOverProps> = ({ isOpen, onClose, title, subtitle, children, width = 'lg' }) => {
+export const SlideOver: React.FC<SlideOverProps> = ({
+  isOpen,
+  onClose,
+  title,
+  subtitle,
+  children,
+  footer,
+  width = '2xl',
+}) => {
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -45,36 +54,62 @@ export const SlideOver: React.FC<SlideOverProps> = ({ isOpen, onClose, title, su
   };
 
   return (
-    <div 
-      className={`fixed inset-0 z-50 overflow-hidden transition-opacity duration-300 ${isOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'}`}
-    >
-      <div 
-        ref={overlayRef}
-        className="absolute inset-0 bg-slate-900/30 backdrop-blur-sm"
-        onClick={handleBackdropClick}
-      />
-      
-      <div className={`absolute inset-y-0 right-0 flex pl-10 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        <div className={`w-screen ${WIDTH_CLASSES[width]} bg-white shadow-2xl flex flex-col h-full border-l border-slate-200`}>
-          <div className="px-6 py-4 border-b border-slate-200 flex items-start justify-between bg-slate-50/50 sticky top-0 z-10">
-            <div>
-              <h2 className="text-lg font-semibold text-slate-900 leading-6">{title}</h2>
-              {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}
-            </div>
-            <button 
-              onClick={onClose}
-              className="rounded-md bg-white text-slate-400 hover:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 p-1 border border-slate-200 hover:bg-slate-50 transition-colors"
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-50 overflow-hidden">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            ref={overlayRef}
+            className="absolute inset-0 bg-black/20"
+            onClick={handleBackdropClick}
+          />
+
+          <motion.div
+            initial={{ x: '100%', opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: '100%', opacity: 0 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            className={`absolute inset-y-0 right-0 flex max-w-full`}
+          >
+            <div
+              className={`w-screen ${WIDTH_CLASSES[width]} bg-white shadow-[-2px_0_16px_rgba(0,0,0,0.06)] flex flex-col h-full border-l border-gray-100`}
             >
-              <span className="sr-only">Close panel</span>
-              <IconX className="h-5 w-5" />
-            </button>
-          </div>
-          
-          <div className="flex-1 overflow-y-auto bg-white">
-            {children}
-          </div>
+              <header className="h-14 px-5 border-b border-gray-100 sticky top-0 bg-white/80 backdrop-blur-sm flex items-center justify-between shrink-0">
+                <div>
+                  <h2 className="text-sm font-semibold text-gray-900 leading-tight tracking-tight">
+                    {title}
+                  </h2>
+                  {subtitle && (
+                    <p className="text-[11px] text-gray-500 font-medium leading-none mt-0.5">
+                      {subtitle}
+                    </p>
+                  )}
+                </div>
+                <button
+                  onClick={onClose}
+                  className="text-gray-400 hover:text-gray-600 focus:outline-none p-1 transition-colors rounded hover:bg-gray-50 -mr-1"
+                >
+                  <span className="sr-only">Close panel</span>
+                  <IconX className="h-4 w-4" />
+                </button>
+              </header>
+
+              <div className="flex-1 overflow-y-auto px-5 py-4 bg-white scrollbar-hide">
+                {children}
+              </div>
+
+              {footer && (
+                <div className="px-5 py-4 border-t border-gray-100 flex justify-end gap-2 shrink-0 bg-white">
+                  {footer}
+                </div>
+              )}
+            </div>
+          </motion.div>
         </div>
-      </div>
-    </div>
+      )}
+    </AnimatePresence>
   );
 };

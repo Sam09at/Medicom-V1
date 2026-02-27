@@ -1,0 +1,42 @@
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Hide everything by default */
+  body > *:not(.print-container) {
+    display: none !important;
+  }
+
+  /* Show only the print container */
+  .print-container {
+    display: block !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 210mm;
+    height: 297mm;
+    background: white;
+    z-index: 9999;
+  }
+
+  /* Reset some Tailwind utilities that might interfere */
+  .print-reset {
+    background-color: white !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Hide print container on screen */
+.print-container {
+  display: none;
+}

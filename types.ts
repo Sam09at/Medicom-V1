@@ -1,5 +1,16 @@
+export type UserRole = 'super_admin' | 'clinic_admin' | 'doctor' | 'staff' | 'patient';
 
-export type UserRole = 'DOCTOR' | 'ASSISTANT' | 'SUPER_ADMIN';
+export interface DoctorPreferences {
+  autoStatusConsultation: boolean;
+  autoRemoveConsultation: boolean;
+  defaultCalendarView?: 'day' | 'week' | 'month';
+  defaultSlotDuration?: number;
+  favorites?: {
+    acts?: string[]; // Array of act/service IDs
+    noteTemplates?: Array<{ id: string; title: string; content: string }>;
+  };
+  [key: string]: any;
+}
 
 export interface ModuleConfiguration {
   dashboard: boolean;
@@ -26,12 +37,15 @@ export interface User {
   email?: string;
   phone?: string;
   enabledModules?: ModuleConfiguration;
+  preferences?: DoctorPreferences;
 }
+
+export type WaitingRoomFilter = 'all' | 'my_patients';
 
 export enum AppointmentStatus {
   PENDING = 'En attente',
   CONFIRMED = 'Confirmé',
-  ARRIVED = 'En salle d\'attente',
+  ARRIVED = "En salle d'attente",
   IN_PROGRESS = 'En consultation',
   COMPLETED = 'Terminé',
   CANCELLED = 'Annulé',
@@ -59,8 +73,14 @@ export interface Patient {
   lastVisit?: string;
   email?: string;
   address?: string;
+  city?: string;
+  dateOfBirth?: string;
+  insuranceNumber?: string;
+  allergies?: string[];
+  pathologies?: string[];
   notes?: string;
   medicalHistory?: string[];
+  isActive?: boolean;
 }
 
 export interface Appointment {
@@ -97,6 +117,62 @@ export interface CabinetStats {
   revenueToday: number;
   activeTreatments: number;
   waitingRoom: number;
+}
+
+export type ToothStatus =
+  | 'Healthy'
+  | 'Caries'
+  | 'Treated'
+  | 'Missing'
+  | 'Crown'
+  | 'RootCanal'
+  | 'Implant'
+  | 'Bridge'
+  | 'ExtractionNeeded'
+  | 'Planned';
+
+export type ToothSurface = 'Mesial' | 'Distal' | 'Occlusal' | 'Lingual' | 'Vestibular';
+
+export interface ToothData {
+  status: ToothStatus;
+  surfaces: ToothSurface[];
+  notes?: string;
+}
+
+export interface TreatmentSession {
+  id: string;
+  tenantId: string;
+  treatmentPlanId: string;
+  appointmentId?: string;
+  doctorId: string;
+  serviceId?: string;
+  serviceName?: string;
+  toothNumbers: number[];
+  procedureNotes?: string;
+  status: 'Planned' | 'Completed' | 'Skipped';
+  durationMinutes: number;
+  price: number;
+  sessionDate?: string;
+  sessionOrder: number;
+}
+
+export interface TreatmentPlan {
+  id: string;
+  tenantId: string;
+  patientId: string;
+  doctorId: string;
+  title: string;
+  description?: string;
+  status: 'Draft' | 'Active' | 'Completed' | 'Cancelled';
+  totalAmount: number;
+  odontogramSnapshot?: Record<
+    number,
+    { status: ToothStatus; surfaces: ToothSurface[]; notes?: string }
+  >;
+  sessions: TreatmentSession[];
+  createdAt: string;
+  updatedAt: string;
+  patientName?: string;
 }
 
 export interface Treatment {
@@ -136,34 +212,100 @@ export interface InventoryItem {
   lastRestock: string;
 }
 
-export interface LabOrder {
+export interface LabContact {
   id: string;
-  patientName: string;
-  labName: string;
-  type: string;
-  sentDate: string;
-  dueDate: string;
-  status: 'Sent' | 'In Progress' | 'Received' | 'Fitted';
-  cost: number;
+  tenantId: string;
+  name: string;
+  contactPerson?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  notes?: string;
+  isActive: boolean;
 }
 
-export interface Expense {
+export interface LabOrder {
   id: string;
+  tenantId: string;
+  patientId: string;
+  patientName?: string; // Joined
+  labContactId?: string;
+  labName?: string; // Joined
+  doctorId?: string;
+  orderDate: string;
+  dueDate?: string;
+  status: 'Sent' | 'In Progress' | 'Received' | 'Fitted' | 'Cancelled';
+  type: string;
+  toothNumbers: string[];
+  shade?: string;
+  description?: string;
+  cost: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InvoiceItem {
+  id: string;
+  invoiceId: string;
   description: string;
-  category: 'Rent' | 'Utilities' | 'Salaries' | 'Supplies' | 'Other';
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+  toothNumber?: number;
+}
+
+export interface Payment {
+  id: string;
+  invoiceId: string;
+  patientId: string;
   amount: number;
+  method: 'Cash' | 'Card' | 'Check' | 'Transfer' | 'Insurance' | 'Other';
   date: string;
-  status: 'Paid' | 'Pending';
+  reference?: string;
+  notes?: string;
+}
+
+export interface Invoice {
+  id: string;
+  tenantId: string;
+  patientId: string;
+  patientName?: string; // Joined
+  number: string;
+  status: 'Draft' | 'Pending' | 'Paid' | 'Partial' | 'Overdue' | 'Cancelled';
+  type: string;
+  subtotal: number;
+  taxAmount: number;
+  discountAmount: number;
+  totalAmount: number;
+  paidAmount: number;
+  dueDate?: string;
+  issuedAt: string;
+  items?: InvoiceItem[];
+  payments?: Payment[]; // Joined
 }
 
 export interface Quote {
   id: string;
-  patient: string;
-  date: string;
+  tenantId: string;
+  patientId: string;
+  patientName?: string; // Joined
+  number: string;
+  status: 'Draft' | 'Sent' | 'Accepted' | 'Rejected' | 'Expired';
+  totalAmount: number;
+  validUntil?: string;
+  issuedAt: string;
+  items: any[]; // JSON
+}
+
+export interface Expense {
+  id: string;
+  tenantId: string;
+  description: string;
+  category: 'Rent' | 'Utilities' | 'Salaries' | 'Supplies' | 'Lab' | 'Equipment' | 'Other';
   amount: number;
-  status: 'Draft' | 'Sent' | 'Accepted' | 'Rejected';
-  items: string;
-  validUntil: string;
+  date: string;
+  status: 'Paid' | 'Pending';
+  receiptUrl?: string;
 }
 
 export interface Campaign {
@@ -177,42 +319,79 @@ export interface Campaign {
 }
 
 export interface Drug {
-  id: string;
   name: string;
   dosage: string;
   frequency: string;
   duration: string;
+  notes?: string;
 }
 
 export interface Prescription {
   id: string;
-  consultationId: string;
-  date: string;
+  tenantId: string;
+  consultationId?: string;
+  patientId: string;
+  doctorId: string;
   drugs: Drug[];
+  notes?: string;
+  issuedAt: string;
+  pdfUrl?: string;
 }
 
 export interface Consultation {
   id: string;
-  appointmentId: string;
+  tenantId: string;
   patientId: string;
-  date: string;
+  appointmentId?: string;
+  doctorId: string;
+  createdAt: string;
+  updatedAt: string;
+  status: 'draft' | 'completed' | 'cancelled';
+  chiefComplaint?: string;
+  examination?: string;
+  diagnosis?: string;
+  treatmentPlan?: string;
+  notes?: string;
   vitals?: {
-    bp?: string;
-    weight?: string;
-    temp?: string;
+    bpSystolic?: number;
+    bpDiastolic?: number;
+    heartRate?: number;
+    temp?: number;
+    weight?: number;
+    height?: number;
   };
-  symptoms: string;
-  diagnosis: string;
-  notes: string;
-  prescription?: Prescription;
+  invoiceId?: string;
+  // Joins
+  patientName?: string;
+  doctorName?: string;
 }
 
 export interface MedicalService {
   id: string;
+  tenantId?: string; // Optional for mocks
   name: string;
-  code: string;
+  code?: string; // Legacy support
+  category?: string;
+  durationMinutes: number;
   price: number;
-  duration: number;
+  tvaRate?: number;
+  isActive: boolean;
+}
+
+export interface Document {
+  id: string;
+  tenantId: string;
+  patientId: string;
+  uploadedBy?: string;
+  name: string;
+  filePath: string;
+  fileType: string;
+  fileSize: number;
+  category: 'prescription' | 'xray' | 'scan' | 'report' | 'id' | 'insurance' | 'other';
+  isGenerated: boolean;
+  createdAt: string;
+  url?: string; // Signed URL
+  patientName?: string;
 }
 
 export interface MedicalDocument {

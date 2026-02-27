@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-heading: 'Aspekta', 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* Force the requested 8px radius for common radius classes */
+  --radius-sm: 8px;
+  --radius-md: 8px;
+  --radius-lg: 8px;
+  --radius-xl: 8px;
+  --radius-2xl: 8px;
+  --radius-3xl: 8px;
+}
+
+@layer base {
+  @font-face {
+    font-family: 'Aspekta';
+    src: local('Aspekta'), local('Inter');
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  html {
+    font-size: 16px;
+    /* User specified body: 16px */
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: #111827;
+    background: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em;
+  }
+
+  h1 {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: 48px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  * {
+    border-color: #f1f5f9;
+    /* Very light slate-100 for linear minimalist style */
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white border border-slate-200/60 rounded-[12px] transition-all duration-200;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  }
+
+  .btn-primary {
+    @apply px-4 py-2 text-[13px] font-medium rounded-[6px] text-white flex items-center justify-center gap-2;
+    background-color: #136cfb;
+    transition: background-color 0.25s ease, opacity 0.25s ease, transform 0.2s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: #0d5ee8;
+    opacity: 0.97;
+  }
+
+  .btn-primary:active {
+    background-color: #0a4fc4;
+    transform: scale(0.985);
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 text-[13px] font-medium rounded-[6px] bg-white text-gray-700 border border-slate-200/60 hover:bg-slate-50 transition-all flex items-center justify-center gap-2;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  }
+
+  .btn-ghost {
+    @apply px-4 py-2 text-[13px] font-medium rounded-[6px] text-gray-500 hover:bg-slate-50 hover:text-gray-900 transition-all flex items-center justify-center gap-2;
+  }
+
+  .input {
+    @apply w-full text-[13px] font-medium rounded-[6px] px-3 py-2 bg-white border border-slate-200/60 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-gray-300 transition-all placeholder:font-normal;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  }
+
+  .badge {
+    @apply inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-[4px] mix-blend-multiply;
+  }
+
+  .badge-blue {
+    @apply inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-[4px] bg-blue-50 text-blue-700 border border-blue-100/50 mix-blend-multiply;
+  }
+
+  .badge-green {
+    @apply inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-[4px] bg-emerald-50 text-emerald-700 border border-emerald-100/50 mix-blend-multiply;
+  }
+
+  .badge-orange {
+    @apply inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-[4px] bg-orange-50 text-orange-700 border border-orange-100/50 mix-blend-multiply;
+  }
+
+  .badge-red {
+    @apply inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-[4px] bg-rose-50 text-rose-700 border border-rose-100/50 mix-blend-multiply;
+  }
+
+  .badge-gray {
+    @apply inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-[4px] bg-slate-50 text-slate-600 border border-slate-200/60 mix-blend-multiply;
+  }
+}
+
+/* ── Scrollbar Utilities ── */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

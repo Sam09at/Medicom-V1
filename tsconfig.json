@@ -1,29 +1,33 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "experimentalDecorators": true,
-    "useDefineForClassFields": false,
     "module": "ESNext",
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
-    "skipLibCheck": true,
-    "types": [
-      "node"
-    ],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    /* ── Strict Mode ── */
+    "strict": true,
+    "noUncheckedIndexedAccess": false /* TODO: re-enable after P3–P9 rewrites */,
+    "exactOptionalPropertyTypes": false,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    /* ── Module Resolution ── */
     "moduleResolution": "bundler",
     "isolatedModules": true,
     "moduleDetection": "force",
-    "allowJs": true,
-    "jsx": "react-jsx",
-    "paths": {
-      "@/*": [
-        "./*"
-      ]
-    },
     "allowImportingTsExtensions": true,
-    "noEmit": true
-  }
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    /* ── Paths ── */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    },
+    /* ── Output ── */
+    "skipLibCheck": true,
+    "noEmit": true,
+    /* ── Types ── */
+    "types": ["node", "vitest/globals"]
+  },
+  "include": ["**/*.ts", "**/*.tsx", "vite-env.d.ts"],
+  "exclude": ["node_modules", "node_modules_old", "dist", "src_backup"]
 }

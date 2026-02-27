@@ -1,218 +1,509 @@
-
 import React, { useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useNavigate } from 'react-router-dom';
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell,
+} from 'recharts';
 import { CabinetStats, Task } from '../types';
-import { IconClock, IconUsers, IconCheckSquare, IconSquare, IconPlus, IconTrash, IconActivity, IconArrowLeft, IconFlag, IconUserPlus, IconTrendingUp, IconTrendingDown } from '../components/Icons';
+import {
+  IconClock,
+  IconUsers,
+  IconCheckSquare,
+  IconSquare,
+  IconPlus,
+  IconTrash,
+  IconTrendingUp,
+  IconTrendingDown,
+  IconCalendar,
+  IconStethoscope,
+  IconDollarSign,
+  IconActivity,
+} from '../components/Icons';
+import { useMedicomStore } from '../store';
+import { useWaitingRoom } from '../hooks/useWaitingRoom';
 
 interface DashboardProps {
   stats: CabinetStats;
 }
 
+// ─── Data ──────────────────────────────────────────────────────────────────────
+
 const dataRevenue = [
-  { name: 'Lun', value: 4000 },
-  { name: 'Mar', value: 3000 },
-  { name: 'Mer', value: 5500 },
-  { name: 'Jeu', value: 4500 },
-  { name: 'Ven', value: 6000 },
-  { name: 'Sam', value: 2000 },
+  { name: 'Jan', current: 9800, prev: 6200 },
+  { name: 'Fév', current: 14200, prev: 8500 },
+  { name: 'Mar', current: 19400, prev: 13200 },
+  { name: 'Avr', current: 16800, prev: 15900 },
+  { name: 'Mai', current: 18600, prev: 17300 },
+  { name: 'Jui', current: 21000, prev: 14800 },
+  { name: 'Jul', current: 17500, prev: 13000 },
+  { name: 'Aoû', current: 22800, prev: 16500 },
+  { name: 'Sep', current: 24500, prev: 19800 },
+  { name: 'Oct', current: 20200, prev: 17400 },
+  { name: 'Nov', current: 26800, prev: 21000 },
+  { name: 'Déc', current: 29400, prev: 23500 },
 ];
+
+const rdvData = [
+  { label: 'Confirmés', value: 58, color: '#136cfb' },
+  { label: 'En attente', value: 18, color: '#94a3b8' },
+  { label: 'Non présentés', value: 13, color: '#e2405f' },
+  { label: 'Reportés', value: 11, color: '#f59e0b' },
+];
+const RDV_TOTAL = rdvData.reduce((s, d) => s + d.value, 0);
+
+const MOCK_SCHEDULE = [
+  { time: '09:00', name: 'Karim Benali', type: 'Détartrage', status: 'confirmed' },
+  { time: '09:45', name: 'Sara El Fassi', type: 'Consultation', status: 'waiting' },
+  { time: '10:30', name: 'Mehdi Tazi', type: 'Extraction', status: 'confirmed' },
+  { time: '11:15', name: 'Nadia Ouhabi', type: 'Blanchiment', status: 'confirmed' },
+  { time: '14:00', name: 'Amine Chraibi', type: 'Pose couronne', status: 'pending' },
+  { time: '15:00', name: 'Fatima Zahra', type: 'Orthodontie', status: 'confirmed' },
+];
+
+const STATUS_STYLE: Record<string, { label: string; color: string; pill: string }> = {
+  confirmed: { label: 'Confirmé', color: '#136cfb', pill: 'text-[#136cfb] bg-blue-50/80 border border-blue-100/60' },
+  waiting: { label: 'En attente', color: '#f59e0b', pill: 'text-amber-600 bg-amber-50/80 border border-amber-100/60' },
+  pending: { label: 'À confirmer', color: '#cbd5e1', pill: 'text-slate-400 bg-slate-50 border border-slate-200/60' },
+};
 
 const MOCK_TASKS: Task[] = [
-    { id: '1', text: 'Appeler Labo Prothèse', completed: false, priority: 'High', assignee: 'Sarah' },
-    { id: '2', text: 'Commander Anesthésique', completed: true, priority: 'Medium', assignee: 'Amina' },
-    { id: '3', text: 'Relancer facture M. Tazi', completed: false, priority: 'Low', assignee: 'Sarah' },
+  { id: '1', text: 'Appeler Labo Prothèse', completed: false, priority: 'High', assignee: 'Sarah' },
+  { id: '2', text: 'Commander Anesthésique', completed: true, priority: 'Medium', assignee: 'Amina' },
+  { id: '3', text: 'Relancer facture M. Tazi', completed: false, priority: 'Low', assignee: 'Sarah' },
 ];
 
-const StatCard = ({ label, value, trend, trendValue }: { label: string, value: string | number, trend?: 'up' | 'down' | 'neutral', trendValue?: string }) => (
-  <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-[0_2px_4px_rgba(0,0,0,0.02)] hover:border-slate-300 transition-all">
-    <div className="text-slate-500 text-xs font-semibold uppercase tracking-wide">{label}</div>
-    <div className="mt-3 flex items-end justify-between">
-      <span className="text-2xl font-bold text-slate-900 tracking-tight">{value}</span>
+// ─── Sub-components ────────────────────────────────────────────────────────────
+
+const StatCard = ({ label, value, trend, trendValue, icon: Icon, colorClass, bgClass }: any) => (
+  <div className="card p-5 flex flex-col justify-between group">
+    <div className="flex items-start justify-between mb-4">
+      <div className={`w-8 h-8 rounded-[6px] flex items-center justify-center ${bgClass} ${colorClass} transition-colors`}>
+        <Icon className="w-4 h-4" />
+      </div>
       {trend && (
-        <span className={`text-xs font-medium px-1.5 py-0.5 rounded-full flex items-center gap-1 ${
-          trend === 'up' ? 'bg-green-50 text-green-700' : 
-          trend === 'down' ? 'bg-red-50 text-red-700' : 'bg-slate-100 text-slate-600'
-        }`}>
+        <div className={`badge ${trend === 'up' ? 'badge-green' : trend === 'down' ? 'badge-red' : 'badge-gray'} gap-1 font-semibold`}>
           {trend === 'up' ? <IconTrendingUp className="w-3 h-3" /> : trend === 'down' ? <IconTrendingDown className="w-3 h-3" /> : null}
-          {trendValue}
-        </span>
+          <span>{trendValue}</span>
+        </div>
       )}
+    </div>
+    <div>
+      <div className="text-[12px] font-semibold text-slate-400 uppercase tracking-widest mb-1">{label}</div>
+      <div className="text-[26px] font-semibold tracking-tight text-slate-900 leading-none">{value}</div>
     </div>
   </div>
 );
 
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-[#136cfb] text-white rounded-[30px] px-4 py-2.5 text-[13px] font-semibold">
+        <div className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-0.5">{label}</div>
+        <div>{payload[0].value.toLocaleString('fr-FR')} MAD</div>
+      </div>
+    );
+  }
+  return null;
+};
+
+const RevenueChart = () => (
+  <div className="card p-6 h-full">
+    <div className="flex justify-between items-start mb-6">
+      <div>
+        <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight">Recettes Analytics</h3>
+        <p className="text-[12px] font-semibold text-slate-400 uppercase tracking-widest mt-0.5">Sur 12 mois</p>
+      </div>
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-full bg-[#136cfb]" />
+            <span className="text-[11px] font-semibold text-slate-500">Cette année</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-full bg-[#e2405f]" />
+            <span className="text-[11px] font-semibold text-slate-500">Passée</span>
+          </div>
+        </div>
+        <select className="text-[12px] font-semibold border border-slate-200/60 rounded-[30px] px-3 py-1.5 bg-white text-slate-700 outline-none cursor-pointer">
+          <option>Cette année</option>
+          <option>Année dernière</option>
+        </select>
+      </div>
+    </div>
+    <div className="h-[220px]">
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart data={dataRevenue} margin={{ top: 8, right: 0, left: -20, bottom: 0 }}>
+          <defs>
+            <linearGradient id="gcurrent" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#136cfb" stopOpacity={0.22} />
+              <stop offset="100%" stopColor="#136cfb" stopOpacity={0} />
+            </linearGradient>
+            <linearGradient id="gprev" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#e2405f" stopOpacity={0.12} />
+              <stop offset="100%" stopColor="#e2405f" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="#F1F5F9" />
+          <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#CBD5E1', fontSize: 11, fontWeight: 600 }} dy={10} />
+          <YAxis axisLine={false} tickLine={false} tick={{ fill: '#CBD5E1', fontSize: 11, fontWeight: 600 }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}K`} dx={-4} />
+          <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#136cfb', strokeWidth: 1, strokeDasharray: '4 4' }} />
+          <Area type="monotone" dataKey="prev" stroke="#e2405f" strokeWidth={1.5} fill="url(#gprev)" dot={false} activeDot={false} />
+          <Area type="monotone" dataKey="current" stroke="#136cfb" strokeWidth={2.5} fill="url(#gcurrent)" dot={false} activeDot={{ r: 4, fill: '#136cfb', stroke: '#fff', strokeWidth: 2 }} />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
+  </div>
+);
+
+const AppointmentStatusChart = () => (
+  <div className="card p-6 h-full">
+    <div className="flex justify-between items-start mb-6">
+      <div>
+        <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight">Statuts des RDV</h3>
+        <p className="text-[12px] font-semibold text-slate-400 uppercase tracking-widest mt-0.5">Ce mois-ci</p>
+      </div>
+      <select className="text-[12px] font-semibold border border-slate-200/60 rounded-[30px] px-3 py-1.5 bg-white text-slate-700 outline-none cursor-pointer">
+        <option>Ce mois</option>
+        <option>Semaine</option>
+        <option>Trimestre</option>
+      </select>
+    </div>
+    <div className="flex items-center gap-6">
+      <div className="relative shrink-0">
+        <PieChart width={160} height={160}>
+          <Pie data={rdvData} cx={75} cy={75} innerRadius={52} outerRadius={72} paddingAngle={3} dataKey="value" startAngle={90} endAngle={-270} strokeWidth={0}>
+            {rdvData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+          </Pie>
+        </PieChart>
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <span className="text-[20px] font-semibold text-slate-900 leading-none tracking-tight">{RDV_TOTAL}</span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Total</span>
+        </div>
+      </div>
+      <div className="flex-1 space-y-3.5">
+        {rdvData.map((d) => {
+          const pct = Math.round((d.value / RDV_TOTAL) * 100);
+          return (
+            <div key={d.label}>
+              <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: d.color }} />
+                  <span className="text-[12px] font-semibold text-slate-600">{d.label}</span>
+                </div>
+                <span className="text-[12px] font-semibold text-slate-900">{pct}%</span>
+              </div>
+              <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+                <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: d.color }} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </div>
+);
+
+const TasksWidget = ({ tasks, toggleTask, removeTask, newTaskText, setNewTaskText, addTask }: any) => (
+  <div className="card p-6 flex flex-col h-full">
+    <div className="flex items-center justify-between mb-5">
+      <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight">Tâches</h3>
+      <span className="badge badge-gray font-semibold">{tasks.filter((t: Task) => !t.completed).length} à faire</span>
+    </div>
+    <div className="space-y-1 flex-1 overflow-y-auto scrollbar-hide">
+      {tasks.map((task: Task) => (
+        <div key={task.id} className="flex items-start group p-2.5 border border-transparent hover:border-slate-200/60 hover:bg-slate-50/50 rounded-[6px] transition-all">
+          <button
+            onClick={() => toggleTask(task.id)}
+            className={`mt-0.5 mr-3 shrink-0 transition-colors ${task.completed ? 'text-[#136cfb]' : 'text-slate-300 hover:text-slate-600'}`}
+          >
+            {task.completed ? <IconCheckSquare className="w-4 h-4" /> : <IconSquare className="w-4 h-4" />}
+          </button>
+          <div className="flex-1 min-w-0 pt-0.5">
+            <p className={`text-[13px] font-semibold leading-tight truncate ${task.completed ? 'text-slate-400 line-through' : 'text-slate-800'}`}>{task.text}</p>
+            <span className="text-[10px] font-bold tracking-widest uppercase text-slate-400 mt-1 block">{task.priority}</span>
+          </div>
+          <button onClick={() => removeTask(task.id)} className="text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity p-1">
+            <IconTrash className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      ))}
+    </div>
+    <form onSubmit={addTask} className="relative mt-4 pt-4 border-t border-slate-100">
+      <input
+        type="text"
+        placeholder="Ajouter une tâche..."
+        value={newTaskText}
+        onChange={(e) => setNewTaskText(e.target.value)}
+        className="input pr-10"
+      />
+      <button type="submit" className="absolute right-3 top-1/2 mt-2 -translate-y-1/2 text-slate-400 hover:text-[#136cfb] transition-colors">
+        <IconPlus className="w-4 h-4" />
+      </button>
+    </form>
+  </div>
+);
+
+const WaitingRoomWidget = ({ isDoctor, waitingPatients, waitingRoom, navigate }: any) => {
+  const count = isDoctor ? waitingPatients.length : waitingRoom;
+  return (
+    <div className="card p-6 h-full">
+      <div className="flex items-center justify-between mb-5">
+        <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight">Salle d'Attente</h3>
+        <span className="badge-blue font-semibold">{count} patient{count !== 1 ? 's' : ''}</span>
+      </div>
+      {count > 0 ? (
+        <div className="space-y-2">
+          {isDoctor ? (
+            waitingPatients.slice(0, 5).map((p: any) => (
+              <div
+                key={p.id}
+                onClick={() => navigate(`/app/consultation/${p.id}`)}
+                className="flex items-center justify-between p-3 rounded-[8px] border border-slate-100 hover:border-slate-200 hover:bg-slate-50/50 transition-all cursor-pointer group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-[6px] bg-blue-50 text-[#136cfb] flex items-center justify-center font-bold text-[11px]">
+                    {p.patientName?.substring(0, 2).toUpperCase() ?? 'PT'}
+                  </div>
+                  <div>
+                    <div className="text-[13px] font-semibold text-slate-900">{p.patientName}</div>
+                    <div className="text-[11px] font-semibold text-slate-400">{p.type}</div>
+                  </div>
+                </div>
+                <IconClock className="w-4 h-4 text-slate-300 group-hover:text-[#136cfb] transition-colors" />
+              </div>
+            ))
+          ) : (
+            <div className="flex items-center justify-between p-3 rounded-[8px] border border-slate-100">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-[6px] bg-blue-50 text-[#136cfb] flex items-center justify-center font-bold text-[11px]">KB</div>
+                <div>
+                  <div className="text-[13px] font-semibold text-slate-900">Karim Benali</div>
+                  <div className="text-[11px] font-semibold text-slate-400">Attente : 15 min</div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="flex-1 flex flex-col items-center justify-center py-10 bg-slate-50/50 rounded-[8px] border border-dashed border-slate-200">
+          <IconUsers className="w-5 h-5 mb-2 text-slate-300" />
+          <div className="text-[12px] font-semibold text-slate-400">Aucun patient en attente</div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─── Main Component ────────────────────────────────────────────────────────────
+
 export const Dashboard: React.FC<DashboardProps> = ({ stats }) => {
+  const navigate = useNavigate();
+  const { currentUser } = useMedicomStore();
+  const { waitingPatients } = useWaitingRoom();
   const [tasks, setTasks] = useState<Task[]>(MOCK_TASKS);
   const [newTaskText, setNewTaskText] = useState('');
-  
-  const toggleTask = (id: string) => {
-      setTasks(tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
-  };
 
+  const isDoctor = currentUser?.role === 'doctor';
+
+  const toggleTask = (id: string) => setTasks(tasks.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t)));
+  const removeTask = (id: string) => setTasks(tasks.filter((t) => t.id !== id));
   const addTask = (e: React.FormEvent) => {
-      e.preventDefault();
-      if (!newTaskText.trim()) return;
-      setTasks([...tasks, { 
-          id: Date.now().toString(), 
-          text: newTaskText, 
-          completed: false,
-          priority: 'Medium',
-          assignee: 'Me'
-      }]);
-      setNewTaskText('');
-  };
-
-  const removeTask = (id: string) => {
-      setTasks(tasks.filter(t => t.id !== id));
+    e.preventDefault();
+    if (!newTaskText.trim()) return;
+    setTasks([...tasks, { id: Date.now().toString(), text: newTaskText, completed: false, priority: 'Medium', assignee: 'Me' }]);
+    setNewTaskText('');
   };
 
   return (
-    <div className="space-y-8 font-sans animate-in fade-in duration-500">
-      
-      {/* Welcome Section */}
-      <div className="flex items-center justify-between">
-          <div>
-              <h2 className="text-xl font-bold text-slate-900">Bonjour, Dr. Amina</h2>
-              <p className="text-slate-500 text-sm mt-1">Voici ce qui se passe aujourd'hui au cabinet.</p>
-          </div>
-          <div className="flex gap-3">
-              <span className="text-xs font-medium bg-white border border-slate-200 px-3 py-1.5 rounded-md shadow-sm text-slate-600">
-                  {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
-              </span>
-          </div>
+    <div className="space-y-6 font-sans animate-in fade-in duration-150 pb-10">
+
+      {/* ── Header ─────────────────────────────────────────────────────── */}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-[22px] font-semibold tracking-tight text-slate-900 leading-tight">
+            Bonjour{isDoctor ? ', Dr. ' : ', '}{(currentUser?.name || 'Amina').replace(/^Dr\.?\s*/i, '')} 👋
+          </h2>
+          <p className="text-[13px] font-semibold text-slate-400 mt-1 uppercase tracking-widest">
+            {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
+          </p>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="flex items-center gap-3 flex-wrap justify-end">
+          {isDoctor ? (
+            <>
+              <button onClick={() => navigate('/app/waiting-room')} className="btn-secondary !rounded-[30px] !px-5 !py-2.5 gap-2">
+                <IconUsers className="w-4 h-4" /> Salle d'attente
+              </button>
+              <button onClick={() => navigate('/app/calendar')} className="btn-secondary !rounded-[30px] !px-5 !py-2.5 gap-2">
+                <IconCalendar className="w-4 h-4" /> Calendrier
+              </button>
+              <button onClick={() => navigate('/app/calendar')} className="btn-primary !rounded-[30px] !px-5 !py-2.5 gap-2">
+                <IconPlus className="w-4 h-4" /> Nouvelle Consultation
+              </button>
+            </>
+          ) : (
+            <>
+              <button onClick={() => navigate('/app/calendar')} className="btn-secondary !rounded-[30px] !px-5 !py-2.5 gap-2">
+                <IconCalendar className="w-4 h-4" /> Calendrier
+              </button>
+              <button onClick={() => navigate('/app/patients')} className="btn-secondary !rounded-[30px] !px-5 !py-2.5 gap-2">
+                <IconStethoscope className="w-4 h-4" /> Patients
+              </button>
+              <button onClick={() => navigate('/app/waiting-room')} className="btn-primary !rounded-[30px] !px-5 !py-2.5 gap-2">
+                <IconPlus className="w-4 h-4" /> Nouveau RDV
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard 
-          label="RDV Aujourd'hui" 
-          value={stats.appointmentsToday} 
-          trend="up" 
-          trendValue="+12%" 
-        />
-        <StatCard 
-          label="Salle d'Attente" 
-          value={stats.waitingRoom} 
-          trend="neutral" 
-          trendValue="Actifs" 
-        />
-        <StatCard 
-          label="Recettes (MAD)" 
-          value={stats.revenueToday.toLocaleString('fr-MA')} 
-          trend="up" 
-          trendValue="+5%" 
-        />
-        <StatCard 
-          label="Traitements Actifs" 
-          value={stats.activeTreatments} 
-          trend="neutral" 
-          trendValue="Stable" 
-        />
+      {/* ── KPI Cards ──────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {isDoctor ? (
+          <>
+            <StatCard label="RDV Aujourd'hui" value={stats.appointmentsToday} trend="up" trendValue="+2 vs hier" icon={IconCalendar} bgClass="bg-blue-50" colorClass="text-[#136cfb]" />
+            <StatCard label="Patients en salle" value={waitingPatients.length} trend="neutral" trendValue="En attente" icon={IconUsers} bgClass="bg-amber-50" colorClass="text-amber-600" />
+            <StatCard label="Prochains RDV" value={stats.pendingConfirmations} trend="neutral" trendValue="À confirmer" icon={IconClock} bgClass="bg-sky-50" colorClass="text-sky-600" />
+            <StatCard label="Tâches" value={`${tasks.filter(t => t.completed).length}/${tasks.length}`} trend="up" trendValue="Complétées" icon={IconCheckSquare} bgClass="bg-emerald-50" colorClass="text-emerald-600" />
+          </>
+        ) : (
+          <>
+            <StatCard label="RDV Aujourd'hui" value={stats.appointmentsToday} trend="up" trendValue="+12%" icon={IconCalendar} bgClass="bg-blue-50" colorClass="text-[#136cfb]" />
+            <StatCard label="Salle d'Attente" value={stats.waitingRoom} trend="neutral" trendValue="Actifs" icon={IconUsers} bgClass="bg-amber-50" colorClass="text-amber-600" />
+            <StatCard label="Recettes du jour" value={`${stats.revenueToday.toLocaleString('fr-MA')} MAD`} trend="up" trendValue="+5%" icon={IconDollarSign} bgClass="bg-emerald-50" colorClass="text-emerald-600" />
+            <StatCard label="Traitements Actifs" value={stats.activeTreatments} trend="neutral" trendValue="Stable" icon={IconActivity} bgClass="bg-violet-50" colorClass="text-violet-600" />
+          </>
+        )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Chart Section */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
-          <div className="flex justify-between items-center mb-6">
-            <div>
-                <h3 className="text-base font-bold text-slate-900">Recettes Hebdomadaires</h3>
-                <p className="text-xs text-slate-500">Comparatif sur 7 jours</p>
-            </div>
-            <select className="text-xs border border-slate-200 rounded-md px-2 py-1 bg-slate-50 text-slate-700 outline-none focus:ring-1 focus:ring-blue-500">
-                <option>Cette semaine</option>
-                <option>Semaine dernière</option>
-            </select>
-          </div>
-          <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={dataRevenue} barSize={32}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
-                <Tooltip 
-                  cursor={{fill: '#f8fafc'}} 
-                  contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'}} 
+      {/* ══ DOCTOR LAYOUT ═══════════════════════════════════════════════════ */}
+      {isDoctor && (
+        <>
+          {/* Row 1 — Today's Schedule (primary) + Waiting Room */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Schedule — main panel */}
+            <div className="lg:col-span-2 card p-6">
+              {/* Header */}
+              <div className="flex items-start justify-between mb-1">
+                <div>
+                  <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight">Programme du jour</h3>
+                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
+                    {MOCK_SCHEDULE.filter(a => a.status === 'confirmed').length} confirmés · {MOCK_SCHEDULE.length} au total
+                  </p>
+                </div>
+                <button onClick={() => navigate('/app/calendar')} className="btn-secondary !rounded-[30px] !px-4 !py-1.5 text-[12px] gap-1.5">
+                  <IconCalendar className="w-3.5 h-3.5" /> Voir calendrier
+                </button>
+              </div>
+              {/* Micro progress bar */}
+              <div className="h-[2px] w-full bg-slate-100 rounded-full overflow-hidden mb-5 mt-3">
+                <div
+                  className="h-full rounded-full bg-[#136cfb] transition-all duration-700"
+                  style={{ width: `${(MOCK_SCHEDULE.filter(a => a.status === 'confirmed').length / MOCK_SCHEDULE.length) * 100}%` }}
                 />
-                <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+              </div>
+              {/* Schedule list — linear style */}
+              <div>
+                {MOCK_SCHEDULE.map((appt, i) => {
+                  const s = STATUS_STYLE[appt.status] ?? STATUS_STYLE.pending;
+                  const initials = appt.name.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase();
+                  const isLast = i === MOCK_SCHEDULE.length - 1;
+                  return (
+                    <div
+                      key={i}
+                      className={`flex items-center gap-5 py-3.5 px-1 transition-colors cursor-pointer group hover:bg-slate-50/60 rounded-[4px] ${!isLast ? 'border-b border-slate-100/80' : ''}`}
+                    >
+                      {/* Time */}
+                      <span className="w-11 shrink-0 text-[12px] font-bold text-slate-400 tabular-nums tracking-tight">
+                        {appt.time}
+                      </span>
+
+                      {/* Thin accent bar */}
+                      <div
+                        className="w-[3px] h-7 rounded-full shrink-0"
+                        style={{ backgroundColor: s.color, opacity: 0.85 }}
+                      />
+
+                      {/* Avatar */}
+                      <div
+                        className="w-7 h-7 rounded-full shrink-0 flex items-center justify-center text-[10px] font-bold"
+                        style={{ backgroundColor: `${s.color}18`, color: s.color }}
+                      >
+                        {initials}
+                      </div>
+
+                      {/* Name + type */}
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[13.5px] font-semibold text-slate-800 leading-tight group-hover:text-slate-900 transition-colors">
+                          {appt.name}
+                        </div>
+                        <div className="text-[11.5px] font-medium text-slate-400 mt-0.5">{appt.type}</div>
+                      </div>
+
+                      {/* Status — minimal pill */}
+                      <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-[30px] shrink-0 ${s.pill}`}>
+                        {s.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Waiting Room */}
+            <WaitingRoomWidget isDoctor={isDoctor} waitingPatients={waitingPatients} waitingRoom={stats.waitingRoom} navigate={navigate} />
           </div>
-        </div>
 
-        {/* Activity & Tasks Column */}
-        <div className="space-y-6">
-            {/* Waiting Room Widget */}
-            <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
-                <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                        <IconClock className="w-4 h-4 text-blue-500" /> Salle d'Attente
-                    </h3>
-                    <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full font-bold">{stats.waitingRoom}</span>
-                </div>
-                {stats.waitingRoom > 0 ? (
-                    <div className="space-y-3">
-                        <div className="flex items-center justify-between p-3 bg-slate-50 rounded border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer group">
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">KB</div>
-                                <div>
-                                    <div className="text-sm font-bold text-slate-900 group-hover:text-blue-600">Karim Benali</div>
-                                    <div className="text-xs text-orange-600 font-medium">Attente: 15 min</div>
-                                </div>
-                            </div>
-                            <button className="text-xs bg-white border border-slate-200 px-2 py-1 rounded hover:bg-blue-50 hover:text-blue-600 transition-colors">Appeler</button>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="py-8 flex flex-col items-center justify-center text-slate-400 text-sm text-center">
-                        <IconUsers className="w-8 h-8 mb-2 opacity-20" />
-                        <div>Aucun patient en attente</div>
-                    </div>
-                )}
+          {/* Row 2 — Revenue Chart + RDV Status + Tasks */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-1"><RevenueChart /></div>
+            <div className="lg:col-span-1"><AppointmentStatusChart /></div>
+            <div className="lg:col-span-1">
+              <TasksWidget tasks={tasks} toggleTask={toggleTask} removeTask={removeTask} newTaskText={newTaskText} setNewTaskText={setNewTaskText} addTask={addTask} />
             </div>
+          </div>
+        </>
+      )}
 
-            {/* Task Widget */}
-            <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm flex flex-col h-[340px]">
-                <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    <IconCheckSquare className="w-4 h-4 text-emerald-500" /> Tâches
-                </h3>
-                
-                <div className="space-y-1 mb-4 flex-1 overflow-y-auto pr-1">
-                    {tasks.map(task => (
-                        <div key={task.id} className="flex items-start group p-2 hover:bg-slate-50 rounded transition-colors">
-                            <button onClick={() => toggleTask(task.id)} className={`mt-0.5 mr-3 ${task.completed ? 'text-emerald-500' : 'text-slate-300 hover:text-blue-500'}`}>
-                                {task.completed ? <IconCheckSquare className="w-4 h-4" /> : <IconSquare className="w-4 h-4" />}
-                            </button>
-                            <div className="flex-1 min-w-0">
-                                <p className={`text-sm truncate ${task.completed ? 'text-slate-400 line-through' : 'text-slate-700'}`}>{task.text}</p>
-                                <div className="flex items-center gap-2 mt-1">
-                                    <span className={`text-[10px] px-1.5 rounded-full ${
-                                        task.priority === 'High' ? 'bg-red-50 text-red-600' : 
-                                        task.priority === 'Medium' ? 'bg-orange-50 text-orange-600' : 'bg-slate-100 text-slate-500'
-                                    }`}>{task.priority}</span>
-                                </div>
-                            </div>
-                            <button onClick={() => removeTask(task.id)} className="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <IconTrash className="w-3.5 h-3.5" />
-                            </button>
-                        </div>
-                    ))}
+      {/* ══ STAFF / CABINET ADMIN LAYOUT ════════════════════════════════════ */}
+      {!isDoctor && (
+        <>
+          {/* Row 1 — Revenue chart (primary) + Appointment status */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2"><RevenueChart /></div>
+            <div className="lg:col-span-1"><AppointmentStatusChart /></div>
+          </div>
+
+          {/* Row 2 — KPI insight cards */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {[
+              { label: 'Non présentés', value: '13', sub: 'ce mois', color: '#e2405f', bg: 'bg-rose-50' },
+              { label: 'Reportés', value: '11', sub: 'ce mois', color: '#f59e0b', bg: 'bg-amber-50' },
+              { label: 'Taux de présence', value: '87%', sub: 'objectif 90%', color: '#136cfb', bg: 'bg-blue-50' },
+              { label: 'RDV confirmés', value: '58', sub: 'ce mois', color: '#10b981', bg: 'bg-emerald-50' },
+              { label: 'Annulés', value: '4', sub: 'ce mois', color: '#8b5cf6', bg: 'bg-violet-50' },
+              { label: 'Liste d\'attente', value: '7', sub: 'patients', color: '#94a3b8', bg: 'bg-slate-50' },
+            ].map((item) => (
+              <div key={item.label} className="card p-4 flex flex-col gap-2">
+                <div className={`w-7 h-7 rounded-[6px] ${item.bg} flex items-center justify-center`}>
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
                 </div>
+                <div className="text-[22px] font-semibold tracking-tight text-slate-900 leading-none mt-1">{item.value}</div>
+                <div className="text-[12px] font-semibold text-slate-600 leading-tight">{item.label}</div>
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{item.sub}</div>
+              </div>
+            ))}
+          </div>
 
-                <form onSubmit={addTask} className="relative mt-auto">
-                    <input 
-                      type="text" 
-                      placeholder="Ajouter une tâche..." 
-                      value={newTaskText}
-                      onChange={(e) => setNewTaskText(e.target.value)}
-                      className="w-full pl-3 pr-10 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:bg-white transition-colors"
-                    />
-                    <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600">
-                        <IconPlus className="w-4 h-4" />
-                    </button>
-                </form>
-            </div>
-        </div>
-      </div>
+          {/* Row 3 — Waiting Room + Tasks */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <WaitingRoomWidget isDoctor={isDoctor} waitingPatients={waitingPatients} waitingRoom={stats.waitingRoom} navigate={navigate} />
+            <TasksWidget tasks={tasks} toggleTask={toggleTask} removeTask={removeTask} newTaskText={newTaskText} setNewTaskText={setNewTaskText} addTask={addTask} />
+          </div>
+        </>
+      )}
+
     </div>
   );
 };
