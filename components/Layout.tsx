@@ -123,40 +123,40 @@ export const Layout: React.FC<LayoutProps> = ({
   const menuItems = getFilteredMenuItems();
 
   return (
-    <div className="flex h-screen bg-white font-sans text-slate-900 antialiased overflow-hidden">
+    <div className="flex h-screen bg-[#FAFAFA] font-sans text-slate-900 antialiased overflow-hidden">
       {/* Sidebar */}
       <aside
-        className={`flex-shrink-0 bg-white border-r border-slate-100 transition-all duration-200 flex flex-col z-30 ${isSidebarCollapsed ? 'w-[72px]' : 'w-[240px]'}`}
+        className={`flex-shrink-0 bg-[#FAFAFA] border-r border-slate-200/60 transition-all duration-200 flex flex-col z-30 ${isSidebarCollapsed ? 'w-[72px]' : 'w-[240px]'}`}
       >
-        <div className="h-14 flex items-center px-5 border-b border-slate-100">
+        <div className="h-14 flex items-center px-5 border-b border-slate-200/60">
           <img src="/logo.png" alt="Medicom Logo" className="w-8 h-8 object-contain" />
           {!isSidebarCollapsed && (
-            <span className="ml-3 font-bold text-slate-900 text-[14px] tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>Medicom</span>
+            <span className="ml-3 font-semibold text-slate-900 text-[14px] tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>Medicom</span>
           )}
         </div>
 
-        <nav className="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-0.5">
           {menuItems.map((item) => (
             <button
               key={item.id}
               onClick={() => onChangeView(item.id)}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 text-[14px] font-medium transition-all duration-300 ease-out group relative ${currentView === item.id
-                ? 'rounded-[30px] bg-[#0F0F0F] text-white'
-                : 'rounded-[30px] text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+              className={`w-full flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-[6px] transition-all duration-200 ease-out group relative ${currentView === item.id
+                ? 'bg-white text-gray-900 shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-slate-200/60'
+                : 'text-gray-500 hover:text-gray-900 hover:bg-slate-200/40 border border-transparent'
                 } ${isSidebarCollapsed ? 'justify-center px-0' : ''}`}
               title={isSidebarCollapsed ? item.label : ''}
             >
               <item.icon
-                className={`w-[18px] h-[18px] ${currentView === item.id ? 'text-white' : 'text-slate-400 group-hover:text-slate-500'}`}
+                className={`w-[16px] h-[16px] ${currentView === item.id ? 'text-gray-900' : 'text-gray-400 group-hover:text-gray-700'}`}
               />
               {!isSidebarCollapsed && <span className="truncate">{item.label}</span>}
             </button>
           ))}
         </nav>
 
-        <div className="p-3 border-t border-slate-100">
+        <div className="p-3 border-t border-slate-200/60">
           <div
-            className={`flex items-center gap-3 p-2 rounded-[30px] hover:bg-slate-50 cursor-pointer ${isSidebarCollapsed ? 'justify-center' : ''}`}
+            className={`flex items-center gap-3 p-2 rounded-[8px] hover:bg-white border border-transparent hover:border-slate-200/60 hover:shadow-[0_1px_3px_rgba(0,0,0,0.05)] transition-all cursor-pointer ${isSidebarCollapsed ? 'justify-center' : ''}`}
           >
             <img src={user.avatar} alt="" className="w-8 h-8 rounded-full border border-slate-200" />
             {!isSidebarCollapsed && (
@@ -172,12 +172,12 @@ export const Layout: React.FC<LayoutProps> = ({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-white">
-        <header className="h-14 bg-white border-b border-slate-100 flex items-center justify-between px-6 sticky top-0 z-20">
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-white rounded-tl-[12px] border-l border-t border-slate-200/60 shadow-[-4px_0_24px_rgba(0,0,0,0.02)] relative z-40">
+        <header className="h-14 bg-white border-b border-slate-200/60 flex items-center justify-between px-6 sticky top-0 z-20">
           <div className="flex items-center gap-4 flex-1">
             <button
               onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-              className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-[30px] transition-colors"
+              className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-[6px] transition-colors"
             >
               <IconMenu className="w-5 h-5" />
             </button>
@@ -189,7 +189,7 @@ export const Layout: React.FC<LayoutProps> = ({
                 value={searchQuery}
                 onChange={handleSearch}
                 placeholder="Recherche..."
-                className="w-full pl-9 pr-4 py-1.5 text-[14px] font-medium bg-white border border-slate-100 shadow-sm rounded-[8px] focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all cursor-pointer"
+                className="w-full pl-9 pr-4 py-1.5 text-[13px] font-medium bg-white border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.03)] rounded-[6px] focus:outline-none focus:ring-1 focus:ring-gray-300 transition-all cursor-pointer placeholder:font-normal"
               />
             </div>
           </div>
@@ -203,7 +203,7 @@ export const Layout: React.FC<LayoutProps> = ({
             <div className="relative" ref={notifRef}>
               <button
                 onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-                className="p-2 text-gray-400 hover:text-gray-600 transition-colors relative"
+                className="p-2 text-gray-400 hover:text-gray-900 hover:bg-slate-50 rounded-[6px] transition-colors relative"
               >
                 <IconBell className="w-5 h-5" />
                 {unreadCount > 0 && (
@@ -239,13 +239,13 @@ export const Layout: React.FC<LayoutProps> = ({
                 </div>
               )}
             </div>
-            <button onClick={onLogout} className="p-2 text-slate-400 hover:text-rose-500 rounded-[30px] transition-colors">
+            <button onClick={onLogout} className="p-2 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-[6px] transition-colors">
               <IconLogOut className="w-5 h-5" />
             </button>
           </div>
         </header>
 
-        <div className="flex-1 overflow-auto p-10">
+        <div className="flex-1 overflow-auto p-10 relative">
           <div className="max-w-[1700px] w-full mx-auto animate-in fade-in duration-300">
             {children}
           </div>

@@ -203,53 +203,51 @@ export const AppLayout: React.FC = () => {
             )}
           </div>
 
-          <nav className="flex-1 overflow-y-auto py-4 space-y-6 scrollbar-hide">
-            {menuGroups.map((group, idx) => {
-              const availableItems = group.items.filter(
-                (item) => item.module === null || (modules as any)[item.module]
-              );
-              if (availableItems.length === 0) return null;
+          <nav className="flex-1 overflow-y-auto py-3 scrollbar-hide">
+            <div className="space-y-0.5 px-3">
+              {menuGroups.map((group, idx) => {
+                const availableItems = group.items.filter(
+                  (item) => item.module === null || (modules as any)[item.module]
+                );
+                if (availableItems.length === 0) return null;
 
-              return (
-                <div key={idx}>
-                  {!isSidebarCollapsed && (
-                    <div className="text-[11px] font-semibold uppercase tracking-widest text-slate-400 px-3 pt-5 pb-1.5">
-                      {group.label}
-                    </div>
-                  )}
-                  <div className="space-y-0.5">
+                return (
+                  <React.Fragment key={idx}>
+                    {idx > 0 && !isSidebarCollapsed && (
+                      <div className="my-2 mx-1 h-px bg-slate-100" />
+                    )}
+                    {idx > 0 && isSidebarCollapsed && (
+                      <div className="my-2 mx-auto w-4 h-px bg-slate-100" />
+                    )}
                     {availableItems.map((item) => (
                       <button
                         key={item.path}
                         onClick={() => navigate(item.path)}
-                        className={`w-full flex items-center justify-between h-10 px-4 mx-2 rounded-[8px] text-[14px] transition-all duration-300 ease-out group relative ${isActive(item.path)
-                          ? 'bg-[#0F0F0F] text-white font-medium'
-                          : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                        className={`w-full flex items-center justify-between h-10 px-3 rounded-[8px] text-[13.5px] transition-all duration-200 ease-out group relative ${isActive(item.path)
+                            ? 'bg-[#136cfb] text-white font-medium'
+                            : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
                           }`}
-                        style={{ width: 'calc(100% - 16px)' }}
                         title={isSidebarCollapsed ? item.label : ''}
                       >
-                        <div
-                          className={`flex items-center gap-2.5 ${isSidebarCollapsed ? 'mx-auto' : ''}`}
-                        >
-                          <item.icon className="w-[16px] h-[16px] text-inherit" />
+                        <div className={`flex items-center gap-3 ${isSidebarCollapsed ? 'mx-auto' : ''}`}>
+                          <item.icon className="w-[16px] h-[16px] shrink-0 text-inherit" />
                           {!isSidebarCollapsed && <span className="truncate">{item.label}</span>}
                         </div>
 
                         {!isSidebarCollapsed && item.badge !== undefined && item.badge > 0 && (
-                          <span className={`${isActive(item.path) ? 'bg-white text-[#0F0F0F]' : 'bg-slate-900 text-white'} rounded-[30px] px-1.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] ml-auto shrink-0 font-medium`}>
+                          <span className={`${isActive(item.path) ? 'bg-white text-[#136cfb]' : 'bg-slate-100 text-slate-600'} rounded-[30px] px-1.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] ml-auto shrink-0 font-semibold`}>
                             {item.badge}
                           </span>
                         )}
                         {isSidebarCollapsed && item.badge !== undefined && item.badge > 0 && (
-                          <span className={`absolute top-1 right-2 w-2 h-2 ${isActive(item.path) ? 'bg-white' : 'bg-slate-900'} rounded-full`}></span>
+                          <span className={`absolute top-1.5 right-2 w-1.5 h-1.5 ${isActive(item.path) ? 'bg-white' : 'bg-[#136cfb]'} rounded-full`}></span>
                         )}
                       </button>
                     ))}
-                  </div>
-                </div>
-              );
-            })}
+                  </React.Fragment>
+                );
+              })}
+            </div>
           </nav>
 
           <div className="p-3 border-t border-slate-100 shrink-0">

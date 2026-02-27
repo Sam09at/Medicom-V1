@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   IconSearch,
-  IconPlus,
   IconPill,
   IconFileText,
   IconDownload,
@@ -9,13 +8,11 @@ import {
   IconClock,
   IconTooth,
   IconActivity,
-  IconUserPlus,
 } from '../components/Icons';
-import { Patient, Consultation, Prescription } from '../types';
+import { Patient } from '../types';
 import { Odontogram } from '../components/Odontogram';
 import { usePatients } from '../hooks/usePatients';
 import { getPatientHistory } from '../lib/api/consultations';
-import { useMedicomStore } from '../store';
 
 type TimelineEvent = {
   id: string;
@@ -26,6 +23,14 @@ type TimelineEvent = {
   author: string;
   icon: any;
   color: string;
+  accent: string;
+};
+
+const TYPE_STYLE: Record<string, { bg: string; text: string; accent: string }> = {
+  Consultation: { bg: 'bg-blue-50', text: 'text-[#136cfb]', accent: '#136cfb' },
+  Ordonnance: { bg: 'bg-violet-50', text: 'text-violet-600', accent: '#8b5cf6' },
+  Document: { bg: 'bg-slate-50', text: 'text-slate-500', accent: '#94a3b8' },
+  Note: { bg: 'bg-amber-50', text: 'text-amber-600', accent: '#f59e0b' },
 };
 
 export const MedicalRecord = () => {
@@ -36,7 +41,6 @@ export const MedicalRecord = () => {
   const [activeTab, setActiveTab] = useState<'history' | 'chart'>('history');
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
 
-  // Filter patients
   const filteredPatients = patients.filter(
     (p) =>
       p.firstName.toLowerCase().includes(patientSearch.toLowerCase()) ||
@@ -49,9 +53,7 @@ export const MedicalRecord = () => {
     try {
       const history = await getPatientHistory(patientId);
       const events: TimelineEvent[] = [];
-
       history.forEach((consult: any) => {
-        // Consultation Event
         events.push({
           id: consult.id,
           date: consult.createdAt,
@@ -60,11 +62,10 @@ export const MedicalRecord = () => {
           details: consult.notes || consult.chiefComplaint || 'Aucune note',
           author: consult.doctorName || 'Médecin',
           icon: IconActivity,
-          color: 'bg-blue-100 text-blue-600',
+          color: 'bg-blue-50 text-[#136cfb]',
+          accent: '#136cfb',
         });
-
-        // Prescription Events associated with consultation
-        if (consult.prescriptions && consult.prescriptions.length > 0) {
+        if (consult.prescriptions?.length > 0) {
           consult.prescriptions.forEach((rx: any) => {
             events.push({
               id: rx.id,
@@ -74,12 +75,12 @@ export const MedicalRecord = () => {
               details: `${rx.drugs.length} médicaments prescrits`,
               author: consult.doctorName || 'Médecin',
               icon: IconPill,
-              color: 'bg-purple-100 text-purple-600',
+              color: 'bg-violet-50 text-violet-600',
+              accent: '#8b5cf6',
             });
           });
         }
       });
-
       setTimeline(events.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
     } catch (error) {
       console.error('Error fetching history:', error);
@@ -95,74 +96,61 @@ export const MedicalRecord = () => {
     fetchHistory(patient.id);
   };
 
+  // ── Patient Picker ─────────────────────────────────────────────────────
   if (!selectedPatient) {
     return (
-      <div className="space-y-8 font-sans h-full flex flex-col pt-4 px-6 sm:px-10 pb-10">
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Dossiers Médicaux
-          </h2>
-          <p className="text-[0.875rem] font-medium text-slate-500 mt-2">
-            Recherchez et sélectionnez un patient pour consulter son historique complet.
+      <div className="space-y-6 font-sans animate-in fade-in duration-150 pb-10">
+        {/* Header */}
+        <div>
+          <h2 className="text-[22px] font-semibold tracking-tight text-slate-900">Dossiers Médicaux</h2>
+          <p className="text-[12px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+            Sélectionnez un patient pour consulter son historique
           </p>
         </div>
 
-        <div className="relative max-w-2xl group animate-in fade-in slide-in-from-bottom-6 duration-300">
-          <IconSearch className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+        {/* Search */}
+        <div className="relative max-w-xl">
+          <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
             placeholder="Rechercher par nom, téléphone..."
             value={patientSearch}
             onChange={(e) => setPatientSearch(e.target.value)}
-            className="w-full pl-14 pr-5 py-4 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] placeholder:font-medium placeholder:text-slate-400"
+            className="input pl-11 w-full"
             autoFocus
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-8 duration-300">
+        {/* Patient grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
           {filteredPatients.map((patient) => (
             <div
               key={patient.id}
               onClick={() => handleSelectPatient(patient)}
-              className="bg-white p-5 rounded-3xl border border-slate-100/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:border-blue-100 cursor-pointer transition-all flex items-center gap-5 group"
+              className="card p-4 flex items-center gap-4 cursor-pointer hover:border-[#136cfb]/30 hover:bg-blue-50/20 transition-all group"
             >
-              <div className="w-14 h-14 rounded-[8px] bg-slate-50 border border-slate-100/80 text-slate-500 font-bold text-lg flex items-center justify-center group-hover:bg-blue-50 group-hover:border-blue-100 group-hover:text-blue-600 transition-colors">
-                {patient.firstName[0]}
-                {patient.lastName[0]}
+              {/* Avatar */}
+              <div className="w-10 h-10 rounded-full bg-blue-50 text-[#136cfb] flex items-center justify-center text-[13px] font-bold shrink-0">
+                {patient.firstName[0]}{patient.lastName[0]}
               </div>
-              <div className="flex-1 overflow-hidden">
-                <div className="font-bold text-[1rem] text-slate-900 group-hover:text-blue-600 transition-colors truncate">
+              <div className="flex-1 min-w-0">
+                <div className="text-[13.5px] font-semibold text-slate-900 truncate group-hover:text-[#136cfb] transition-colors">
                   {patient.firstName} {patient.lastName}
                 </div>
-                <div className="text-[0.75rem] font-medium text-slate-500 truncate mt-0.5">
-                  {patient.age} ans • {patient.phone}
+                <div className="text-[11.5px] font-medium text-slate-400 mt-0.5 truncate">
+                  {patient.age} ans · {patient.phone}
                 </div>
               </div>
-              <div className="w-8 h-8 rounded-[8px] bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
-                <svg
-                  className="w-4 h-4 text-blue-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </div>
+              <svg className="w-4 h-4 text-slate-300 group-hover:text-[#136cfb] transition-colors shrink-0 -translate-x-1 group-hover:translate-x-0 duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
             </div>
           ))}
+
           {filteredPatients.length === 0 && (
-            <div className="col-span-full flex flex-col items-center justify-center py-20 bg-slate-50/50 rounded-3xl border border-dashed border-slate-200">
-              <div className="w-16 h-16 bg-white rounded-[8px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex items-center justify-center mb-4">
-                <IconSearch className="w-8 h-8 text-slate-300" />
-              </div>
-              <p className="text-[0.875rem] font-bold text-slate-400">
-                Aucun patient ne correspond à votre recherche.
-              </p>
+            <div className="col-span-full flex flex-col items-center justify-center py-16 card border-dashed">
+              <IconSearch className="w-6 h-6 text-slate-300 mb-3" />
+              <p className="text-[13px] font-semibold text-slate-400">Aucun patient trouvé</p>
             </div>
           )}
         </div>
@@ -170,178 +158,165 @@ export const MedicalRecord = () => {
     );
   }
 
+  // ── Patient Detail ─────────────────────────────────────────────────────
   return (
-    <div className="space-y-6 font-sans h-full flex flex-col pt-4 px-6 sm:px-10 pb-10 animate-in fade-in slide-in-from-bottom-4 duration-300">
+    <div className="space-y-6 font-sans animate-in fade-in duration-150 pb-10">
+
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-slate-100/80 bg-slate-50/30 sticky top-0 z-10 -mx-6 sm:-mx-10 px-6 sm:px-10 pt-2">
-        <div className="flex items-center gap-5 flex-1">
+      <div className="flex items-center justify-between gap-4 pb-5 border-b border-slate-100">
+        <div className="flex items-center gap-4">
           <button
             onClick={() => setSelectedPatient(null)}
-            className="w-10 h-10 bg-white border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 text-slate-500 rounded-[8px] flex items-center justify-center transition-all"
+            className="w-9 h-9 rounded-[8px] border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-300 transition-all"
           >
-            <IconArrowLeft className="w-5 h-5" />
+            <IconArrowLeft className="w-4 h-4" />
           </button>
-          <div>
-            <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-              {selectedPatient.firstName} {selectedPatient.lastName}
-            </h2>
-            <div className="flex flex-wrap items-center gap-2 mt-1.5 align-middle">
-              <span className="inline-flex px-2 py-0.5 rounded-[30px] bg-slate-100 text-slate-600 text-[0.75rem] font-bold">
-                {selectedPatient.age} ans
-              </span>
-              <span className="text-slate-300">•</span>
-              <span className="text-[0.875rem] font-medium text-slate-500">
-                {selectedPatient.gender === 'M' ? 'Homme' : 'Femme'}
-              </span>
-              <span className="text-slate-300">•</span>
-              <span className="text-[0.875rem] font-mono text-slate-500">
-                {selectedPatient.phone}
-              </span>
+          {/* Patient avatar + info */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-blue-50 text-[#136cfb] flex items-center justify-center text-[13px] font-bold shrink-0">
+              {selectedPatient.firstName[0]}{selectedPatient.lastName[0]}
+            </div>
+            <div>
+              <h2 className="text-[18px] font-semibold tracking-tight text-slate-900 leading-tight">
+                {selectedPatient.firstName} {selectedPatient.lastName}
+              </h2>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="text-[11px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-[30px]">
+                  {selectedPatient.age} ans
+                </span>
+                <span className="text-slate-300 text-[11px]">·</span>
+                <span className="text-[12px] font-medium text-slate-400">
+                  {selectedPatient.gender === 'M' ? 'Homme' : 'Femme'}
+                </span>
+                <span className="text-slate-300 text-[11px]">·</span>
+                <span className="text-[12px] font-medium text-slate-400 font-mono">{selectedPatient.phone}</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="flex bg-slate-100/50 p-1.5 rounded-[8px] border border-slate-200/50 shadow-inner">
-          <button
-            onClick={() => setActiveTab('history')}
-            className={`flex items-center gap-2 px-5 py-2.5 text-[0.875rem] font-bold rounded-[30px] transition-all ${activeTab === 'history' ? 'bg-white text-blue-600 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)]' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}
-          >
-            <IconClock className="w-4 h-4" /> Historique
-          </button>
-          <button
-            onClick={() => setActiveTab('chart')}
-            className={`flex items-center gap-2 px-5 py-2.5 text-[0.875rem] font-bold rounded-[30px] transition-all ${activeTab === 'chart' ? 'bg-white text-blue-600 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)]' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}
-          >
-            <IconTooth className="w-4 h-4" /> Schéma Dentaire
-          </button>
+        {/* Tab switcher */}
+        <div className="flex items-center bg-slate-100/60 rounded-[30px] p-1 gap-1">
+          {[
+            { id: 'history', label: 'Historique', icon: IconClock },
+            { id: 'chart', label: 'Odontogramme', icon: IconTooth },
+          ].map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              onClick={() => setActiveTab(id as any)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-[30px] text-[12px] font-semibold transition-all ${activeTab === id
+                  ? 'bg-white text-[#136cfb] shadow-sm'
+                  : 'text-slate-500 hover:text-slate-700'
+                }`}
+            >
+              <Icon className="w-3.5 h-3.5" />
+              {label}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="flex-1 overflow-hidden flex flex-col lg:flex-row gap-8 pt-4">
-        {/* Main Content Area */}
-        <div className="flex-1 overflow-y-auto pr-2 pb-10">
+      {/* Body */}
+      <div className="flex flex-col lg:flex-row gap-6">
+
+        {/* Main content */}
+        <div className="flex-1 min-w-0">
           {activeTab === 'history' && (
-            <div className="space-y-8 relative before:absolute before:inset-0 before:ml-8 before:w-0.5 before:bg-slate-200/60">
+            <div>
               {isLoadingHistory ? (
-                <div className="pl-20 py-8 text-[0.875rem] font-medium text-slate-500 flex items-center gap-3">
-                  <div className="w-5 h-5 border-2 border-slate-200 border-t-blue-600 rounded-full animate-spin"></div>
+                <div className="flex items-center gap-3 py-10 text-[13px] font-semibold text-slate-400">
+                  <div className="w-4 h-4 border-2 border-slate-200 border-t-[#136cfb] rounded-full animate-spin" />
                   Chargement de l'historique...
                 </div>
               ) : timeline.length === 0 ? (
-                <div className="pl-20 py-8 text-[0.875rem] font-medium text-slate-400 italic">
-                  Aucun historique disponible.
+                <div className="flex flex-col items-center justify-center py-16 card border-dashed">
+                  <IconClock className="w-6 h-6 text-slate-300 mb-3" />
+                  <p className="text-[13px] font-semibold text-slate-400">Aucun historique disponible</p>
                 </div>
               ) : (
-                timeline.map((event) => (
-                  <div key={event.id} className="relative flex gap-6 group">
-                    <div
-                      className={`absolute left-0 w-16 h-16 rounded-[8px] border flex items-center justify-center z-10 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] transition-transform group-hover:scale-110 group-hover:shadow-md ${
-                        event.type === 'Consultation'
-                          ? 'bg-blue-50 border-blue-100 text-blue-600'
-                          : event.type === 'Ordonnance'
-                            ? 'bg-purple-50 border-purple-100 text-purple-600'
-                            : 'bg-slate-50 border-slate-200 text-slate-600'
-                      }`}
-                    >
-                      <event.icon className="w-6 h-6" />
-                    </div>
-                    <div className="ml-24 flex-1 bg-white p-6 rounded-3xl border border-slate-100/50 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] group-hover:border-blue-100 group-hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all">
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-4 gap-2">
-                        <div>
-                          <span
-                            className={`inline-block px-2.5 py-1 rounded-[30px] text-[0.65rem] font-bold uppercase tracking-widest mb-2 ${
-                              event.type === 'Consultation'
-                                ? 'bg-blue-50 text-blue-600'
-                                : 'bg-purple-50 text-purple-600'
-                            }`}
-                          >
-                            {event.type}
-                          </span>
-                          <h4 className="text-[1.125rem] font-bold text-slate-900 tracking-tight">
-                            {event.title}
-                          </h4>
+                <div>
+                  {timeline.map((event, i) => {
+                    const ts = TYPE_STYLE[event.type] ?? TYPE_STYLE.Note;
+                    const isLast = i === timeline.length - 1;
+                    return (
+                      <div key={event.id} className={`flex gap-4 py-4 ${!isLast ? 'border-b border-slate-100' : ''}`}>
+                        {/* Icon */}
+                        <div className={`w-8 h-8 rounded-[8px] flex items-center justify-center shrink-0 mt-0.5 ${ts.bg} ${ts.text}`}>
+                          <event.icon className="w-4 h-4" />
                         </div>
-                        <div className="text-left sm:text-right mt-1 sm:mt-0">
-                          <div className="inline-flex px-3 py-1.5 rounded-[30px] bg-slate-50 border border-slate-100 text-[0.75rem] font-bold text-slate-500">
-                            {new Date(event.date).toLocaleDateString('fr-FR', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                            })}
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-4 mb-1">
+                            <div>
+                              <span className={`text-[10px] font-bold uppercase tracking-widest ${ts.text}`}>
+                                {event.type}
+                              </span>
+                              <h4 className="text-[14px] font-semibold text-slate-900 leading-tight mt-0.5">
+                                {event.title}
+                              </h4>
+                            </div>
+                            <span className="text-[11px] font-semibold text-slate-400 shrink-0 mt-0.5">
+                              {new Date(event.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            </span>
+                          </div>
+                          <p className="text-[12.5px] font-medium text-slate-500 leading-relaxed bg-slate-50 px-3 py-2 rounded-[6px] mt-2">
+                            {event.details}
+                          </p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <div className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[9px] font-bold text-slate-500">
+                              {event.author.split(' ').map((n) => n[0]).join('')}
+                            </div>
+                            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
+                              Par {event.author}
+                            </span>
                           </div>
                         </div>
                       </div>
-                      <p className="text-[0.875rem] font-medium text-slate-600 mb-6 leading-relaxed bg-slate-50/50 p-4 rounded-[8px] border border-slate-100/50">
-                        {event.details}
-                      </p>
-                      <div className="flex justify-between items-center pt-4 border-t border-slate-100/80">
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[0.5rem] font-bold text-slate-500">
-                            {event.author
-                              .split(' ')
-                              .map((n) => n[0])
-                              .join('')}
-                          </div>
-                          <span className="text-[0.75rem] text-slate-500 font-bold uppercase tracking-widest">
-                            Par {event.author}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))
+                    );
+                  })}
+                </div>
               )}
             </div>
           )}
 
           {activeTab === 'chart' && (
-            <div className="bg-white rounded-3xl border border-slate-100/80 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-              <h3 className="text-[1rem] font-bold text-slate-900 mb-8 flex items-center gap-3 tracking-tight">
-                <div className="w-10 h-10 rounded-[8px] bg-blue-50 flex items-center justify-center text-blue-600">
-                  <IconTooth className="w-5 h-5" />
+            <div className="card p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 rounded-[8px] bg-blue-50 flex items-center justify-center text-[#136cfb]">
+                  <IconTooth className="w-4 h-4" />
                 </div>
-                Odontogramme Actuel
-              </h3>
-              <div className="mb-0 bg-slate-50/50 p-6 sm:p-10 rounded-[2rem] border border-slate-100/50 flex justify-center overflow-x-auto">
+                <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight">Odontogramme Actuel</h3>
+              </div>
+              <div className="bg-slate-50/50 p-6 rounded-[8px] border border-slate-100 flex justify-center overflow-x-auto">
                 <Odontogram statusMap={{}} readOnly={true} />
               </div>
             </div>
           )}
         </div>
 
-        {/* Sidebar Info */}
-        <div className="w-full lg:w-80 shrink-0 space-y-6 overflow-y-auto pb-10">
-          <div className="bg-white p-6 rounded-3xl border border-slate-100/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-            <h3 className="text-[1rem] font-bold text-slate-900 mb-6 tracking-tight flex items-center gap-3">
-              <div className="w-10 h-10 rounded-[8px] bg-slate-50 flex items-center justify-center text-slate-500">
-                <IconFileText className="w-5 h-5" />
+        {/* Sidebar */}
+        <div className="w-full lg:w-72 shrink-0 space-y-4">
+          <div className="card p-5">
+            <div className="flex items-center gap-2 mb-5">
+              <div className="w-7 h-7 rounded-[6px] bg-slate-50 flex items-center justify-center text-slate-500">
+                <IconFileText className="w-3.5 h-3.5" />
               </div>
-              Informations Générales
-            </h3>
-            <div className="space-y-5">
-              <div className="bg-slate-50/50 p-4 rounded-[8px] border border-slate-100/50">
-                <div className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-1">
-                  Email
+              <h3 className="text-[13px] font-semibold text-slate-900">Informations Générales</h3>
+            </div>
+            <div className="space-y-4">
+              {[
+                { label: 'Email', value: selectedPatient.email || 'Non renseigné' },
+                { label: 'Assurance', value: selectedPatient.insuranceType },
+                { label: 'Téléphone', value: selectedPatient.phone },
+              ].map(({ label, value }) => (
+                <div key={label} className="border-b border-slate-100 pb-4 last:border-0 last:pb-0">
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{label}</div>
+                  <div className="text-[13px] font-semibold text-slate-900 truncate">{value}</div>
                 </div>
-                <div className="text-[0.875rem] text-slate-900 font-bold truncate">
-                  {selectedPatient.email || 'Non renseigné'}
-                </div>
-              </div>
-              <div className="bg-slate-50/50 p-4 rounded-[8px] border border-slate-100/50">
-                <div className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-1">
-                  Assurance
-                </div>
-                <div className="text-[0.875rem] text-slate-900 font-bold">
-                  {selectedPatient.insuranceType}
-                </div>
-              </div>
-              {/* Actions placeholder */}
-              <div className="pt-2">
-                <button className="w-full py-3.5 bg-white border border-slate-200 hover:border-blue-200 text-slate-600 hover:text-blue-600 text-[0.875rem] font-bold rounded-[30px] transition-all shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex items-center justify-center gap-2 group">
-                  <IconDownload className="w-4 h-4 text-slate-400 group-hover:text-blue-500" />
-                  Exporter le dossier
-                </button>
-              </div>
+              ))}
+              <button className="w-full mt-2 flex items-center justify-center gap-2 py-2.5 rounded-[30px] border border-slate-200 text-[12px] font-semibold text-slate-600 hover:border-[#136cfb] hover:text-[#136cfb] transition-all">
+                <IconDownload className="w-3.5 h-3.5" /> Exporter le dossier
+              </button>
             </div>
           </div>
         </div>

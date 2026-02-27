@@ -1,6 +1,6 @@
 # Medicom SaaS — Complete Project State Report
 > **Generated:** 2026-02-18T18:30:00Z  
-> **Last Updated:** 2026-02-19T16:30:00Z (QA code audit session)  
+> **Last Updated:** 2026-02-26T12:56:39Z (UI Optimization: Dossier, Reports & Dashboard)  
 > **Project:** Medicom V1 (`medicom-saas`)  
 > **Version in package.json:** `0.15.0`  
 > **Documented Version:** v0.15 (per `OWF/MEDICOM_v0.15.md`)  
@@ -123,20 +123,20 @@ Medicom is a **multi-tenant SaaS platform** for dental/medical practice manageme
 | `Billing.tsx` | ~777 | 48.3 KB | Invoices, quotes, expenses, cash closing | Mock internal |
 | `Settings.tsx` | ~930 | ~46 KB | Clinic settings (10+ tabs incl. Language Switcher **(P10)**) | **Supabase** (`tenants`, `medical_services`, `users`) + fallback |
 | `SaaSAdministration.tsx` | ~807 | ~47 KB | Super Admin control tower (13+ tabs) | **Supabase** (Users, Finance/MRR, Customer Success) + mock fallback |
-| `Consultation.tsx` | **440** | 25.2 KB | Live consultation: vitals, odontogram, procedures, prescriptions, notes. Uses `useConsultationLogic` hook. ⚠️ **Not wired to router** — `/app/consultation/:id` route shows placeholder text only | `MOCK_SERVICES`, `MOCK_INVENTORY`, `useConsultationLogic` |
+| `Consultation.tsx` | **440** | 25.2 KB | Live consultation: vitals, odontogram, procedures, prescriptions, notes. Uses `useConsultationLogic` hook. ✅ **Wired to router** — entry from Calendar, Waiting Room, or Dashboard. | `MOCK_SERVICES`, `MOCK_INVENTORY`, `useConsultationLogic` |
 | `PatientList.tsx` | ~424 | 26.8 KB | **Production**: Patient CRUD table + SlideOver detail view (4 tabs) | `usePatients` (Supabase) |
 | `CRM.tsx` | ~450 | ~25 KB | Sales pipeline (Kanban), onboarding, partners, campaigns | **Supabase** (`leads`, `lead_activities`) + fallback |
 | `Inventory.tsx` | 411 | 23.5 KB | Stock management, ordering, consumption charts | `MOCK_INVENTORY` |
 | `Treatments.tsx` | ~392 | 21.1 KB | Treatment plans + odontogram chart view | Supabase (P6) |
 | `Documents.tsx` | 336 | 18.0 KB | GED: upload, generate, search, template-based document generation | `MOCK_DOCUMENTS`, `MOCK_PATIENTS` |
-| `MedicalRecord.tsx` | 339 | 18.3 KB | Patient timeline, medical history, odontogram, notes | `MOCK_PATIENTS`, `MOCK_DOCUMENTS` |
-| `Reports.tsx` | ~330 | ~18 KB | Analytics: Clinic reports + Super Admin reports (dual view) | **Supabase** (`invoices`, analytics API) + fallback |
+| `MedicalRecord.tsx` | **326** | 15.3 KB | **Production Hardened**: Attio-style timeline, hairline dividers, minimal sidebar, patient search. | `MOCK_PATIENTS`, `MOCK_DOCUMENTS` |
+| `Reports.tsx` | **468** | 24.1 KB | **Production Hardened**: AreaChart revenue, custom donut legend, clinical performance tables. | **Supabase** (`invoices`, analytics API) + fallback |
 | `LabOrders.tsx` | 297 | 17.1 KB | Lab/prosthesis order tracking | `MOCK_LAB_ORDERS`, `MOCK_PATIENTS` |
 | `Support.tsx` | 332 | 17.0 KB | Ticket system with threaded messages | Mock internal |
 | `Cabinets.tsx` | ~260 | ~16 KB | Tenant management for Super Admin | **Supabase** (`getAllTenants`, suspend/activate) + fallback |
 | `SuperAdminDashboard.tsx` | ~270 | ~15 KB | KPIs, revenue charts, live activity feed, churn risks | **Supabase** (analytics API: MRR, tenants, bookings) |
 | `WaitingRoom.tsx` | ~260 | 16.5 KB | Kanban board, TV mode, **Waiting Room: doctor mode ✅** | Appointments from `App.tsx` |
-| `Dashboard.tsx` | ~219 | 11.1 KB | KPI cards, revenue bar chart, task management | Mock internal |
+| `Dashboard.tsx` | **509** | 27.8 KB | **Production Hardened**: Role-specific layouts, AreaChart, "Programme du jour" linear list. | Mock internal |
 
 ### 3.5 Other Directories
 | Directory | Contents |
@@ -262,7 +262,8 @@ Navigation uses **React Router v7** (`createBrowserRouter`) with real URL routin
 | `/app/patients` | `<PatientList />` | `patients` |
 | `/app/patients/:id` | Patient Detail | `patients` |
 | `/app/treatments` | `<Treatments />` | `treatments` |
-| `/app/consultation/:appointmentId` | ⚠️ **PLACEHOLDER** — renders static text `"Consultation — sélectionnez un rendez-vous depuis le calendrier."` — `Consultation.tsx` component exists but is NOT wired to this route | — |
+| `/app/consultations` | `<ConsultationsIndexPage />` | Navigation guide |
+| `/app/consultation/:appointmentId` | `<ConsultationPage />` | Live clinical workflow |
 | `/app/records` | `<MedicalRecord />` | `records` |
 | `/app/inventory` | `<Inventory />` | `inventory` |
 | `/app/lab-orders` | `<LabOrders />` | `labOrders` |
@@ -430,13 +431,13 @@ VITE_POSTHOG_KEY=phc_...
 | 3 | **Calendar** | `CalendarView.tsx` | ✅ Production | 381 | **Real Data** (Supabase), Local conflict check, DB Constraints, Drag-n-Drop, Day/Week/Month, Realtime |
 | 4 | **Patient Management** | `PatientList.tsx` | ✅ Production | 676 | **Real Data**: Hook-based CRUD, Search, Virtualization, CSV Import/Export, SlideOver (edit form). |
 | 5 | **Treatments** | `Treatments.tsx` | ✅ Production | 392 | Plan list, plan creation wizard, interactive Odontogram, Real Data (Supabase) |
-| 6 | **Consultation** | `Consultation.tsx` | ⚠️ **PARTIALLY IMPLEMENTED** | 440 | 5-tab workflow exists (vitals, chart, procedures, Rx, notes) + `useConsultationLogic` hook. **⚠️ CRITICAL GAP**: `/app/consultation/:id` route shows a placeholder div — real component is NOT wired to the router. Must fix in next session. |
+| 6 | **Consultation** | `Consultation.tsx` | ✅ Production | 440 | 5-tab workflow (vitals, chart, Rx, notes), wired to router. Entry from Calendar/Dashboard. |
 | 7 | **Finance & Billing** | ✅ Complete | | | Invoicing & Payments, Quotes & Estimates, Expenses Management, Financial Reporting (Daily Closing) |
 | 8 | **Documents (GED)** | `Documents.tsx` | ✅ Prototype | 336 | Upload, template-based generation, search, AI prompt stub |
 | 9 | **Inventory** | `Inventory.tsx` | ✅ Prototype | 411 | Stock tracking, ordering, consumption charts, low-stock alerts |
 | 10 | **Lab Orders** | `LabOrders.tsx` | ✅ Prototype | 297 | Order creation, status tracking, lab management |
-| 11 | **Medical Records** | `MedicalRecord.tsx` | ✅ Production | 339 | Patient timeline, medical history (Real Data), odontogram, notes |
-| 12 | **Reports** | `Reports.tsx` | ✅ Production | ~330 | **Supabase**: Revenue from `invoices`, MRR from analytics API. Dual mode: Clinic + Super Admin |
+| 11 | **Medical Records** | `MedicalRecord.tsx` | ✅ Production | 339 | **UI Optimized (Attio Style)**: Linear timeline, circular avatars, minimal sidebar. |
+| 12 | **Reports** | `Reports.tsx` | ✅ Production | ~450 | **UI Optimized (Attio Style)**: AreaChart, custom donut legend, clinical table update. |
 | 13 | **Settings** | `Settings.tsx` | ✅ Production | ~870 | **Supabase**: Clinic info, services CRUD (`medical_services`), staff, schedule. Persists to `settings_json` |
 | 14 | **CRM** | `CRM.tsx` | ✅ Production | ~450 | **Supabase**: Kanban loads from `leads`, drag-drop persists status, activities timeline from `lead_activities` |
 | 15 | **Support** | `Support.tsx` | ✅ Prototype | 332 | Ticket list, threaded messages, ticket creation |
@@ -498,7 +499,8 @@ A suite of 11 standardized skills adopted for robust architecture implementation
 | 4 | 2026-02-20 | SuperAdmin Upgrade | **Phase 1 Complete**: SuperAdminDashboard: control tower ✅<br>**Phase 2 Complete**: Cabinets: lifecycle management ✅<br>**Phase 3 Complete**: SaaS Billing Intelligence ✅<br>**Phase 4 Complete**: CRM Pipeline Automation ✅ | `Cabinets.tsx`, `tenants.ts`, `SuperAdminDashboard.tsx`, `analytics.ts`, `Billing.tsx`, `billing.ts`, `CRM.tsx`, `useCRM.ts` | Gemini |
 | 5 | 2026-02-20 | UI Redesign Phase 1 & 2 | **Phase 1**: shared layouts (`globals.css`, `AppLayout`, `AdminLayout`, `SlideOver`, `Toast`).<br>**Phase 2**: `Dashboard` and `SuperAdminDashboard` updated to UI specs. | `globals.css`, `AppLayout.tsx`, `AdminLayout.tsx`, `SlideOver.tsx`, `Toast.tsx`, `Dashboard.tsx`, `SuperAdminDashboard.tsx` | Gemini |
 | 6 | 2026-02-20 | UI Redesign Phase 3 | **Phase 3**: `PatientList.tsx` and SlideOver redesign complete. New table styling, standard headers, and refined detail panels. | `PatientList.tsx`, `TagInput.tsx`, `InsuranceBadge.tsx` | Antigravity |
-| 7 | 2026-02-21 | Architecture | Installed 16 standard Agent Skills including `gemini-skill-creator`, `brand-identity`, strict workflow gates, and 11 `developer-essentials`. | `.agent/skills/*` | Antigravity |
+| 7 | 2026-02-24 | UI Polish | **SaaS Admin UI Polish**: Refined AiOps, CustomerSuccess, and ModernUserTable to Attio specs. | Multiple (SaaS Admin modules) | Gemini |
+| 8 | 2026-02-26 | UI Phase 11 | **Dossier & Reports Re-optimization**: Refactored MedicalRecord and Reports to linear Attio style. Dashboard "Programme du jour" refined. | `MedicalRecord.tsx`, `Reports.tsx`, `Dashboard.tsx`, `router/index.tsx` | Gemini |
 
 ---
 
@@ -508,7 +510,6 @@ A suite of 11 standardized skills adopted for robust architecture implementation
 |---|---|---|---|---|---|
 | BUG-001 | Calendar drag crossing midnight breaks date | HIGH | `components/CalendarView.tsx` | 🔴 Open | Avoid dragging past 23:30 |
 | BUG-002 | SlideOver animation jitter on Firefox | LOW | `components/SlideOver.tsx` | 🔴 Open | Use Chrome/Edge |
-| BUG-003 | `/app/consultation/:id` route shows placeholder text — real `Consultation.tsx` component NOT wired | CRITICAL | `router/index.tsx` | 🔴 Open | Navigate via Consultation component directly if embedded elsewhere |
 
 ---
 
@@ -524,7 +525,7 @@ A suite of 11 standardized skills adopted for robust architecture implementation
 | 4 | ~~**Role Naming Mismatch**~~ | **FIXED (Phase 2)**: Roles reconciled to `super_admin`/`clinic_admin`/`doctor`/`staff`/`patient`. |
 | 5 | **No Environment Config** | No `.env` or `.env.local` file with real Supabase keys. `.env.example` exists. |
 | 6 | ~~**No Calendar Data**~~ | **FIXED (Phase 4)**: Calendar uses `useAppointments` + Realtime + Conflict checks. |
-| 7 | **🚨 Consultation route is a placeholder** | `/app/consultation/:appointmentId` renders static text. `Consultation.tsx` (440 lines with 5 tabs + `useConsultationLogic` hook) exists but is not wired to the router. **Next session priority #1.** |
+| 7 | **Consultation route integration** | **FIXED**: `/app/consultations` index added, and consultation page correctly wired to handle live sessions. |
 
 ### 14.2 Important 🟡
 

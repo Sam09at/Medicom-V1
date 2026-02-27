@@ -156,7 +156,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
                 <div className="space-y-3">
                   <input
                     type="text"
-                    className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-100/80 rounded-2xl text-[0.875rem] font-medium text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm"
+                    className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-100/80 rounded-[8px] text-[0.875rem] font-medium text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm"
                     placeholder="Rechercher un patient par nom..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -164,7 +164,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
                   <div className="relative">
                     <select
                       {...field}
-                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-2xl text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm appearance-none"
+                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm appearance-none"
                     >
                       <option value="" disabled>
                         Sélectionner depuis les résultats
@@ -213,7 +213,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
           <div className="relative mt-1">
             <select
               {...register('type')}
-              className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-2xl text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm appearance-none"
+              className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm appearance-none"
             >
               {Object.values(AppointmentType).map((type) => (
                 <option key={type} value={type}>
@@ -247,7 +247,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
               <input
                 type="date"
                 {...register('date')}
-                className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-100/80 rounded-2xl text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm"
+                className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm"
               />
               <div className="pointer-events-none absolute top-1/2 -translate-y-1/2 left-4 text-slate-400">
                 <IconCalendar className="w-5 h-5" />
@@ -266,7 +266,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
               <input
                 type="time"
                 {...register('startTime')}
-                className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-100/80 rounded-2xl text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm"
+                className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm"
               />
               <div className="pointer-events-none absolute top-1/2 -translate-y-1/2 left-4 text-slate-400">
                 <IconClock className="w-5 h-5" />
@@ -291,7 +291,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
                 key={mins}
                 type="button"
                 onClick={() => setValue('duration', mins)}
-                className={`flex items-center justify-center rounded-xl py-2.5 text-[0.875rem] font-bold transition-all ${
+                className={`flex items-center justify-center rounded-[30px] py-2.5 text-[0.875rem] font-bold transition-all ${
                   watch('duration') === mins
                     ? 'bg-blue-600 text-white shadow-md shadow-blue-200/50 scale-[1.02]'
                     : 'bg-white border border-slate-100/80 text-slate-700 hover:bg-slate-50 hover:border-slate-200'
@@ -305,7 +305,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
           <input
             type="number"
             {...register('duration', { valueAsNumber: true })}
-            className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-2xl text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm"
+            className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm"
             placeholder="Personnalisée (min)"
           />
           {errors.duration && (
@@ -321,7 +321,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
           <div className="relative mt-1">
             <select
               {...register('status')}
-              className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-2xl text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm appearance-none"
+              className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm appearance-none"
             >
               {Object.values(AppointmentStatus).map((status) => (
                 <option key={status} value={status}>
@@ -350,7 +350,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
           <textarea
             {...register('notes')}
             rows={3}
-            className="w-full px-5 py-4 bg-white border border-slate-100/80 rounded-2xl text-[0.875rem] font-medium text-slate-700 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm resize-none leading-relaxed"
+            className="w-full px-5 py-4 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-medium text-slate-700 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm resize-none leading-relaxed"
             placeholder="Motif de la visite, instructions particulières..."
           />
         </div>
@@ -360,14 +360,14 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-3.5 bg-white border border-slate-200 text-slate-600 text-[0.875rem] font-bold rounded-2xl hover:bg-slate-50 hover:text-slate-900 transition-colors"
+            className="px-6 py-3.5 bg-white border border-slate-200 text-slate-600 text-[0.875rem] font-bold rounded-[8px] hover:bg-slate-50 hover:text-slate-900 transition-colors"
           >
             Annuler
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn-primary py-3.5 px-8 rounded-2xl text-[0.875rem] disabled:opacity-50"
+            className="btn-primary py-3.5 px-8 rounded-[8px] text-[0.875rem] disabled:opacity-50"
           >
             {isSubmitting
               ? 'Enregistrement...'

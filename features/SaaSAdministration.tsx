@@ -170,27 +170,27 @@ export const ContentManagementPage = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-6">
         <div>
-          <h3 className="text-[18px] font-semibold text-gray-900">Content Management System</h3>
-          <p className="text-[13px] text-gray-500 mt-1">
+          <h3 className="text-[18px] font-semibold text-slate-900 tracking-tight">Content Management System</h3>
+          <p className="text-[13px] text-slate-500 mt-1">
             Gérez les communications, pages légales et traductions
           </p>
         </div>
-        <div className="flex bg-slate-50/80 p-1 rounded-[8px] border border-slate-100">
+        <div className="flex bg-slate-100/80 p-1 rounded-[8px] border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
           <button
             onClick={() => setActiveTab('templates')}
-            className={`px-4 py-1.5 text-[13px] font-medium rounded-[6px] transition-all ${activeTab === 'templates' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+            className={`px-4 py-1.5 text-[13px] font-medium rounded-[6px] transition-all ${activeTab === 'templates' ? 'bg-white text-slate-900 shadow-[0_1px_3px_rgba(0,0,0,0.05)]' : 'text-slate-500 hover:text-slate-900'}`}
           >
             Templates (Email/SMS)
           </button>
           <button
             onClick={() => setActiveTab('pages')}
-            className={`px-4 py-1.5 text-[13px] font-medium rounded-[6px] transition-all ${activeTab === 'pages' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+            className={`px-4 py-1.5 text-[13px] font-medium rounded-[6px] transition-all ${activeTab === 'pages' ? 'bg-white text-slate-900 shadow-[0_1px_3px_rgba(0,0,0,0.05)]' : 'text-slate-500 hover:text-slate-900'}`}
           >
             Pages Légales
           </button>
           <button
             onClick={() => setActiveTab('translations')}
-            className={`px-4 py-1.5 text-[13px] font-medium rounded-[6px] transition-all ${activeTab === 'translations' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+            className={`px-4 py-1.5 text-[13px] font-medium rounded-[6px] transition-all ${activeTab === 'translations' ? 'bg-white text-slate-900 shadow-[0_1px_3px_rgba(0,0,0,0.05)]' : 'text-slate-500 hover:text-slate-900'}`}
           >
             Traductions
           </button>
@@ -203,11 +203,11 @@ export const ContentManagementPage = () => {
           {templates.map((tmpl) => (
             <div
               key={tmpl.id}
-              className="bg-white border border-gray-200 rounded-[8px] p-5 shadow-sm hover:shadow-md transition-all group"
+              className="bg-white border border-slate-200/60 rounded-[12px] p-5 shadow-[0_2px_4px_rgba(0,0,0,0.02)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-shadow group"
             >
               <div className="flex justify-between items-start mb-4">
                 <div
-                  className={`p-2 rounded-[8px] ${tmpl.type === 'Email' ? 'bg-blue-50 text-blue-600' : 'bg-green-50 text-green-600'}`}
+                  className={`p-2.5 rounded-[8px] border ${tmpl.type === 'Email' ? 'bg-blue-50/50 text-blue-600 border-blue-100/50' : 'bg-emerald-50/50 text-emerald-600 border-emerald-100/50'}`}
                 >
                   {tmpl.type === 'Email' ? (
                     <IconMail className="w-5 h-5" />
@@ -217,75 +217,75 @@ export const ContentManagementPage = () => {
                 </div>
                 <button
                   onClick={() => handleEditTemplate(tmpl)}
-                  className="text-gray-400 hover:text-indigo-600"
+                  className="text-slate-400 hover:text-blue-600 transition-colors"
                 >
                   <IconEdit className="w-4 h-4" />
                 </button>
               </div>
-              <h4 className="font-bold text-gray-900 text-sm mb-1">{tmpl.name}</h4>
-              <p className="text-xs text-gray-500 mb-4 truncate">Sujet: {tmpl.subject}</p>
-              <div className="pt-3 border-t border-gray-50 text-[10px] text-gray-400 flex justify-between items-center">
+              <h4 className="font-bold text-slate-900 text-[14px] mb-1.5">{tmpl.name}</h4>
+              <p className="text-[12px] text-slate-500 mb-4 truncate font-medium">Sujet: {tmpl.subject}</p>
+              <div className="pt-4 border-t border-slate-100 text-[11px] font-medium text-slate-400 flex justify-between items-center">
                 <span>Modifié: {tmpl.lastModified}</span>
-                <span className="uppercase tracking-wider font-bold bg-gray-50 px-1.5 py-0.5 rounded">
+                <span className="uppercase tracking-wider font-bold bg-slate-50 px-2 py-1 rounded-[4px] border border-slate-100/80">
                   {tmpl.type}
                 </span>
               </div>
             </div>
           ))}
-          <button className="border-2 border-dashed border-gray-200 rounded-[8px] p-6 flex flex-col items-center justify-center text-gray-400 hover:border-indigo-300 hover:text-indigo-600 transition-all">
+          <button className="border-2 border-dashed border-slate-200/80 rounded-[12px] p-6 flex flex-col items-center justify-center text-slate-400 hover:border-blue-400/50 hover:bg-slate-50 hover:text-blue-600 transition-all cursor-pointer">
             <IconPlus className="w-8 h-8 mb-2" />
-            <span className="font-medium text-sm">Nouveau Modèle</span>
+            <span className="font-medium text-[13px]">Nouveau Modèle</span>
           </button>
         </div>
       )}
 
       {/* PAGES TAB */}
       {activeTab === 'pages' && (
-        <div className="bg-white border border-gray-200 rounded-[8px] shadow-sm overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-100">
-            <thead className="bg-gray-50">
+        <div className="bg-white border border-slate-200/60 rounded-[12px] shadow-[0_2px_4px_rgba(0,0,0,0.02)] overflow-hidden">
+          <table className="min-w-full divide-y divide-slate-200/60">
+            <thead className="bg-[#FAFAFA]">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
+                <th className="px-6 py-3.5 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
                   Titre
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
+                <th className="px-6 py-3.5 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
                   Slug URL
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
+                <th className="px-6 py-3.5 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
                   Dernière MàJ
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">
+                <th className="px-6 py-3.5 text-right text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
                   Statut
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">
+                <th className="px-6 py-3.5 text-right text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-slate-200/60">
               {pages.map((page) => (
-                <tr key={page.id} className="hover:bg-gray-50">
+                <tr key={page.id} className="hover:bg-slate-50/50 transition-colors">
                   <td className="px-6 py-4 flex items-center gap-3">
-                    <IconFileText className="w-4 h-4 text-gray-400" />
-                    <span className="text-sm font-medium text-gray-900">{page.title}</span>
+                    <IconFileText className="w-4 h-4 text-slate-400" />
+                    <span className="text-[13px] font-medium text-slate-900">{page.title}</span>
                   </td>
-                  <td className="px-6 py-4 text-xs font-mono text-gray-500">{page.slug}</td>
-                  <td className="px-6 py-4 text-xs text-gray-500">{page.lastUpdated}</td>
+                  <td className="px-6 py-4 text-[12px] font-mono text-slate-500">{page.slug}</td>
+                  <td className="px-6 py-4 text-[13px] text-slate-500">{page.lastUpdated}</td>
                   <td className="px-6 py-4 text-right">
                     <span
-                      className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${page.status === 'Published'
-                        ? 'bg-green-50 text-green-700 border border-green-100'
-                        : 'bg-yellow-50 text-yellow-700 border border-yellow-100'
+                      className={`px-2 py-1 rounded-[4px] border text-[10px] font-bold uppercase ${page.status === 'Published'
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-100/50'
+                        : 'bg-yellow-50 text-yellow-700 border-yellow-100/50'
                         }`}
                     >
                       {page.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button className="text-gray-400 hover:text-indigo-600 mx-1">
+                    <button className="text-slate-400 hover:text-blue-600 transition-colors mx-1.5 cursor-pointer">
                       <IconEdit className="w-4 h-4" />
                     </button>
-                    <button className="text-gray-400 hover:text-gray-600 mx-1">
+                    <button className="text-slate-400 hover:text-slate-600 transition-colors mx-1.5 cursor-pointer">
                       <IconEye className="w-4 h-4" />
                     </button>
                   </td>
@@ -299,29 +299,29 @@ export const ContentManagementPage = () => {
       {/* TRANSLATIONS TAB */}
       {activeTab === 'translations' && (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {translations.map((mod) => (
               <div
                 key={mod.id}
-                className="bg-white border border-gray-200 rounded-[8px] p-5 shadow-sm"
+                className="bg-white border border-slate-200/60 rounded-[12px] p-5 shadow-[0_2px_4px_rgba(0,0,0,0.02)]"
               >
-                <div className="flex justify-between items-center mb-3">
-                  <h4 className="font-bold text-gray-900">{mod.name}</h4>
-                  <IconGlobe className="w-4 h-4 text-gray-400" />
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="font-bold text-[14px] text-slate-900 tracking-tight">{mod.name}</h4>
+                  <IconGlobe className="w-4 h-4 text-slate-400" />
                 </div>
-                <div className="mb-2 flex justify-between text-xs text-gray-500">
+                <div className="mb-2 flex justify-between text-[11px] font-semibold text-slate-500">
                   <span>Progression</span>
                   <span>{mod.progress}%</span>
                 </div>
-                <div className="w-full bg-gray-100 rounded-full h-2 mb-4">
+                <div className="w-full bg-slate-100 border border-slate-200/50 rounded-full h-1.5 mb-5 shadow-inner">
                   <div
-                    className={`h-2 rounded-full ${mod.progress === 100 ? 'bg-green-500' : 'bg-blue-500'}`}
+                    className={`h-full rounded-full ${mod.progress === 100 ? 'bg-emerald-500' : 'bg-blue-500'}`}
                     style={{ width: `${mod.progress}%` }}
                   ></div>
                 </div>
-                <div className="flex justify-between items-center pt-3 border-t border-gray-50 text-xs">
-                  <span className="text-gray-400">{mod.keys} clés</span>
-                  <button className="text-indigo-600 font-medium hover:underline">Gérer</button>
+                <div className="flex justify-between items-center pt-4 border-t border-slate-100/80 text-[12px] font-medium">
+                  <span className="text-slate-500">{mod.keys} clés</span>
+                  <button className="text-blue-600 font-bold hover:text-blue-700 hover:underline transition-all">Gérer</button>
                 </div>
               </div>
             ))}
@@ -339,42 +339,41 @@ export const ContentManagementPage = () => {
         }
       >
         {editingTemplate && (
-          <div className="p-6 space-y-6">
+          <div className="p-6 space-y-6 flex flex-col h-full bg-[#FAFAFA]">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Sujet</label>
+              <label className="block text-[13px] font-bold text-slate-700 mb-1.5">Sujet</label>
               <input
                 type="text"
-                className="w-full border border-gray-300 rounded-[8px] p-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                className="w-full border border-slate-200/60 rounded-[8px] p-2.5 text-[14px] bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none shadow-sm transition-all"
                 defaultValue={editingTemplate.subject}
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="flex-1 flex flex-col min-h-0">
+              <label className="block text-[13px] font-bold text-slate-700 mb-1.5">
                 Corps du message
               </label>
               <textarea
-                rows={15}
-                className="w-full border border-gray-300 rounded-[8px] p-3 text-sm font-mono focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-50"
+                className="w-full flex-1 border border-slate-200/60 rounded-[8px] p-3 text-[13px] font-mono focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none bg-slate-50 shadow-inner resize-none transition-all leading-relaxed"
                 value={templateBody}
                 onChange={(e) => setTemplateBody(e.target.value)}
               />
-              <p className="mt-2 text-xs text-gray-500">
-                Variables disponibles:{' '}
-                <code className="bg-gray-100 px-1 rounded">{`{userName}`}</code>,{' '}
-                <code className="bg-gray-100 px-1 rounded">{`{clinicName}`}</code>,{' '}
-                <code className="bg-gray-100 px-1 rounded">{`{actionUrl}`}</code>.
+              <p className="mt-3 text-[11px] font-medium text-slate-500 flex flex-wrap gap-1.5 items-center">
+                Variables disponibles:
+                <code className="bg-slate-200/60 text-slate-700 font-bold px-1.5 py-0.5 rounded-[4px]">{`{userName}`}</code>
+                <code className="bg-slate-200/60 text-slate-700 font-bold px-1.5 py-0.5 rounded-[4px]">{`{clinicName}`}</code>
+                <code className="bg-slate-200/60 text-slate-700 font-bold px-1.5 py-0.5 rounded-[4px]">{`{actionUrl}`}</code>
               </p>
             </div>
-            <div className="pt-4 flex gap-3 border-t border-gray-100">
+            <div className="pt-4 flex gap-3 border-t border-slate-200/60 mt-auto">
               <button
                 onClick={() => setEditingTemplate(null)}
-                className="flex-1 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-[8px] hover:bg-gray-50"
+                className="flex-1 py-2 text-[13px] font-bold text-slate-700 border border-slate-200/60 rounded-[8px] hover:bg-slate-100 transition-colors shadow-sm bg-white cursor-pointer"
               >
                 Annuler
               </button>
               <button
                 onClick={handleSaveTemplate}
-                className="flex-1 py-2 text-sm font-medium text-white bg-indigo-600 rounded-[8px] hover:bg-indigo-700 shadow-sm flex justify-center items-center gap-2"
+                className="flex-1 py-2 text-[13px] font-bold text-white bg-slate-900 rounded-[8px] hover:bg-slate-800 transition-colors shadow-[0_1px_3px_rgba(0,0,0,0.05)] flex justify-center items-center gap-2 cursor-pointer"
               >
                 <IconCheckCircle className="w-4 h-4" /> Sauvegarder
               </button>
@@ -411,79 +410,79 @@ export const FinancePage = () => {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-5 rounded-[8px] border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.03)] flex flex-col justify-between h-32">
-          <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">
+        <div className="bg-white p-6 rounded-[12px] border border-slate-200/60 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between h-32">
+          <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
             MRR (Mensuel)
           </div>
           <div className="flex items-end justify-between">
-            <span className="text-2xl font-semibold text-gray-900 tracking-tight">{mrr.toLocaleString()}</span>
+            <span className="text-2xl font-bold text-slate-900 tracking-tight">{mrr.toLocaleString()}</span>
             <span
-              className={`badge ${mrrGrowth >= 0 ? 'badge-green' : 'badge-red'}`}
+              className={`text-[11px] font-bold px-2 py-1 rounded-[4px] border ${mrrGrowth >= 0 ? 'bg-emerald-50 text-emerald-700 border-emerald-100/50' : 'bg-red-50 text-red-700 border-red-100/50'}`}
             >
               {mrrGrowth >= 0 ? '+' : ''}
               {mrrGrowth}%
             </span>
           </div>
-          <div className="text-[12px] text-gray-400">MAD Recurring Revenue</div>
+          <div className="text-[12px] text-slate-400 font-medium">MAD Recurring Revenue</div>
         </div>
-        <div className="bg-white p-5 rounded-[8px] border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.03)] flex flex-col justify-between h-32">
-          <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">ARPU</div>
+        <div className="bg-white p-6 rounded-[12px] border border-slate-200/60 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between h-32">
+          <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">ARPU</div>
           <div className="flex items-end justify-between">
-            <span className="text-2xl font-semibold text-gray-900 tracking-tight">{arpu.toLocaleString()}</span>
-            <span className="badge badge-green">
+            <span className="text-2xl font-bold text-slate-900 tracking-tight">{arpu.toLocaleString()}</span>
+            <span className="text-[11px] font-bold px-2 py-1 rounded-[4px] border bg-emerald-50 text-emerald-700 border-emerald-100/50">
               +5%
             </span>
           </div>
-          <div className="text-[12px] text-gray-400">
+          <div className="text-[12px] text-slate-400 font-medium">
             Revenu moyen par cabinet ({activeTenants} actifs)
           </div>
         </div>
-        <div className="bg-white p-5 rounded-[8px] border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.03)] flex flex-col justify-between h-32">
-          <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">Churn Rate</div>
+        <div className="bg-white p-6 rounded-[12px] border border-slate-200/60 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between h-32">
+          <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">Churn Rate</div>
           <div className="flex items-end justify-between">
-            <span className="text-2xl font-semibold text-gray-900 tracking-tight">1.2%</span>
-            <span className="badge badge-red">
+            <span className="text-2xl font-bold text-slate-900 tracking-tight">1.2%</span>
+            <span className="text-[11px] font-bold px-2 py-1 rounded-[4px] border bg-red-50 text-red-700 border-red-100/50">
               +0.1%
             </span>
           </div>
-          <div className="text-[12px] text-gray-400">Taux de désabonnement</div>
+          <div className="text-[12px] text-slate-400 font-medium">Taux de désabonnement</div>
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200/60 rounded-[8px] shadow-[0_1px_2px_rgba(0,0,0,0.03)] p-6">
-        <h3 className="text-[14px] font-semibold text-gray-900 mb-6">Plans d'abonnement</h3>
+      <div className="bg-white border border-slate-200/60 rounded-[12px] shadow-[0_2px_8px_rgba(0,0,0,0.02)] p-6">
+        <h3 className="text-[14px] font-bold text-slate-900 mb-6">Plans d'abonnement</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {MOCK_PLANS.map((plan) => (
             <div
               key={plan.id}
-              className="border border-gray-200 rounded-[8px] p-5 hover:border-indigo-300 transition-colors relative group bg-gray-50/30"
+              className="border border-slate-200/60 rounded-[8px] p-5 hover:border-indigo-300 hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-all relative group bg-slate-50/30"
             >
               {plan.isPopular && (
-                <span className="absolute top-0 right-0 bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-1 rounded-bl-lg border-l border-b border-indigo-200">
+                <span className="absolute top-0 right-0 bg-indigo-50 text-indigo-700 text-[10px] font-bold px-2 py-1 rounded-bl-[8px] border-l border-b border-indigo-100">
                   POPULAIRE
                 </span>
               )}
-              <h4 className="font-bold text-gray-900">{plan.name}</h4>
-              <div className="mt-2 text-2xl font-bold text-indigo-600">
+              <h4 className="font-bold text-slate-900">{plan.name}</h4>
+              <div className="mt-2 text-2xl font-bold text-indigo-600 tracking-tight">
                 {plan.price}{' '}
-                <span className="text-sm text-gray-500 font-medium">
+                <span className="text-[13px] text-slate-500 font-medium tracking-normal">
                   {plan.currency}/{plan.billing === 'Monthly' ? 'mo' : 'yr'}
                 </span>
               </div>
-              <div className="mt-4 space-y-2">
+              <div className="mt-5 space-y-2.5">
                 {plan.features.slice(0, 3).map((f, i) => (
-                  <div key={i} className="flex items-center gap-2 text-xs text-gray-600">
-                    <IconCheckCircle className="w-3 h-3 text-green-500" /> {f}
+                  <div key={i} className="flex items-center gap-2 text-[13px] text-slate-600 font-medium">
+                    <IconCheckCircle className="w-4 h-4 text-emerald-500 shrink-0" /> <span className="truncate">{f}</span>
                   </div>
                 ))}
               </div>
-              <div className="mt-6 pt-4 border-t border-gray-200 flex justify-between items-center">
-                <span className="text-xs font-medium text-gray-500">
+              <div className="mt-6 pt-4 border-t border-slate-200/60 flex justify-between items-center">
+                <span className="text-[12px] font-bold text-slate-500">
                   {plan.activeClinics} abonnés
                 </span>
                 <button
                   onClick={() => alert(`Modifier le plan ${plan.name}`)}
-                  className="text-xs text-indigo-600 font-medium hover:underline"
+                  className="text-[12px] text-indigo-600 font-bold hover:text-indigo-700"
                 >
                   Modifier
                 </button>
@@ -510,12 +509,12 @@ export const MarketplacePage = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-end mb-6">
         <div>
-          <h3 className="text-[18px] font-semibold text-gray-900">Marketplace & Add-ons</h3>
-          <p className="text-[13px] text-gray-500 mt-1">
+          <h3 className="text-[18px] font-semibold text-slate-900 tracking-tight">Marketplace & Add-ons</h3>
+          <p className="text-[13px] text-slate-500 mt-1">
             Gérez les modules additionnels vendus aux cliniques
           </p>
         </div>
-        <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-[8px] text-sm font-medium hover:bg-blue-700 shadow-sm">
+        <button className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-[6px] text-[13px] font-medium hover:bg-slate-800 shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-colors">
           <IconPlus className="w-4 h-4" /> Créer un Add-on
         </button>
       </div>
@@ -524,48 +523,48 @@ export const MarketplacePage = () => {
         {addons.map((addon) => (
           <div
             key={addon.id}
-            className="bg-white border border-gray-200 rounded-[8px] p-5 shadow-sm hover:shadow-md transition-shadow"
+            className="bg-white border border-slate-200/60 rounded-[12px] p-5 shadow-[0_2px_4px_rgba(0,0,0,0.02)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-shadow"
           >
             <div className="flex justify-between items-start mb-4">
-              <div className="p-2 bg-indigo-50 text-indigo-600 rounded-[8px]">
+              <div className="p-2.5 bg-indigo-50/50 text-indigo-600 rounded-[8px] border border-indigo-100/50">
                 {addon.icon === 'message' ? (
-                  <IconMail className="w-6 h-6" />
+                  <IconMail className="w-5 h-5" />
                 ) : addon.icon === 'wand' ? (
-                  <IconWand className="w-6 h-6" />
+                  <IconWand className="w-5 h-5" />
                 ) : (
-                  <IconCheckCircle className="w-6 h-6" />
+                  <IconCheckCircle className="w-5 h-5" />
                 )}
               </div>
               <span
-                className={`px-2 py-1 rounded text-xs font-bold ${addon.status === 'Available'
-                  ? 'bg-green-100 text-green-700'
+                className={`px-2 py-1 rounded-[4px] border text-[11px] font-bold ${addon.status === 'Available'
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-100/50'
                   : addon.status === 'Beta'
-                    ? 'bg-purple-100 text-purple-700'
-                    : 'bg-gray-100 text-gray-600'
+                    ? 'bg-purple-50 text-purple-700 border-purple-100/50'
+                    : 'bg-slate-100 text-slate-600 border-slate-200/60'
                   }`}
               >
                 {addon.status}
               </span>
             </div>
-            <h4 className="font-bold text-gray-900 text-lg">{addon.name}</h4>
-            <p className="text-sm text-gray-500 mt-1 h-10">{addon.description}</p>
+            <h4 className="font-bold text-slate-900 text-[14px]">{addon.name}</h4>
+            <p className="text-[13px] text-slate-500 mt-1.5 h-10 leading-snug">{addon.description}</p>
 
-            <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
-              <div className="font-bold text-gray-900">
-                {addon.price} MAD <span className="font-normal text-xs text-gray-400">/mois</span>
+            <div className="mt-5 pt-4 border-t border-slate-100 flex justify-between items-center">
+              <div className="font-bold text-slate-900">
+                {addon.price} MAD <span className="font-medium text-[11px] text-slate-400">/mois</span>
               </div>
-              <div className="text-xs text-gray-500">{addon.activeInstalls} installs</div>
+              <div className="text-[12px] font-bold text-slate-500">{addon.activeInstalls} installs</div>
             </div>
 
-            <div className="mt-4 flex gap-2">
-              <button className="flex-1 py-1.5 text-xs font-medium border border-gray-200 rounded hover:bg-gray-50 text-gray-700">
+            <div className="mt-5 flex gap-2">
+              <button className="flex-1 py-1.5 text-[12px] font-bold border border-slate-200/60 rounded-[6px] hover:bg-slate-50 text-slate-700 transition-colors">
                 Éditer
               </button>
               <button
                 onClick={() => toggleStatus(addon.id)}
-                className={`flex-1 py-1.5 text-xs font-medium border rounded transition-colors ${addon.status === 'Available'
-                  ? 'border-red-200 text-red-600 hover:bg-red-50'
-                  : 'border-green-200 text-green-600 hover:bg-green-50'
+                className={`flex-1 py-1.5 text-[12px] font-bold border rounded-[6px] transition-colors ${addon.status === 'Available'
+                  ? 'border-red-100/50 text-red-600 bg-red-50/50 hover:bg-red-50'
+                  : 'border-emerald-100/50 text-emerald-600 bg-emerald-50/50 hover:bg-emerald-50'
                   }`}
               >
                 {addon.status === 'Available' ? 'Désactiver' : 'Activer'}
@@ -623,12 +622,12 @@ export const BroadcastsPage = () => {
     <div className="space-y-6 h-full flex flex-col">
       <div className="flex justify-between items-end mb-6">
         <div>
-          <h3 className="text-[18px] font-semibold text-gray-900">Broadcasts & Annonces</h3>
-          <p className="text-[13px] text-gray-500 mt-1">Envoyez des messages à tous vos utilisateurs</p>
+          <h3 className="text-[18px] font-semibold text-slate-900 tracking-tight">Broadcasts & Annonces</h3>
+          <p className="text-[13px] text-slate-500 mt-1">Envoyez des messages à tous vos utilisateurs</p>
         </div>
         <button
           onClick={() => setIsComposeOpen(true)}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-[8px] text-sm font-medium hover:bg-blue-700 shadow-sm"
+          className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-[6px] text-[13px] font-medium hover:bg-slate-800 shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-colors"
         >
           <IconPlus className="w-4 h-4" /> Nouvelle Annonce
         </button>
@@ -646,9 +645,9 @@ export const BroadcastsPage = () => {
               <div className="flex items-center justify-between mb-4 px-1">
                 <div className="flex items-center gap-2">
                   <div
-                    className={`w-2 h-2 rounded-full ${status === 'Sent' ? 'bg-green-500' : status === 'Scheduled' ? 'bg-blue-500' : 'bg-gray-400'}`}
+                    className={`w-2 h-2 rounded-full ${status === 'Sent' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]' : status === 'Scheduled' ? 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.4)]' : 'bg-slate-300'}`}
                   ></div>
-                  <span className="text-sm font-bold text-gray-700">{status}</span>
+                  <span className="text-[13px] font-bold text-slate-900 tracking-tight">{status}</span>
                 </div>
               </div>
               <div className="flex-1 space-y-3 p-1">
@@ -659,10 +658,10 @@ export const BroadcastsPage = () => {
                       key={b.id}
                       draggable
                       onDragStart={(e) => handleDragStart(e, b)}
-                      className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm cursor-grab active:cursor-grabbing"
+                      className="bg-white p-4 rounded-[12px] border border-slate-200/60 shadow-[0_2px_4px_rgba(0,0,0,0.02)] cursor-grab active:cursor-grabbing hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-shadow"
                     >
-                      <h4 className="font-bold text-gray-900 text-sm mb-1">{b.title}</h4>
-                      <p className="text-xs text-gray-500 line-clamp-2">{b.message}</p>
+                      <h4 className="font-bold text-slate-900 text-[13px] mb-1.5">{b.title}</h4>
+                      <p className="text-[12px] text-slate-500 line-clamp-2 leading-relaxed">{b.message}</p>
                     </div>
                   ))}
               </div>
@@ -674,34 +673,45 @@ export const BroadcastsPage = () => {
       {isComposeOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm"
             onClick={() => setIsComposeOpen(false)}
           ></div>
-          <div className="bg-white rounded-[8px] shadow-xl w-full max-w-md relative z-10 p-6 space-y-4">
-            <h3 className="text-lg font-bold">Nouvelle Annonce</h3>
-            <input
-              type="text"
-              placeholder="Titre"
-              className="w-full border p-2 rounded"
-              value={newBroadcast.title}
-              onChange={(e) => setNewBroadcast({ ...newBroadcast, title: e.target.value })}
-            />
-            <textarea
-              placeholder="Message"
-              className="w-full border p-2 rounded"
-              rows={4}
-              value={newBroadcast.message}
-              onChange={(e) => setNewBroadcast({ ...newBroadcast, message: e.target.value })}
-            />
-            <div className="flex justify-end gap-2">
-              <button onClick={() => setIsComposeOpen(false)} className="px-4 py-2">
+          <div className="bg-white rounded-[12px] shadow-[0_8px_32px_rgba(0,0,0,0.08)] w-full max-w-md relative z-10 p-6 space-y-5 border border-slate-200/60">
+            <h3 className="text-[16px] font-bold text-slate-900 tracking-tight">Nouvelle Annonce</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-[12px] font-semibold text-slate-700 mb-1.5">Titre</label>
+                <input
+                  type="text"
+                  placeholder="Ex: Mise à jour 2.0"
+                  className="w-full border border-slate-200/60 p-2.5 rounded-[8px] text-[13px] focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder-slate-400"
+                  value={newBroadcast.title}
+                  onChange={(e) => setNewBroadcast({ ...newBroadcast, title: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="block text-[12px] font-semibold text-slate-700 mb-1.5">Message</label>
+                <textarea
+                  placeholder="Détails de l'annonce..."
+                  className="w-full border border-slate-200/60 p-2.5 rounded-[8px] text-[13px] focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder-slate-400"
+                  rows={4}
+                  value={newBroadcast.message}
+                  onChange={(e) => setNewBroadcast({ ...newBroadcast, message: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 pt-2">
+              <button
+                onClick={() => setIsComposeOpen(false)}
+                className="px-4 py-2 text-[13px] font-bold text-slate-700 hover:bg-slate-50 rounded-[6px] transition-colors"
+              >
                 Annuler
               </button>
               <button
                 onClick={handleCreateBroadcast}
-                className="px-4 py-2 bg-blue-600 text-white rounded"
+                className="px-4 py-2 bg-slate-900 text-white text-[13px] font-bold rounded-[6px] hover:bg-slate-800 transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
               >
-                Créer
+                Créer l'annonce
               </button>
             </div>
           </div>
@@ -717,36 +727,40 @@ export const AiOpsPage = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-end mb-6">
         <div>
-          <h3 className="text-[18px] font-semibold text-gray-900">AI Command Center</h3>
-          <p className="text-[13px] text-gray-500 mt-1">Gestion des modèles LLM et coûts</p>
+          <h3 className="text-[18px] font-semibold text-slate-900 tracking-tight">AI Command Center</h3>
+          <p className="text-[13px] text-slate-500 mt-1">Gestion des modèles LLM et coûts</p>
         </div>
-        <span className="text-xl font-bold text-gray-900">185.40 USD / jour</span>
+        <span className="text-xl font-bold text-slate-900 tracking-tight">185.40 USD <span className="text-[13px] font-medium text-slate-400">/ jour</span></span>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white p-6 rounded-[8px] border border-gray-200 shadow-sm">
-          <h4 className="text-sm font-bold mb-6">Usage & Rentabilité</h4>
-          <div className="h-64">
+        <div className="lg:col-span-2 bg-white p-6 rounded-[12px] border border-slate-200/60 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+          <h4 className="text-[13px] font-bold text-slate-900 mb-6">Usage & Rentabilité</h4>
+          <div className="h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={AI_USAGE_DATA}>
-                <XAxis dataKey="day" />
-                <YAxis />
-                <Tooltip />
-                <Area type="monotone" dataKey="revenue" stroke="#82ca9d" fill="#82ca9d" />
-                <Area type="monotone" dataKey="cost" stroke="#8884d8" fill="#8884d8" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94a3b8' }} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94a3b8' }} dx={-10} />
+                <Tooltip
+                  contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: '12px' }}
+                  itemStyle={{ color: '#0f172a', fontWeight: 'bold' }}
+                />
+                <Area type="monotone" dataKey="revenue" stroke="#10b981" fill="#10b981" fillOpacity={0.1} strokeWidth={2} />
+                <Area type="monotone" dataKey="cost" stroke="#6366f1" fill="#6366f1" fillOpacity={0.1} strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
         <div className="space-y-4">
           {MOCK_AI_CONFIGS.map((config) => (
-            <div key={config.id} className="bg-white p-4 rounded-[8px] border border-gray-200">
-              <div className="font-bold">{config.name}</div>
-              <div className="text-xs text-gray-500">
-                {config.provider} • ${config.costPer1kTokens}/1k tk
+            <div key={config.id} className="bg-white p-5 rounded-[12px] border border-slate-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+              <div className="font-bold text-[14px] text-slate-900">{config.name}</div>
+              <div className="text-[12px] text-slate-500 mt-1 font-medium">
+                {config.provider} • <span className="text-indigo-600 font-bold">${config.costPer1kTokens}</span>/1k tk
               </div>
-              <div className="w-full bg-gray-100 rounded-full h-1.5 mt-2">
-                <div className="bg-purple-500 h-1.5 rounded-full" style={{ width: '60%' }}></div>
+              <div className="w-full bg-slate-100 rounded-full h-1.5 mt-4">
+                <div className="bg-indigo-500 h-1.5 rounded-full" style={{ width: '60%' }}></div>
               </div>
             </div>
           ))}
@@ -773,39 +787,39 @@ export const CustomerSuccessPage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-emerald-50 rounded-[8px] p-6 border border-emerald-100 flex items-center justify-between h-32">
+      <div className="bg-emerald-50 rounded-[12px] p-6 border border-emerald-100 flex items-center justify-between h-32 shadow-[0_2px_4px_rgba(16,185,129,0.05)]">
         <div>
-          <h3 className="text-[14px] font-semibold text-emerald-900 mb-1">Santé du Parc Clients</h3>
-          <p className="text-[12px] text-emerald-700 mt-1">Vue globale sur le risque d'attrition</p>
+          <h3 className="text-[14px] font-bold text-emerald-900 mb-1">Santé du Parc Clients</h3>
+          <p className="text-[12px] text-emerald-700/80 mt-1 font-medium">Vue globale sur le risque d'attrition</p>
         </div>
-        <div className="text-4xl font-semibold text-emerald-700 tracking-tight">
-          92<span className="text-xl text-emerald-500/70 font-medium tracking-normal">/100</span>
+        <div className="text-4xl font-bold text-emerald-700 tracking-tight">
+          92<span className="text-[16px] text-emerald-500/70 tracking-normal">/100</span>
         </div>
       </div>
-      <div className="bg-white border border-gray-200 rounded-[8px] shadow-sm overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-100">
+      <div className="bg-white border border-slate-200/60 rounded-[12px] shadow-[0_2px_4px_rgba(0,0,0,0.02)] overflow-hidden">
+        <table className="min-w-full divide-y divide-slate-100/80">
           <thead>
-            <tr className="bg-gray-50">
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase">Tenant</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase">MRR</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase">Risk Score</th>
-              <th className="px-6 py-3 text-right text-xs font-semibold uppercase">Action</th>
+            <tr className="bg-[#FAFAFA]">
+              <th className="px-6 py-3.5 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Tenant</th>
+              <th className="px-6 py-3.5 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider">MRR</th>
+              <th className="px-6 py-3.5 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Risk Score</th>
+              <th className="px-6 py-3.5 text-right text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-slate-100/80">
             {risks.map((risk) => (
-              <tr key={risk.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 text-sm font-medium">{risk.clinicName}</td>
-                <td className="px-6 py-4 text-sm">{risk.mrr} MAD</td>
+              <tr key={risk.id} className="hover:bg-slate-50/50 transition-colors">
+                <td className="px-6 py-4 text-[13px] font-bold text-slate-900">{risk.clinicName}</td>
+                <td className="px-6 py-4 text-[13px] font-medium text-slate-600">{risk.mrr} MAD</td>
                 <td className="px-6 py-4">
                   <span
-                    className={`px-2 py-1 rounded text-xs font-bold ${risk.riskScore > 70 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}
+                    className={`px-2 py-1 rounded-[4px] border border-transparent text-[11px] font-bold ${risk.riskScore > 70 ? 'bg-red-50 text-red-700 border-red-100/50' : 'bg-emerald-50 text-emerald-700 border-emerald-100/50'}`}
                   >
                     {risk.riskScore}%
                   </span>
                 </td>
                 <td className="px-6 py-4 text-right">
-                  <button className="text-blue-600 font-medium">Contacter</button>
+                  <button className="text-[12px] text-blue-600 font-bold hover:text-blue-700 transition-colors">Contacter</button>
                 </td>
               </tr>
             ))}
@@ -818,17 +832,20 @@ export const CustomerSuccessPage = () => {
 
 export const BackupManagerPage = () => (
   <div className="space-y-6">
-    <h3 className="text-[18px] font-semibold text-gray-900 mb-6">Data & Backups</h3>
+    <div>
+      <h3 className="text-[18px] font-semibold text-slate-900 tracking-tight">Data & Backups</h3>
+      <p className="text-[13px] text-slate-500 mt-1">Gérez les sauvegardes et la rétention des données pour vos tenants.</p>
+    </div>
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className="bg-white p-6 rounded-[8px] border border-gray-200 shadow-sm">
-        <h4 className="text-sm font-bold mb-4">Derniers Snapshots</h4>
-        <div className="divide-y">
+      <div className="bg-white p-6 rounded-[12px] border border-slate-200/60 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+        <h4 className="text-[13px] font-bold text-slate-900 mb-4">Derniers Snapshots</h4>
+        <div className="divide-y divide-slate-100/80">
           {MOCK_BACKUPS.map((bk) => (
             <div key={bk.id} className="py-3 flex justify-between items-center">
-              <div className="text-sm">
-                {bk.clinicName} • {bk.createdAt}
+              <div className="text-[13px] text-slate-800 font-medium">
+                {bk.clinicName} <span className="text-slate-400 font-normal ml-1">• {bk.createdAt}</span>
               </div>
-              <span className="text-xs bg-green-50 text-green-700 px-2 py-1 rounded">Réussi</span>
+              <span className="text-[11px] font-bold bg-emerald-50 text-emerald-700 px-2 py-1 rounded-[4px] border border-emerald-100/50">Réussi</span>
             </div>
           ))}
         </div>
@@ -839,26 +856,32 @@ export const BackupManagerPage = () => (
 
 export const InfrastructurePage = () => (
   <div className="space-y-6">
-    <h3 className="text-[18px] font-semibold text-gray-900 mb-6">Infrastructure & Scaling</h3>
+    <div>
+      <h3 className="text-[18px] font-semibold text-slate-900 tracking-tight">Infrastructure & Scaling</h3>
+      <p className="text-[13px] text-slate-500 mt-1">Supervisez l'état des serveurs et les performances de l'infrastructure.</p>
+    </div>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {MOCK_REGIONS.map((region) => (
-        <div key={region.id} className="bg-gray-900 rounded-[8px] p-5 text-white">
-          <div className="text-xs font-bold text-gray-400 uppercase">{region.code}</div>
-          <div className="text-xl font-bold">{region.name}</div>
-          <div className="text-sm text-gray-400 mt-2">{region.activeTenants} Tenants</div>
+        <div key={region.id} className="bg-[#0F0F0F] rounded-[12px] p-6 text-white border border-slate-800 shadow-[0_4px_16px_rgba(0,0,0,0.1)] relative overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="relative z-10">
+            <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">{region.code}</div>
+            <div className="text-2xl font-bold mt-1 text-slate-50 tracking-tight">{region.name}</div>
+            <div className="text-[13px] text-slate-400 mt-3 flex items-center gap-1.5"><IconGlobe className="w-3.5 h-3.5" /> {region.activeTenants} Tenants</div>
+          </div>
         </div>
       ))}
     </div>
-    <div className="bg-white p-6 rounded-[8px] border border-gray-200">
-      <h4 className="font-bold mb-4">Cache Hit Rates</h4>
+    <div className="bg-white p-6 rounded-[12px] border border-slate-200/60 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+      <h4 className="text-[13px] font-bold text-slate-900 mb-6 flex items-center gap-2"><IconActivity className="w-4 h-4 text-emerald-500" /> Cache Hit Rates</h4>
       {MOCK_CACHE_METRICS.map((c) => (
         <div key={c.name} className="mb-4">
-          <div className="flex justify-between text-xs mb-1">
+          <div className="flex justify-between text-[13px] font-medium text-slate-700 mb-2">
             <span>{c.name}</span>
-            <span>{c.hitRate}%</span>
+            <span className="text-emerald-600">{c.hitRate}%</span>
           </div>
-          <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-            <div className="bg-indigo-500 h-full" style={{ width: `${c.hitRate}%` }}></div>
+          <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+            <div className="bg-emerald-500 h-full rounded-full transition-all duration-500" style={{ width: `${c.hitRate}%` }}></div>
           </div>
         </div>
       ))}
@@ -868,23 +891,26 @@ export const InfrastructurePage = () => (
 
 export const CompliancePage = () => (
   <div className="space-y-6">
-    <h3 className="text-[18px] font-semibold text-gray-900 mb-6">Compliance Center</h3>
-    <div className="bg-white border border-gray-200 rounded-[8px] overflow-hidden">
-      <table className="min-w-full divide-y divide-gray-100">
-        <thead className="bg-gray-50">
+    <div>
+      <h3 className="text-[18px] font-semibold text-slate-900 tracking-tight">Compliance Center</h3>
+      <p className="text-[13px] text-slate-500 mt-1">Gardez un œil sur la conformité légale et la souveraineté des données.</p>
+    </div>
+    <div className="bg-white border border-slate-200/60 shadow-[0_2px_4px_rgba(0,0,0,0.02)] rounded-[12px] overflow-hidden">
+      <table className="min-w-full divide-y divide-slate-200/60">
+        <thead className="bg-[#FAFAFA]">
           <tr>
-            <th className="px-6 py-3 text-left">Tenant</th>
-            <th className="px-6 py-3 text-left">Data Location</th>
-            <th className="px-6 py-3 text-right">Status</th>
+            <th className="px-6 py-3.5 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Tenant</th>
+            <th className="px-6 py-3.5 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Data Location</th>
+            <th className="px-6 py-3.5 text-right text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Status</th>
           </tr>
         </thead>
-        <tbody className="divide-y">
+        <tbody className="divide-y divide-slate-200/60">
           {MOCK_COMPLIANCE.map((c) => (
-            <tr key={c.id}>
-              <td className="px-6 py-4">{c.clinicName}</td>
-              <td className="px-6 py-4">{c.dataLocation}</td>
+            <tr key={c.id} className="hover:bg-slate-50/50 transition-colors">
+              <td className="px-6 py-4 text-[13px] font-medium text-slate-900">{c.clinicName}</td>
+              <td className="px-6 py-4 text-[13px] text-slate-500">{c.dataLocation}</td>
               <td className="px-6 py-4 text-right">
-                <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">
+                <span className="bg-emerald-50 text-emerald-700 font-bold px-2 py-1 rounded-[4px] text-[11px] border border-emerald-100/50">
                   Compliant
                 </span>
               </td>
@@ -898,17 +924,22 @@ export const CompliancePage = () => (
 
 export const RoadmapPage = () => (
   <div className="space-y-6">
-    <h3 className="text-[18px] font-semibold text-gray-900 mb-6">Product Roadmap</h3>
+    <div>
+      <h3 className="text-[18px] font-semibold text-slate-900 tracking-tight">Product Roadmap</h3>
+      <p className="text-[13px] text-slate-500 mt-1">Visualisez les requêtes fonctionnalités et définissez les priorités.</p>
+    </div>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {['Planned', 'In Progress', 'Live'].map((status) => (
         <div key={status} className="space-y-4">
-          <div className="font-bold border-b pb-2">{status}</div>
+          <div className="text-[13px] font-bold text-slate-800 border-b border-slate-200/60 pb-3">{status}</div>
           {MOCK_FEATURE_REQUESTS.filter((f) => (status === 'Live' ? f.status === 'Live' : true))
             .slice(0, 2)
             .map((f) => (
-              <div key={f.id} className="bg-white p-4 rounded border shadow-sm">
-                <div className="font-bold text-sm">{f.title}</div>
-                <div className="text-xs text-gray-500 mt-2">Votes: {f.votes}</div>
+              <div key={f.id} className="bg-white p-4 rounded-[8px] border border-slate-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-shadow cursor-default group">
+                <div className="font-bold text-[13px] text-slate-900 group-hover:text-blue-600 transition-colors">{f.title}</div>
+                <div className="flex items-center gap-2 mt-3 text-[11px] text-slate-500 font-medium bg-slate-50 w-fit px-2 py-1 rounded-[4px]">
+                  <IconTrendingUp className="w-3 h-3 text-slate-400" /> Votes: {f.votes}
+                </div>
               </div>
             ))}
         </div>
@@ -919,27 +950,38 @@ export const RoadmapPage = () => (
 
 export const SecurityPage = () => (
   <div className="space-y-6">
-    <div className="grid grid-cols-4 gap-6">
-      <div className="bg-[#0F0F0F] p-5 rounded-[8px] text-white border border-gray-800 flex flex-col justify-between h-32 shadow-[0_4px_16px_rgba(0,0,0,0.1)]">
-        <div className="text-[11px] font-semibold text-gray-500 uppercase tracking-widest">Threat Level</div>
-        <div className="text-3xl font-semibold text-emerald-400 tracking-tight">Low</div>
+    <div>
+      <h3 className="text-[18px] font-semibold text-slate-900 tracking-tight">Sécurité</h3>
+      <p className="text-[13px] text-slate-500 mt-1">Journal des événements de sécurité et alertes.</p>
+    </div>
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="bg-[#0F0F0F] p-5 rounded-[12px] text-white border border-gray-800 flex flex-col justify-between h-32 shadow-[0_4px_16px_rgba(0,0,0,0.1)] relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10"></div>
+        <div className="relative z-10">
+          <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">Threat Level</div>
+          <div className="text-[32px] font-semibold text-emerald-400 tracking-tight mt-1 flex items-center gap-2">Low <IconCheckCircle className="w-6 h-6" /></div>
+        </div>
       </div>
     </div>
-    <div className="bg-white border rounded-[8px] overflow-hidden">
-      <table className="min-w-full divide-y">
-        <thead className="bg-gray-50">
+    <div className="bg-white border border-slate-200/60 shadow-[0_2px_4px_rgba(0,0,0,0.02)] rounded-[12px] overflow-hidden">
+      <table className="min-w-full divide-y divide-slate-200/60">
+        <thead className="bg-[#FAFAFA]">
           <tr>
-            <th className="px-6 py-3 text-left">Event</th>
-            <th className="px-6 py-3 text-left">IP</th>
-            <th className="px-6 py-3 text-right">Threat</th>
+            <th className="px-6 py-3.5 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Event</th>
+            <th className="px-6 py-3.5 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider">IP</th>
+            <th className="px-6 py-3.5 text-right text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Threat</th>
           </tr>
         </thead>
-        <tbody className="divide-y">
+        <tbody className="divide-y divide-slate-200/60">
           {MOCK_SECURITY_EVENTS.map((s) => (
-            <tr key={s.id}>
-              <td className="px-6 py-4">{s.reason}</td>
-              <td className="px-6 py-4 font-mono text-xs">{s.ip}</td>
-              <td className="px-6 py-4 text-right">{s.threatLevel}</td>
+            <tr key={s.id} className="hover:bg-slate-50/50 transition-colors">
+              <td className="px-6 py-4 text-[13px] font-medium text-slate-900">{s.reason}</td>
+              <td className="px-6 py-4 font-mono text-[12px] text-slate-500">{s.ip}</td>
+              <td className="px-6 py-4 text-right">
+                <span className={`px-2 py-1 rounded-[4px] text-[11px] font-bold border ${s.threatLevel === 'High' ? 'bg-red-50 text-red-700 border-red-100/50' : s.threatLevel === 'Medium' ? 'bg-orange-50 text-orange-700 border-orange-100/50' : 'bg-emerald-50 text-emerald-700 border-emerald-100/50'}`}>
+                  {s.threatLevel}
+                </span>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -950,29 +992,43 @@ export const SecurityPage = () => (
 
 export const SystemHealthPage = () => (
   <div className="space-y-6">
-    <h2 className="text-[18px] font-semibold text-gray-900 mb-6">System Health</h2>
+    <div>
+      <h3 className="text-[18px] font-semibold text-slate-900 tracking-tight">System Health</h3>
+      <p className="text-[13px] text-slate-500 mt-1">Métriques de performance de la plateforme en temps réel.</p>
+    </div>
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2 bg-white p-6 border rounded-[8px]">
-        <h4 className="mb-4">Latency (ms)</h4>
-        <div className="h-64">
+      <div className="lg:col-span-2 bg-white p-6 border border-slate-200/60 shadow-[0_2px_8px_rgba(0,0,0,0.02)] rounded-[12px]">
+        <h4 className="text-[13px] font-bold text-slate-900 mb-6">Latency (ms)</h4>
+        <div className="h-[280px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={SYSTEM_METRICS_DATA}>
-              <XAxis dataKey="time" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="latency" stroke="#4f46e5" dot={false} />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+              <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94a3b8' }} dy={10} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94a3b8' }} dx={-10} />
+              <Tooltip
+                contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: '12px' }}
+                itemStyle={{ color: '#0f172a', fontWeight: 'bold' }}
+              />
+              <Line type="monotone" dataKey="latency" stroke="#3b82f6" strokeWidth={2} dot={{ r: 4, fill: '#3b82f6', strokeWidth: 0 }} activeDot={{ r: 6 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
-      <div className="bg-white p-6 border rounded-[8px]">
-        <h4 className="mb-4">Active Jobs</h4>
-        {MOCK_JOBS.map((j) => (
-          <div key={j.id} className="flex justify-between py-2 border-b">
-            <span>{j.name}</span>
-            <span className="text-xs bg-blue-50 text-blue-600 px-2 rounded">Running</span>
-          </div>
-        ))}
+      <div className="bg-white p-6 border border-slate-200/60 shadow-[0_2px_8px_rgba(0,0,0,0.02)] rounded-[12px] flex flex-col">
+        <h4 className="text-[13px] font-bold text-slate-900 mb-6 flex items-center justify-between">
+          Active Jobs
+          <span className="bg-blue-50 text-blue-600 font-bold px-2 py-0.5 rounded-[4px] text-[10px]">{MOCK_JOBS.length} Queue</span>
+        </h4>
+        <div className="divide-y divide-slate-100/80 flex-1">
+          {MOCK_JOBS.map((j) => (
+            <div key={j.id} className="flex justify-between items-center py-3">
+              <span className="text-[13px] font-medium text-slate-700">{j.name}</span>
+              <span className="text-[11px] font-bold bg-blue-50/80 text-blue-600 px-2 py-1 rounded-[4px] border border-blue-100/50 flex items-center gap-1">
+                <IconRefresh className="w-3 h-3 animate-spin" /> {j.status}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   </div>
@@ -982,35 +1038,56 @@ export const DevelopersPage = () => {
   const [subTab, setSubTab] = useState<'webhooks' | 'api' | 'flags' | 'sql'>('webhooks');
   return (
     <div className="space-y-6">
-      <div className="flex gap-4 border-b">
+      <div>
+        <h3 className="text-[18px] font-semibold text-slate-900 tracking-tight">Développeurs</h3>
+        <p className="text-[13px] text-slate-500 mt-1">Intégrations, API, et paramètres avancés.</p>
+      </div>
+      <div className="flex gap-1 border-b border-slate-200/60">
         {['webhooks', 'api', 'flags', 'sql'].map((t) => (
           <button
             key={t}
             onClick={() => setSubTab(t as any)}
-            className={`pb-2 px-4 text-sm font-medium ${subTab === t ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-500'}`}
+            className={`pb-3 px-4 text-[13px] font-bold transition-all border-b-2 -mb-[2px] cursor-pointer ${subTab === t ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
           >
             {t.toUpperCase()}
           </button>
         ))}
       </div>
       {subTab === 'webhooks' && (
-        <div className="bg-white border rounded-[8px]">
-          {MOCK_WEBHOOKS.map((w) => (
-            <div key={w.id} className="p-4 flex justify-between border-b last:border-0">
-              <div className="font-mono text-sm">{w.url}</div>
-              <div className="text-xs bg-green-50 text-green-700 px-2 py-1 rounded">Active</div>
+        <div className="bg-white border border-slate-200/60 shadow-[0_2px_4px_rgba(0,0,0,0.02)] rounded-[12px] overflow-hidden">
+          <div className="divide-y divide-slate-100/80">
+            {MOCK_WEBHOOKS.map((w) => (
+              <div key={w.id} className="p-5 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
+                <div>
+                  <div className="font-mono text-[13px] text-slate-700 font-bold">{w.url}</div>
+                  <div className="text-[12px] font-medium text-slate-400 mt-1.5 flex items-center gap-1.5">
+                    <span className="text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded-[4px] border border-slate-200/50">Events</span> {w.events.join(', ')}
+                  </div>
+                </div>
+                <div className="text-[11px] font-bold bg-emerald-50 text-emerald-700 px-2 py-1 rounded-[4px] border border-emerald-100/50">Active</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {subTab === 'api' && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {MOCK_API_METRICS.map((m) => (
+            <div key={m.endpoint} className="p-6 border border-slate-200/60 rounded-[12px] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.02)] relative overflow-hidden group hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-shadow">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><IconCode className="w-10 h-10 text-slate-400" /></div>
+              <div className="text-[12px] font-mono font-bold text-slate-500 truncate relative z-10">{m.endpoint}</div>
+              <div className="text-[28px] font-bold text-slate-900 mt-3 relative z-10 tracking-tight">{m.requests.toLocaleString()} <span className="text-[14px] font-medium tracking-normal text-slate-400">reqs</span></div>
+              <div className="text-[12px] font-bold mt-5 relative z-10 flex gap-4">
+                <span className="text-slate-500 bg-slate-50 px-2.5 py-1 rounded-[4px] border border-slate-200/50">Latency: {m.avgLatency}ms</span>
+                <span className={`px-2.5 py-1 rounded-[4px] border ${m.errors > 0 ? 'bg-red-50 text-red-600 border-red-100/50' : 'bg-emerald-50 text-emerald-600 border-emerald-100/50'}`}>Err: {m.errors}</span>
+              </div>
             </div>
           ))}
         </div>
       )}
-      {subTab === 'api' && (
-        <div className="grid grid-cols-3 gap-4">
-          {MOCK_API_METRICS.map((m) => (
-            <div key={m.endpoint} className="p-4 border rounded bg-gray-50">
-              <div className="text-xs text-gray-500 truncate">{m.endpoint}</div>
-              <div className="text-xl font-bold">{m.requests} reqs</div>
-            </div>
-          ))}
+      {subTab !== 'api' && subTab !== 'webhooks' && (
+        <div className="p-10 text-center bg-slate-50/50 border border-slate-200/60 border-dashed rounded-[12px]">
+          <p className="text-[13px] text-slate-500 font-medium tracking-tight">Ce module est en cours de développement.</p>
         </div>
       )}
     </div>
@@ -1067,38 +1144,38 @@ export const SaaSAdministration = () => {
       case 'security':
         return <SecurityPage />;
       default:
-        return <div className="text-gray-400 text-center py-10">Section en construction</div>;
+        return <div className="text-slate-400 font-medium text-center py-10 tracking-tight">Section en construction</div>;
     }
   };
 
   return (
-    <div className="flex h-full bg-white rounded-[12px] border border-slate-200/60 shadow-[0_2px_8px_rgba(0,0,0,0.02)] overflow-hidden font-sans">
-      <div className="w-64 bg-[#FAFAFA] border-r border-slate-200/60 flex flex-col">
-        <div className="p-4 border-b border-slate-200/60">
-          <h2 className="text-[11px] font-semibold text-gray-500 uppercase tracking-widest">
+    <div className="flex relative h-[min(calc(100vh-140px),900px)] min-h-[600px] bg-white rounded-[16px] border border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden font-sans">
+      <div className="w-64 bg-[#FAFAFA] border-r border-slate-200/60 flex flex-col pt-2 relative z-10">
+        <div className="px-5 py-4 mb-2">
+          <h2 className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.15em]">
             Administration
           </h2>
         </div>
-        <nav className="flex-1 overflow-y-auto p-3 space-y-0.5">
+        <nav className="flex-1 overflow-y-auto px-3 pb-6 space-y-0.5 custom-scrollbar">
           {navItems.map((item) => (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-[6px] transition-all duration-200 ${activeTab === item.id
-                ? 'bg-white text-gray-900 shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-slate-200/60'
-                : 'text-gray-500 hover:text-gray-900 hover:bg-slate-100/50 border border-transparent'
+              className={`w-full flex items-center gap-3 px-3 py-2 text-[13px] font-bold rounded-[8px] transition-all duration-200 cursor-pointer ${activeTab === item.id
+                ? 'bg-white text-slate-900 shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-slate-200/60'
+                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 border border-transparent'
                 }`}
             >
               <item.icon
-                className={`w-4 h-4 ${activeTab === item.id ? 'text-gray-900' : 'text-gray-400'}`}
+                className={`w-4 h-4 transition-colors ${activeTab === item.id ? 'text-slate-900' : 'text-slate-400'}`}
               />
               {item.label}
             </button>
           ))}
         </nav>
       </div>
-      <div className="flex-1 overflow-auto bg-white p-8">
-        <div className="max-w-6xl mx-auto h-full flex flex-col">{renderContent()}</div>
+      <div className="flex-1 overflow-auto bg-slate-50/30 p-8 custom-scrollbar relative z-0">
+        <div className="max-w-[1000px] mx-auto h-full flex flex-col pb-10">{renderContent()}</div>
       </div>
     </div>
   );
