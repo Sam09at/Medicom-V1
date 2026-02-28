@@ -167,32 +167,35 @@ export const Cabinets = () => {
   };
 
   return (
-    <div className="space-y-6 font-sans">
-      {/* Header */}
+    <div className="space-y-6 animate-in fade-in duration-300">
+      {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-gray-900 tracking-tight">Gestion des Tenants</h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-[22px] font-semibold text-slate-900 tracking-tight">Gestion des Tenants</h1>
+          <p className="text-[13px] text-slate-500 mt-0.5">
             Supervision et configuration des instances cliniques.
           </p>
         </div>
         <button
           onClick={() => setIsProvisioning(true)}
-          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-[8px] text-[13px] font-bold transition-all shadow-sm active:scale-95"
+          className="btn-primary"
         >
           <IconPlus className="w-4 h-4" /> Provisionner
         </button>
       </div>
 
-      {/* List */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center bg-gray-50/30 gap-4">
+      {/* Tenant List */}
+      <div className="card overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center bg-[#FAFAFA] gap-4">
           <div className="flex gap-2">
             {['All', 'Active', 'Suspended'].map((s) => (
               <button
                 key={s}
                 onClick={() => setFilter(s)}
-                className={`px-3 py-1.5 text-xs font-bold rounded-full border transition-all ${filter === s ? 'bg-white text-gray-900 border-gray-300 shadow-sm' : 'text-gray-400 border-transparent hover:bg-gray-100'}`}
+                className={`px-3 py-1.5 text-[11px] font-semibold rounded-[30px] border transition-all ${filter === s
+                    ? 'bg-white text-slate-900 border-slate-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.05)]'
+                    : 'text-slate-400 border-transparent hover:bg-slate-100 hover:text-slate-700'
+                  }`}
               >
                 {s === 'All' ? 'Tous' : s}
               </button>
@@ -200,174 +203,129 @@ export const Cabinets = () => {
           </div>
 
           {selectedIds.size > 0 ? (
-            <div className="flex items-center gap-2 bg-indigo-50 px-3 py-1.5 rounded-[8px] border border-indigo-100 animate-in fade-in">
-              <span className="text-xs font-medium text-indigo-700">
+            <div className="flex items-center gap-2 bg-blue-50/80 px-3 py-1.5 rounded-[8px] border border-blue-100/60 animate-in fade-in">
+              <span className="text-[11px] font-semibold text-[#136cfb]">
                 {selectedIds.size} sélectionné(s)
               </span>
-              <div className="h-4 w-px bg-indigo-200 mx-1"></div>
+              <div className="h-4 w-px bg-blue-200 mx-1"></div>
               <button
                 onClick={() => handleBulkAction('activate')}
-                className="text-xs font-medium text-emerald-600 hover:text-emerald-700 px-2"
+                className="text-[11px] font-semibold text-emerald-600 hover:text-emerald-700 px-2"
               >
                 Activer
               </button>
               <button
                 onClick={() => handleBulkAction('suspend')}
-                className="text-xs font-medium text-rose-600 hover:text-rose-700 px-2"
+                className="text-[11px] font-semibold text-rose-600 hover:text-rose-700 px-2"
               >
                 Suspendre
               </button>
               <button
                 onClick={() => handleBulkAction('export')}
-                className="text-xs font-medium text-indigo-600 hover:text-indigo-700 px-2 flex items-center gap-1"
+                className="text-[11px] font-semibold text-[#136cfb] hover:text-blue-700 px-2 flex items-center gap-1"
               >
                 <IconDownload className="w-3 h-3" /> CSV
               </button>
             </div>
           ) : (
             <div className="relative w-full sm:w-64">
-              <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type="text"
                 placeholder="Rechercher..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-1.5 text-sm border border-gray-200 rounded-[8px] focus:outline-none focus:ring-2 focus:ring-blue-100"
+                className="input pl-9 py-1.5"
               />
             </div>
           )}
         </div>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-100">
+          <table className="min-w-full divide-y divide-slate-100">
             <thead>
-              <tr className="bg-gray-50/50">
-                <th scope="col" className="px-6 py-3 text-left">
+              <tr className="bg-[#FAFAFA]">
+                <th scope="col" className="px-6 py-3.5 text-left">
                   <input
                     type="checkbox"
                     onChange={toggleAll}
                     checked={
                       selectedIds.size === filteredTenants.length && filteredTenants.length > 0
                     }
-                    className="w-4 h-4 rounded border-gray-300 text-blue-600"
+                    className="w-4 h-4 rounded border-slate-300 text-[#136cfb]"
                   />
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest"
-                >
-                  Tenant
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest"
-                >
-                  Plan
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest"
-                >
-                  Statut
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest"
-                >
-                  Admin
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest"
-                >
-                  Last Booking
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest"
-                >
-                  MRR
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest"
-                >
-                  Churn Risk
-                </th>
-                <th scope="col" className="relative px-6 py-3"></th>
+                <th scope="col" className="px-6 py-3.5 text-left text-[11px] font-bold text-slate-400 uppercase tracking-widest">Tenant</th>
+                <th scope="col" className="px-6 py-3.5 text-left text-[11px] font-bold text-slate-400 uppercase tracking-widest">Plan</th>
+                <th scope="col" className="px-6 py-3.5 text-left text-[11px] font-bold text-slate-400 uppercase tracking-widest">Statut</th>
+                <th scope="col" className="px-6 py-3.5 text-left text-[11px] font-bold text-slate-400 uppercase tracking-widest">Admin</th>
+                <th scope="col" className="px-6 py-3.5 text-left text-[11px] font-bold text-slate-400 uppercase tracking-widest">Dernière activité</th>
+                <th scope="col" className="px-6 py-3.5 text-left text-[11px] font-bold text-slate-400 uppercase tracking-widest">MRR</th>
+                <th scope="col" className="px-6 py-3.5 text-left text-[11px] font-bold text-slate-400 uppercase tracking-widest">Churn Risk</th>
+                <th scope="col" className="relative px-6 py-3.5"></th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-100">
+            <tbody className="bg-white divide-y divide-slate-100">
               {filteredTenants.map((tenant) => (
                 <tr
                   key={tenant.id}
                   onClick={() => setSelectedTenant(tenant)}
-                  className={`hover:bg-gray-50 transition-colors cursor-pointer group ${selectedIds.has(tenant.id) ? 'bg-blue-50/50' : ''}`}
+                  className={`hover:bg-slate-50/60 transition-colors cursor-pointer group ${selectedIds.has(tenant.id) ? 'bg-blue-50/40' : ''
+                    }`}
                 >
                   <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                     <input
                       type="checkbox"
                       checked={selectedIds.has(tenant.id)}
                       onChange={(e) => toggleSelection(tenant.id, e as any)}
-                      className="w-4 h-4 rounded border-gray-300 text-blue-600"
+                      className="w-4 h-4 rounded border-slate-200 text-[#136cfb]"
                     />
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <div className="h-9 w-9 flex-shrink-0 bg-gradient-to-br from-blue-50 to-indigo-50 text-indigo-600 rounded-[8px] flex items-center justify-center font-bold text-xs border border-indigo-100 shadow-sm">
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 flex-shrink-0 bg-blue-50 text-[#136cfb] rounded-[6px] flex items-center justify-center font-semibold text-[11px] border border-blue-100/60">
                         {tenant.name.substring(0, 2).toUpperCase()}
                       </div>
-                      <div className="ml-3">
-                        <div className="text-sm font-bold text-gray-900">{tenant.name}</div>
-                        <div className="text-xs text-gray-500 flex items-center gap-1">
-                          <IconFileText className="w-3 h-3" /> {tenant.id.slice(0, 8)}...
+                      <div>
+                        <div className="text-[13px] font-semibold text-slate-900">{tenant.name}</div>
+                        <div className="text-[11px] text-slate-400 font-medium">
+                          {tenant.id.slice(0, 8)}...
                         </div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span
-                      className={`px-2 py-0.5 text-[10px] font-bold rounded border ${
-                        tenant.plan === 'Premium'
-                          ? 'bg-purple-50 text-purple-700 border-purple-100'
-                          : 'bg-blue-50 text-blue-700 border-blue-100'
-                      }`}
-                    >
+                    <span className={`badge ${tenant.plan === 'Premium' ? 'badge-blue' : 'badge-gray'
+                      }`}>
                       {tenant.plan}
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
-                        tenant.status === 'Active'
-                          ? 'bg-green-50 text-green-700 border-green-200'
-                          : 'bg-red-50 text-red-700 border-red-200'
-                      }`}
-                    >
-                      <span
-                        className={`w-1.5 h-1.5 rounded-full ${tenant.status === 'Active' ? 'bg-green-500' : 'bg-red-500'}`}
-                      ></span>
+                    <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-0.5 rounded-[30px] border ${tenant.status === 'Active'
+                        ? 'bg-emerald-50/80 text-emerald-700 border-emerald-100/60'
+                        : 'bg-rose-50/80 text-rose-700 border-rose-100/60'
+                      }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${tenant.status === 'Active' ? 'bg-emerald-500' : 'bg-rose-500'
+                        }`} />
                       {tenant.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-xs font-medium text-gray-600">
+                  <td className="px-6 py-4 text-[12px] font-medium text-slate-600">
                     <div className="flex items-center gap-1">
-                      <IconShield className="w-3 h-3 text-gray-400" /> {tenant.contactName}
+                      <IconShield className="w-3 h-3 text-slate-300" />
+                      {tenant.contactName}
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-xs font-medium text-gray-500">
+                  <td className="px-6 py-4 text-[12px] font-medium text-slate-400">
                     Aujourd'hui, 14:30
                   </td>
-                  <td className="px-6 py-4 text-sm font-bold text-gray-900">
+                  <td className="px-6 py-4 text-[13px] font-semibold text-slate-900">
                     {tenant.mrr.toLocaleString()} MAD
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`text-xs font-bold ${Math.random() > 0.8 ? 'text-amber-600' : 'text-emerald-600'}`}
-                      >
-                        {Math.random() > 0.8 ? 'High' : 'Low'}
-                      </span>
-                    </div>
+                    <span className={`badge ${Math.random() > 0.8 ? 'badge-orange' : 'badge-green'
+                      }`}>
+                      {Math.random() > 0.8 ? 'High' : 'Low'}
+                    </span>
                   </td>
                   <td className="px-6 py-4 text-right">
                     <button
@@ -375,7 +333,7 @@ export const Cabinets = () => {
                         e.stopPropagation();
                         setSelectedTenant(tenant);
                       }}
-                      className="text-gray-400 hover:text-blue-600 p-2"
+                      className="text-slate-300 hover:text-[#136cfb] p-2 transition-colors"
                     >
                       <IconSettings className="w-4 h-4" />
                     </button>
@@ -396,13 +354,16 @@ export const Cabinets = () => {
         width="xl"
       >
         {selectedTenant && (
-          <div className="flex flex-col h-full bg-[#F9FAFB]">
-            <div className="flex bg-white border-b border-gray-200 px-6 overflow-x-auto">
+          <div className="flex flex-col h-full bg-[#FAFAFA]">
+            <div className="flex bg-white border-b border-slate-100 px-6 overflow-x-auto">
               {['overview', 'billing', 'usage', 'users', 'logs', 'actions'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveDetailTab(tab)}
-                  className={`px-4 py-3 text-[11px] font-bold uppercase tracking-widest border-b-2 transition-all whitespace-nowrap ${activeDetailTab === tab ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-400 hover:text-gray-900'}`}
+                  className={`px-4 py-3 text-[11px] font-semibold uppercase tracking-widest border-b-2 transition-all whitespace-nowrap ${activeDetailTab === tab
+                      ? 'border-[#136cfb] text-[#136cfb]'
+                      : 'border-transparent text-slate-400 hover:text-slate-900'
+                    }`}
                 >
                   {tab}
                 </button>
@@ -411,59 +372,39 @@ export const Cabinets = () => {
 
             <div className="flex-1 overflow-y-auto p-8 space-y-6">
               {activeDetailTab === 'overview' && (
-                <div className="space-y-6 animate-in fade-in duration-300">
-                  <div className="grid grid-cols-3 gap-6">
-                    <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-                      <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                        MRR
-                      </div>
-                      <div className="text-2xl font-bold mt-1 text-gray-900">
-                        {selectedTenant.mrr} MAD
-                      </div>
+                <div className="space-y-5 animate-in fade-in duration-300">
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="card p-5">
+                      <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">MRR</div>
+                      <div className="text-[22px] font-semibold text-slate-900 tracking-tight">{selectedTenant.mrr.toLocaleString()} MAD</div>
                     </div>
-                    <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-                      <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                        Utilisateurs
-                      </div>
-                      <div className="text-2xl font-bold mt-1 text-gray-900">
-                        {selectedTenant.usersCount}
-                      </div>
+                    <div className="card p-5">
+                      <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Utilisateurs</div>
+                      <div className="text-[22px] font-semibold text-slate-900 tracking-tight">{selectedTenant.usersCount}</div>
                     </div>
-                    <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-                      <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                        Stockage
-                      </div>
-                      <div className="text-2xl font-bold mt-1 text-gray-900">
-                        {selectedTenant.storageUsed}
-                      </div>
+                    <div className="card p-5">
+                      <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Stockage</div>
+                      <div className="text-[22px] font-semibold text-slate-900 tracking-tight">{selectedTenant.storageUsed}</div>
                     </div>
                   </div>
-                  <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                    <h3 className="font-bold text-gray-900 text-sm mb-4">Informations</h3>
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-sm">
+                  <div className="card p-6">
+                    <h3 className="text-[13px] font-semibold text-slate-900 mb-4">Informations</h3>
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-4">
                       <div>
-                        <label className="text-[10px] font-bold text-gray-400 uppercase">
-                          Contact
-                        </label>
-                        <p className="font-medium">{selectedTenant.contactName}</p>
+                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Contact</label>
+                        <p className="text-[13px] font-medium text-slate-900 mt-0.5">{selectedTenant.contactName}</p>
                       </div>
                       <div>
-                        <label className="text-[10px] font-bold text-gray-400 uppercase">
-                          Email
-                        </label>
-                        <p className="font-medium">{selectedTenant.email}</p>
+                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Email</label>
+                        <p className="text-[13px] font-medium text-slate-900 mt-0.5">{selectedTenant.email}</p>
                       </div>
                       <div>
-                        <label className="text-[10px] font-bold text-gray-400 uppercase">
-                          Région
-                        </label>
-                        <p className="font-medium">{selectedTenant.region}</p>
+                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Région</label>
+                        <p className="text-[13px] font-medium text-slate-900 mt-0.5">{selectedTenant.region}</p>
                       </div>
                       <div>
-                        <label className="text-[10px] font-bold text-gray-400 uppercase">
-                          Inscrit le
-                        </label>
-                        <p className="font-medium">{selectedTenant.joinedAt}</p>
+                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Inscrit le</label>
+                        <p className="text-[13px] font-medium text-slate-900 mt-0.5">{selectedTenant.joinedAt}</p>
                       </div>
                     </div>
                   </div>
@@ -483,26 +424,27 @@ export const Cabinets = () => {
                     </div>
                   </div>
 
-                  <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden divide-y divide-gray-100">
+                  <div className="card overflow-hidden divide-y divide-slate-100">
                     {Object.keys(MODULE_LABELS).map((key) => {
                       const moduleKey = key as keyof ModuleConfiguration;
                       const isEnabled = selectedTenant.enabledModules[moduleKey];
                       return (
                         <div
                           key={key}
-                          className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                          className="p-4 flex items-center justify-between hover:bg-slate-50/60 transition-colors"
                         >
                           <div>
-                            <div className="text-sm font-bold text-gray-900">
+                            <div className="text-[13px] font-medium text-slate-900">
                               {MODULE_LABELS[moduleKey]}
                             </div>
-                            <div className="text-[11px] text-gray-500 uppercase tracking-tight mt-0.5">
+                            <div className="text-[11px] text-slate-400 font-mono mt-0.5">
                               module.{key}
                             </div>
                           </div>
                           <button
                             onClick={() => toggleModule(moduleKey)}
-                            className={`transition-all ${isEnabled ? 'text-blue-600' : 'text-gray-300 hover:text-gray-400'}`}
+                            className={`transition-all ${isEnabled ? 'text-[#136cfb]' : 'text-slate-200 hover:text-slate-300'
+                              }`}
                           >
                             {isEnabled ? (
                               <IconToggleRight className="w-10 h-10" />
@@ -518,43 +460,39 @@ export const Cabinets = () => {
               )}
 
               {activeDetailTab === 'users' && (
-                <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 animate-in fade-in">
-                  <h3 className="font-bold text-gray-900 text-sm mb-4">Utilisateurs du Cabinet</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-[8px] border border-gray-100">
+                <div className="card p-6 animate-in fade-in">
+                  <h3 className="text-[13px] font-semibold text-slate-900 mb-4">Utilisateurs du Cabinet</h3>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-3 bg-slate-50 rounded-[6px] border border-slate-100">
                       <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center font-bold text-xs">
-                          MA
+                        <div className="h-8 w-8 bg-blue-50 text-[#136cfb] rounded-full flex items-center justify-center font-semibold text-[11px]">
+                          {selectedTenant.contactName.substring(0, 2).toUpperCase()}
                         </div>
                         <div>
-                          <div className="text-sm font-bold text-gray-900">
-                            {selectedTenant.contactName}
-                          </div>
-                          <div className="text-xs text-gray-500">Administrateur</div>
+                          <div className="text-[13px] font-medium text-slate-900">{selectedTenant.contactName}</div>
+                          <div className="text-[11px] text-slate-400">Administrateur</div>
                         </div>
                       </div>
-                      <span className="text-xs font-medium text-gray-500">Dernière cx: 2h</span>
+                      <span className="text-[11px] font-medium text-slate-400">Dernière cx: 2h</span>
                     </div>
                   </div>
                 </div>
               )}
 
               {activeDetailTab === 'logs' && (
-                <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 animate-in fade-in">
-                  <h3 className="font-bold text-gray-900 text-sm mb-4">
-                    Journaux d'Audit (Tenant)
-                  </h3>
-                  <div className="space-y-4">
+                <div className="card p-6 animate-in fade-in">
+                  <h3 className="text-[13px] font-semibold text-slate-900 mb-4">Journaux d'Audit</h3>
+                  <div className="space-y-0 divide-y divide-slate-100">
                     {MOCK_AUDIT_LOGS.map((log) => (
                       <div
                         key={log.id}
-                        className="flex gap-4 p-3 hover:bg-gray-50 border border-transparent hover:border-gray-100 rounded-[8px] transition-colors"
+                        className="flex gap-3 py-3 hover:bg-slate-50/60 transition-colors"
                       >
-                        <IconActivity className="w-4 h-4 text-gray-400 mt-0.5" />
+                        <IconActivity className="w-4 h-4 text-slate-300 mt-0.5 shrink-0" />
                         <div>
-                          <div className="text-sm font-medium text-gray-900">{log.action}</div>
-                          <div className="text-xs text-gray-500">
-                            {log.timestamp} - IP: {log.ipAddress}
+                          <div className="text-[13px] font-medium text-slate-900">{log.action}</div>
+                          <div className="text-[11px] text-slate-400 mt-0.5">
+                            {log.timestamp} · IP: {log.ipAddress}
                           </div>
                         </div>
                       </div>

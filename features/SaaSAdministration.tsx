@@ -449,40 +449,40 @@ export const FinancePage = () => {
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200/60 rounded-[12px] shadow-[0_2px_8px_rgba(0,0,0,0.02)] p-6">
-        <h3 className="text-[14px] font-bold text-slate-900 mb-6">Plans d'abonnement</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="card p-6">
+        <h3 className="text-[14px] font-semibold text-slate-900 mb-5 tracking-tight">Plans d'abonnement</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {MOCK_PLANS.map((plan) => (
             <div
               key={plan.id}
-              className="border border-slate-200/60 rounded-[8px] p-5 hover:border-indigo-300 hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-all relative group bg-slate-50/30"
+              className="border border-slate-200/60 rounded-[12px] p-5 hover:border-[#136cfb]/30 hover:shadow-[0_4px_12px_rgba(19,108,251,0.06)] transition-all relative group bg-slate-50/30"
             >
               {plan.isPopular && (
-                <span className="absolute top-0 right-0 bg-indigo-50 text-indigo-700 text-[10px] font-bold px-2 py-1 rounded-bl-[8px] border-l border-b border-indigo-100">
+                <span className="absolute top-0 right-0 bg-blue-50 text-[#136cfb] text-[10px] font-bold px-2 py-1 rounded-bl-[8px] border-l border-b border-blue-100/60">
                   POPULAIRE
                 </span>
               )}
-              <h4 className="font-bold text-slate-900">{plan.name}</h4>
-              <div className="mt-2 text-2xl font-bold text-indigo-600 tracking-tight">
+              <h4 className="font-semibold text-slate-900">{plan.name}</h4>
+              <div className="mt-2 text-[22px] font-semibold text-[#136cfb] tracking-tight">
                 {plan.price}{' '}
-                <span className="text-[13px] text-slate-500 font-medium tracking-normal">
+                <span className="text-[13px] text-slate-400 font-medium tracking-normal">
                   {plan.currency}/{plan.billing === 'Monthly' ? 'mo' : 'yr'}
                 </span>
               </div>
-              <div className="mt-5 space-y-2.5">
+              <div className="mt-4 space-y-2">
                 {plan.features.slice(0, 3).map((f, i) => (
-                  <div key={i} className="flex items-center gap-2 text-[13px] text-slate-600 font-medium">
-                    <IconCheckCircle className="w-4 h-4 text-emerald-500 shrink-0" /> <span className="truncate">{f}</span>
+                  <div key={i} className="flex items-center gap-2 text-[12px] text-slate-600 font-medium">
+                    <IconCheckCircle className="w-3.5 h-3.5 text-emerald-500 shrink-0" /> <span className="truncate">{f}</span>
                   </div>
                 ))}
               </div>
-              <div className="mt-6 pt-4 border-t border-slate-200/60 flex justify-between items-center">
-                <span className="text-[12px] font-bold text-slate-500">
+              <div className="mt-5 pt-4 border-t border-slate-100 flex justify-between items-center">
+                <span className="text-[12px] font-medium text-slate-400">
                   {plan.activeClinics} abonnés
                 </span>
                 <button
                   onClick={() => alert(`Modifier le plan ${plan.name}`)}
-                  className="text-[12px] text-indigo-600 font-bold hover:text-indigo-700"
+                  className="text-[12px] text-[#136cfb] font-semibold hover:text-blue-700"
                 >
                   Modifier
                 </button>
@@ -514,7 +514,7 @@ export const MarketplacePage = () => {
             Gérez les modules additionnels vendus aux cliniques
           </p>
         </div>
-        <button className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-[6px] text-[13px] font-medium hover:bg-slate-800 shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-colors">
+        <button className="btn-primary">
           <IconPlus className="w-4 h-4" /> Créer un Add-on
         </button>
       </div>
@@ -526,7 +526,7 @@ export const MarketplacePage = () => {
             className="bg-white border border-slate-200/60 rounded-[12px] p-5 shadow-[0_2px_4px_rgba(0,0,0,0.02)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-shadow"
           >
             <div className="flex justify-between items-start mb-4">
-              <div className="p-2.5 bg-indigo-50/50 text-indigo-600 rounded-[8px] border border-indigo-100/50">
+              <div className="p-2.5 bg-blue-50/50 text-[#136cfb] rounded-[8px] border border-blue-100/50">
                 {addon.icon === 'message' ? (
                   <IconMail className="w-5 h-5" />
                 ) : addon.icon === 'wand' ? (
@@ -1161,13 +1161,14 @@ export const SaaSAdministration = () => {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2 text-[13px] font-bold rounded-[8px] transition-all duration-200 cursor-pointer ${activeTab === item.id
+              className={`w-full flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-[6px] transition-all duration-200 cursor-pointer ${activeTab === item.id
                 ? 'bg-white text-slate-900 shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-slate-200/60'
                 : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 border border-transparent'
                 }`}
             >
               <item.icon
-                className={`w-4 h-4 transition-colors ${activeTab === item.id ? 'text-slate-900' : 'text-slate-400'}`}
+                className={`w-4 h-4 transition-colors ${activeTab === item.id ? 'text-[#136cfb]' : 'text-slate-400'
+                  }`}
               />
               {item.label}
             </button>
