@@ -255,17 +255,37 @@ const PortalPlaceholder = () => (
   </div>
 );
 
-const UnauthorizedPage = () => (
-  <div className="min-h-screen flex items-center justify-center text-gray-500 font-sans">
-    <div className="text-center">
-      <div className="w-16 h-16 bg-red-50 text-red-400 rounded-full flex items-center justify-center mb-6 mx-auto border border-red-100 text-2xl">
-        🔒
+const UnauthorizedPage = () => {
+  const navigate = useNavigate();
+  const { setCurrentUser, setCurrentTenant } = useMedicomStore();
+
+  const handleBackToLogin = () => {
+    // Clear any stale user state so RoleGuard/RootRedirect shows login
+    setCurrentUser(null);
+    setCurrentTenant(null);
+    navigate('/', { replace: true });
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center text-gray-500 font-sans bg-white">
+      <div className="text-center max-w-sm">
+        <div className="w-16 h-16 bg-red-50 text-red-400 rounded-full flex items-center justify-center mb-6 mx-auto border border-red-100 text-2xl">
+          🔒
+        </div>
+        <h2 className="text-[20px] font-semibold text-gray-900 tracking-tight">Accès non autorisé</h2>
+        <p className="mt-2 text-[13px] text-gray-500">
+          Vous n'avez pas les permissions nécessaires pour accéder à cette page.
+        </p>
+        <button
+          onClick={handleBackToLogin}
+          className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-[30px] bg-slate-900 text-white text-[13px] font-semibold hover:bg-slate-700 transition-colors"
+        >
+          Retour à la connexion
+        </button>
       </div>
-      <h2 className="text-xl font-bold text-gray-900">Accès non autorisé</h2>
-      <p className="mt-2">Vous n'avez pas les permissions nécessaires pour accéder à cette page.</p>
     </div>
-  </div>
-);
+  );
+};
 
 // ── Smart root redirect ──
 const RootRedirect = () => {

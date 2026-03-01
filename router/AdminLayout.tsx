@@ -204,7 +204,7 @@ export const AdminLayout: React.FC = () => {
           </header>
 
           <div className="flex-1 overflow-auto bg-white">
-            <div className="w-full px-6 py-6 lg:py-8 lg:px-8 animate-in fade-in duration-300">
+            <div className="w-full px-6 py-6 lg:py-8 lg:px-8">
               <Outlet />
             </div>
           </div>
