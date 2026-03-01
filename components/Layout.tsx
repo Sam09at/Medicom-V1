@@ -11,23 +11,19 @@ import {
   IconFileText,
   IconTooth,
   IconClipboard,
-  IconUserPlus,
   IconMessage,
   IconSearch,
-  IconClock,
   IconBell,
-  IconCheck,
   IconFolder,
-  IconChevronLeft,
-  IconChevronRight,
   IconArchive,
   IconTruck,
-  IconShield,
   IconPlus,
   IconMenu,
   IconBriefcase,
+  IconShield,
 } from './Icons';
 import { MOCK_NOTIFICATIONS } from '../constants';
+import { SuperAdminSidebar } from './SuperAdminSidebar';
 
 interface LayoutProps {
   children: ReactNode;
@@ -123,56 +119,77 @@ export const Layout: React.FC<LayoutProps> = ({
   const menuItems = getFilteredMenuItems();
 
   return (
-    <div className="flex h-screen bg-[#FAFAFA] font-sans text-slate-900 antialiased overflow-hidden">
-      {/* Sidebar */}
-      <aside
-        className={`flex-shrink-0 bg-[#FAFAFA] border-r border-slate-200/60 transition-all duration-200 flex flex-col z-30 ${isSidebarCollapsed ? 'w-[72px]' : 'w-[240px]'}`}
-      >
-        <div className="h-14 flex items-center px-5 border-b border-slate-200/60">
-          <img src="/logo.png" alt="Medicom Logo" className="w-8 h-8 object-contain" />
-          {!isSidebarCollapsed && (
-            <span className="ml-3 font-semibold text-slate-900 text-[14px] tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>Medicom</span>
-          )}
-        </div>
-
-        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-0.5">
-          {menuItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => onChangeView(item.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-[6px] transition-all duration-200 ease-out group relative ${currentView === item.id
-                ? 'bg-white text-gray-900 shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-slate-200/60'
-                : 'text-gray-500 hover:text-gray-900 hover:bg-slate-200/40 border border-transparent'
-                } ${isSidebarCollapsed ? 'justify-center px-0' : ''}`}
-              title={isSidebarCollapsed ? item.label : ''}
-            >
-              <item.icon
-                className={`w-[16px] h-[16px] ${currentView === item.id ? 'text-gray-900' : 'text-gray-400 group-hover:text-gray-700'}`}
-              />
-              {!isSidebarCollapsed && <span className="truncate">{item.label}</span>}
-            </button>
-          ))}
-        </nav>
-
-        <div className="p-3 border-t border-slate-200/60">
-          <div
-            className={`flex items-center gap-3 p-2 rounded-[8px] hover:bg-white border border-transparent hover:border-slate-200/60 hover:shadow-[0_1px_3px_rgba(0,0,0,0.05)] transition-all cursor-pointer ${isSidebarCollapsed ? 'justify-center' : ''}`}
-          >
-            <img src={user.avatar} alt="" className="w-8 h-8 rounded-full border border-slate-200" />
+    <div
+      className={`flex h-screen bg-[#FAFAFA] font-sans text-slate-900 antialiased overflow-hidden${isSuperAdmin ? ' sa-shell' : ''}`}
+    >
+      {/* ─── SIDEBAR RENDERING ─── */}
+      {isSuperAdmin ? (
+        <SuperAdminSidebar
+          user={user}
+          onLogout={onLogout}
+          isSidebarCollapsed={isSidebarCollapsed}
+          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        />
+      ) : (
+        <aside
+          className={`flex-shrink-0 bg-[#FAFAFA] border-r border-slate-200/60 transition-all duration-200 flex flex-col z-30 ${isSidebarCollapsed ? 'w-[72px]' : 'w-[240px]'}`}
+        >
+          <div className="h-14 flex items-center px-5 border-b border-slate-200/60">
+            <img src="/logo.png" alt="Medicom Logo" className="w-8 h-8 object-contain" />
             {!isSidebarCollapsed && (
-              <div className="flex-1 min-w-0 text-left">
-                <p className="text-[13px] font-semibold text-slate-900 truncate">{user.name}</p>
-                <p className="text-[11px] font-medium text-slate-500 truncate">
-                  {user.clinicName || 'Super Admin'}
-                </p>
-              </div>
+              <span
+                className="ml-3 font-semibold text-slate-900 text-[14px] tracking-tight"
+                style={{ fontFamily: 'var(--font-heading)' }}
+              >
+                Medicom
+              </span>
             )}
           </div>
-        </div>
-      </aside>
+
+          <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-0.5">
+            {menuItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => onChangeView(item.id)}
+                className={`w-full flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-[6px] transition-all duration-200 ease-out group relative ${
+                  currentView === item.id
+                    ? 'bg-white text-gray-900  border border-slate-200/60'
+                    : 'text-gray-500 hover:text-gray-900 hover:bg-slate-200/40 border border-transparent'
+                } ${isSidebarCollapsed ? 'justify-center px-0' : ''}`}
+                title={isSidebarCollapsed ? item.label : ''}
+              >
+                <item.icon
+                  className={`w-[16px] h-[16px] ${currentView === item.id ? 'text-gray-900' : 'text-gray-400 group-hover:text-gray-700'}`}
+                />
+                {!isSidebarCollapsed && <span className="truncate">{item.label}</span>}
+              </button>
+            ))}
+          </nav>
+
+          <div className="p-3 border-t border-slate-200/60">
+            <div
+              className={`flex items-center gap-3 p-2 rounded-[20px] hover:bg-white border border-transparent hover:border-slate-200/60 hover: transition-all cursor-pointer ${isSidebarCollapsed ? 'justify-center' : ''}`}
+            >
+              <img
+                src={user.avatar}
+                alt=""
+                className="w-8 h-8 rounded-full border border-slate-200"
+              />
+              {!isSidebarCollapsed && (
+                <div className="flex-1 min-w-0 text-left">
+                  <p className="text-[13px] font-semibold text-slate-900 truncate">{user.name}</p>
+                  <p className="text-[11px] font-medium text-slate-500 truncate">
+                    {user.clinicName || 'Super Admin'}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </aside>
+      )}
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-white rounded-tl-[12px] border-l border-t border-slate-200/60 shadow-[-4px_0_24px_rgba(0,0,0,0.02)] relative z-40">
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-white rounded-tl-[12px] border-l border-t border-slate-200/60  relative z-40">
         <header className="h-14 bg-white border-b border-slate-200/60 flex items-center justify-between px-6 sticky top-0 z-20">
           <div className="flex items-center gap-4 flex-1">
             <button
@@ -189,7 +206,7 @@ export const Layout: React.FC<LayoutProps> = ({
                 value={searchQuery}
                 onChange={handleSearch}
                 placeholder="Recherche..."
-                className="w-full pl-9 pr-4 py-1.5 text-[13px] font-medium bg-white border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.03)] rounded-[6px] focus:outline-none focus:ring-1 focus:ring-gray-300 transition-all cursor-pointer placeholder:font-normal"
+                className="w-full pl-9 pr-4 py-1.5 text-[13px] font-medium bg-white border border-slate-200/60  rounded-[6px] focus:outline-none focus:ring-1 focus:ring-gray-300 transition-all cursor-pointer placeholder:font-normal"
               />
             </div>
           </div>
@@ -212,7 +229,7 @@ export const Layout: React.FC<LayoutProps> = ({
               </button>
 
               {isNotificationsOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-white rounded-[8px] shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-1">
+                <div className="absolute right-0 mt-2 w-80 bg-white rounded-[20px]  border border-slate-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-1">
                   <div className="px-4 py-3 border-b border-slate-100 flex justify-between items-center bg-white">
                     <span className="text-[11px] font-bold tracking-widest text-slate-400 uppercase">
                       Notifications
@@ -232,14 +249,19 @@ export const Layout: React.FC<LayoutProps> = ({
                       >
                         <div className="text-[13px] font-medium text-slate-900">{n.title}</div>
                         <div className="text-[13px] text-slate-500 mt-0.5">{n.message}</div>
-                        <div className="text-[11px] text-slate-400 mt-2 uppercase tracking-wide">{n.time}</div>
+                        <div className="text-[11px] text-slate-400 mt-2 uppercase tracking-wide">
+                          {n.time}
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
               )}
             </div>
-            <button onClick={onLogout} className="p-2 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-[6px] transition-colors">
+            <button
+              onClick={onLogout}
+              className="p-2 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-[6px] transition-colors"
+            >
               <IconLogOut className="w-5 h-5" />
             </button>
           </div>

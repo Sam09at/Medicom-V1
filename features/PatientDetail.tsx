@@ -105,7 +105,7 @@ export const PatientDetail: React.FC = () => {
       </div>
 
       {/* Header Card */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+      <div className="bg-white rounded-xl border border-gray-200  p-6">
         <div className="flex items-center gap-6">
           <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center text-3xl font-bold text-blue-600 border-2 border-blue-100">
             {patient.firstName[0]}
@@ -135,10 +135,10 @@ export const PatientDetail: React.FC = () => {
               {patient.city || 'Ville non renseignée'}
             </p>
             <div className="flex items-center gap-4 mt-3">
-              <button className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-[8px] text-xs font-medium hover:bg-blue-700 transition-colors">
+              <button className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-[20px] text-xs font-medium hover:bg-blue-700 transition-colors">
                 <IconMessage className="w-3.5 h-3.5" /> SMS
               </button>
-              <button className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 text-gray-700 rounded-[8px] text-xs font-medium hover:bg-gray-50 transition-colors">
+              <button className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 text-gray-700 rounded-[20px] text-xs font-medium hover:bg-gray-50 transition-colors">
                 <IconPhone className="w-3.5 h-3.5" /> {patient.phone || 'Pas de téléphone'}
               </button>
             </div>
@@ -159,7 +159,7 @@ export const PatientDetail: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm flex-1 flex flex-col overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-200  flex-1 flex flex-col overflow-hidden">
         <div className="flex border-b border-gray-200 px-6">
           {TABS.map((tab) => (
             <button
@@ -180,7 +180,7 @@ export const PatientDetail: React.FC = () => {
           {/* Dossier Tab */}
           {activeTab === 'dossier' && (
             <div className="grid grid-cols-2 gap-6 animate-in fade-in duration-300">
-              <div className="bg-gray-50 rounded-[8px] p-5 space-y-4">
+              <div className="bg-gray-50 rounded-[20px] p-5 space-y-4">
                 <h3 className="text-sm font-bold text-gray-900">Informations Personnelles</h3>
                 {[
                   ['Téléphone', patient.phone || '-'],
@@ -199,7 +199,7 @@ export const PatientDetail: React.FC = () => {
                 ))}
               </div>
               <div className="space-y-5">
-                <div className="bg-red-50 border border-red-100 rounded-[8px] p-5">
+                <div className="bg-red-50 border border-red-100 rounded-[20px] p-5">
                   <h3 className="text-sm font-bold text-red-800 flex items-center gap-2 mb-3">
                     <IconAlertOctagon className="w-4 h-4" /> Allergies
                   </h3>
@@ -218,7 +218,7 @@ export const PatientDetail: React.FC = () => {
                     <p className="text-sm text-red-600/70 italic">Aucune allergie connue.</p>
                   )}
                 </div>
-                <div className="bg-amber-50 border border-amber-100 rounded-[8px] p-5">
+                <div className="bg-amber-50 border border-amber-100 rounded-[20px] p-5">
                   <h3 className="text-sm font-bold text-amber-800 flex items-center gap-2 mb-3">
                     <IconFileText className="w-4 h-4" /> Pathologies
                   </h3>
@@ -238,7 +238,7 @@ export const PatientDetail: React.FC = () => {
                   )}
                 </div>
                 {patient.notes && (
-                  <div className="bg-white border border-gray-200 rounded-[8px] p-5">
+                  <div className="bg-white border border-gray-200 rounded-[20px] p-5">
                     <h3 className="text-sm font-bold text-gray-900 mb-2">Notes</h3>
                     <p className="text-sm text-gray-600 whitespace-pre-wrap">{patient.notes}</p>
                   </div>
@@ -254,10 +254,10 @@ export const PatientDetail: React.FC = () => {
                 appointments.map((apt) => (
                   <div
                     key={apt.id}
-                    className="bg-white p-4 rounded-[8px] border border-gray-200 shadow-sm flex justify-between items-center hover:shadow-md transition-shadow"
+                    className="bg-white p-4 rounded-[20px] border border-gray-200  flex justify-between items-center hover: transition-shadow"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="p-2 bg-blue-50 text-blue-600 rounded-[8px]">
+                      <div className="p-2 bg-blue-50 text-blue-600 rounded-[20px]">
                         <IconCalendar className="w-5 h-5" />
                       </div>
                       <div>
@@ -280,7 +280,7 @@ export const PatientDetail: React.FC = () => {
                   </div>
                 ))
               ) : (
-                <div className="text-center py-12 text-gray-400 bg-gray-50 rounded-[8px] border border-dashed border-gray-200 text-sm">
+                <div className="text-center py-12 text-gray-400 bg-gray-50 rounded-[20px] border border-dashed border-gray-200 text-sm">
                   Aucun rendez-vous enregistré.
                 </div>
               )}

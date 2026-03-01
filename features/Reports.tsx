@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import {
-  AreaChart, Area,
-  BarChart, Bar,
-  LineChart, Line,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
 } from 'recharts';
 import {
   IconDownload,
@@ -12,6 +21,8 @@ import {
   IconUsers,
   IconActivity,
   IconLayers,
+  IconTrendingUp,
+  IconTrendingDown,
 } from '../components/Icons';
 import { User } from '../types';
 import { supabase } from '../lib/supabase';
@@ -79,9 +90,14 @@ const cohorts = [
 const BlueTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-[#136cfb] text-white rounded-[30px] px-4 py-2 text-[12px] font-semibold shadow-lg">
-        <div className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-0.5">{label}</div>
-        <div>{payload[0].value?.toLocaleString('fr-FR')}{payload[0].unit ?? ''}</div>
+      <div className="bg-[#136cfb] text-white rounded-[30px] px-4 py-2 text-[12px] font-semibold border border-[#136cfb]">
+        <div className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-0.5">
+          {label}
+        </div>
+        <div>
+          {payload[0].value?.toLocaleString('fr-FR')}
+          {payload[0].unit ?? ''}
+        </div>
       </div>
     );
   }
@@ -91,11 +107,16 @@ const BlueTooltip = ({ active, payload, label }: any) => {
 // ─── Component ─────────────────────────────────────────────────────────────────
 
 export const Reports: React.FC<ReportsProps> = ({ user }) => {
-  const [reportType, setReportType] = useState<'financial' | 'operational' | 'clinical'>('financial');
+  const [reportType, setReportType] = useState<'financial' | 'operational' | 'clinical'>(
+    'financial'
+  );
   const [dateRange, setDateRange] = useState('6months');
   const [revenueData, setRevenueData] = useState(MOCK_REVENUE);
   const [totalRevenue, setTotalRevenue] = useState(338000);
-  const [mrrData, setMrrData] = useState<{ currentMRR: number; growth: number }>({ currentMRR: 0, growth: 0 });
+  const [mrrData, setMrrData] = useState<{ currentMRR: number; growth: number }>({
+    currentMRR: 0,
+    growth: 0,
+  });
 
   const isSuperAdmin = user.role === 'super_admin';
 
@@ -115,9 +136,13 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
             const key = d.toLocaleString('fr-FR', { month: 'short' });
             monthlyMap[key] = (monthlyMap[key] || 0) + (inv.total_amount || 0);
           });
-          const mapped = Object.entries(monthlyMap).slice(-6).map(([month, revenue]) => ({
-            month, revenue, projected: revenue * 1.05,
-          }));
+          const mapped = Object.entries(monthlyMap)
+            .slice(-6)
+            .map(([month, revenue]) => ({
+              month,
+              revenue,
+              projected: revenue * 1.05,
+            }));
           if (mapped.length > 0) {
             setRevenueData(mapped);
             setTotalRevenue(mapped.reduce((s, m) => s + m.revenue, 0));
@@ -132,7 +157,9 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
       try {
         const mrr = await getPlatformMRR();
         setMrrData({ currentMRR: mrr.currentMRR, growth: mrr.growth });
-      } catch { /* fallback */ }
+      } catch {
+        /* fallback */
+      }
     };
     loadRevenueData();
     loadMrr();
@@ -149,7 +176,7 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
   ] as const;
 
   const renderClinicReports = () => (
-    <div className="space-y-6 animate-in fade-in duration-150">
+    <div className="space-y-12 animate-in fade-in duration-150">
       {/* Controls bar */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
         {/* Tab switcher */}
@@ -158,7 +185,9 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
             <button
               key={id}
               onClick={() => setReportType(id)}
-              className={`px-4 py-2 rounded-[30px] text-[12px] font-semibold transition-all ${reportType === id ? 'bg-white text-[#136cfb] shadow-sm' : 'text-slate-500 hover:text-slate-700'
+              className={`px-4 py-2 rounded-[30px] text-[12px] font-semibold transition-all duration-300 ease-in-out border border-transparent ${reportType === id
+                ? 'bg-white text-slate-900 border-slate-200/50'
+                : 'text-slate-500 hover:text-slate-700'
                 }`}
             >
               {label}
@@ -177,10 +206,18 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
             <option value="6months">6 derniers mois</option>
             <option value="year">Cette année</option>
           </select>
-          <button onClick={() => handleExport('csv')} title="Export CSV" className="w-9 h-9 rounded-[30px] border border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#136cfb] hover:border-[#136cfb]/40 transition-all">
+          <button
+            onClick={() => handleExport('csv')}
+            title="Export CSV"
+            className="w-9 h-9 rounded-[30px] border border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#136cfb] hover:border-[#136cfb]/40 transition-all"
+          >
             <IconFileText className="w-4 h-4" />
           </button>
-          <button onClick={() => handleExport('pdf')} title="Export PDF" className="w-9 h-9 rounded-[30px] border border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#136cfb] hover:border-[#136cfb]/40 transition-all">
+          <button
+            onClick={() => handleExport('pdf')}
+            title="Export PDF"
+            className="w-9 h-9 rounded-[30px] border border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#136cfb] hover:border-[#136cfb]/40 transition-all"
+          >
             <IconDownload className="w-4 h-4" />
           </button>
         </div>
@@ -191,8 +228,12 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Area chart */}
           <div className="lg:col-span-2 card p-6">
-            <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight mb-1">Évolution des Revenus</h3>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-6">Réalisé vs Objectif</p>
+            <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight mb-1">
+              Évolution des Revenus
+            </h3>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-6">
+              Réalisé vs Objectif
+            </p>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={revenueData} margin={{ top: 4, right: 0, left: -20, bottom: 0 }}>
@@ -207,17 +248,54 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="#F1F5F9" />
-                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#CBD5E1', fontSize: 11, fontWeight: 600 }} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#CBD5E1', fontSize: 11, fontWeight: 600 }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}K`} dx={-4} />
-                  <Tooltip content={<BlueTooltip />} cursor={{ stroke: '#136cfb', strokeWidth: 1, strokeDasharray: '4 4' }} />
-                  <Area type="monotone" dataKey="projected" stroke="#94a3b8" strokeWidth={1.5} fill="url(#gproj)" dot={false} activeDot={false} />
-                  <Area type="monotone" dataKey="revenue" stroke="#136cfb" strokeWidth={2.5} fill="url(#grev)" dot={false} activeDot={{ r: 4, fill: '#136cfb', stroke: '#fff', strokeWidth: 2 }} />
+                  <XAxis
+                    dataKey="month"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#CBD5E1', fontSize: 11, fontWeight: 600 }}
+                    dy={10}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#CBD5E1', fontSize: 11, fontWeight: 600 }}
+                    tickFormatter={(v) => `${(v / 1000).toFixed(0)}K`}
+                    dx={-4}
+                  />
+                  <Tooltip
+                    content={<BlueTooltip />}
+                    cursor={{ stroke: '#136cfb', strokeWidth: 1, strokeDasharray: '4 4' }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="projected"
+                    stroke="#94a3b8"
+                    strokeWidth={1.5}
+                    fill="url(#gproj)"
+                    dot={false}
+                    activeDot={false}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="#136cfb"
+                    strokeWidth={2.5}
+                    fill="url(#grev)"
+                    dot={false}
+                    activeDot={{ r: 4, fill: '#136cfb', stroke: '#fff', strokeWidth: 2 }}
+                  />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
             <div className="flex items-center gap-5 mt-4">
-              <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-[#136cfb]" /><span className="text-[11px] font-semibold text-slate-500">Réalisé</span></div>
-              <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-slate-300" /><span className="text-[11px] font-semibold text-slate-500">Objectif</span></div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#136cfb]" />
+                <span className="text-[11px] font-semibold text-slate-500">Réalisé</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-slate-300" />
+                <span className="text-[11px] font-semibold text-slate-500">Objectif</span>
+              </div>
             </div>
           </div>
 
@@ -241,16 +319,25 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
               },
             ].map((kpi) => (
               <div key={kpi.label} className="card p-5">
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">{kpi.label}</div>
-                <div className="text-[26px] font-semibold tracking-tight text-slate-900 leading-none">{kpi.value}</div>
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
+                  {kpi.label}
+                </div>
+                <div className="text-[26px] font-semibold tracking-tight text-slate-900 leading-none">
+                  {kpi.value}
+                </div>
                 {kpi.badge && (
-                  <span className={`inline-block mt-2 text-[11px] font-bold px-2 py-0.5 rounded-[30px] ${kpi.badgeClass}`}>
+                  <span
+                    className={`inline-block mt-2 text-[11px] font-bold px-2 py-0.5 rounded-[30px] ${kpi.badgeClass}`}
+                  >
                     {kpi.badge}
                   </span>
                 )}
                 {kpi.progress && (
                   <div className="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full rounded-full bg-[#136cfb]" style={{ width: `${kpi.progress}%` }} />
+                    <div
+                      className="h-full rounded-full bg-[#136cfb]"
+                      style={{ width: `${kpi.progress}%` }}
+                    />
                   </div>
                 )}
               </div>
@@ -264,18 +351,39 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Donut */}
           <div className="card p-6">
-            <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight mb-1">Statut des Rendez-vous</h3>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-6">Ce mois-ci</p>
+            <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight mb-1">
+              Statut des Rendez-vous
+            </h3>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-6">
+              Ce mois-ci
+            </p>
             <div className="flex items-center gap-6">
               <div className="relative shrink-0">
                 <PieChart width={160} height={160}>
-                  <Pie data={appointmentStats} cx={75} cy={75} innerRadius={50} outerRadius={72} paddingAngle={3} dataKey="value" startAngle={90} endAngle={-270} strokeWidth={0}>
-                    {appointmentStats.map((e, i) => <Cell key={i} fill={e.color} />)}
+                  <Pie
+                    data={appointmentStats}
+                    cx={75}
+                    cy={75}
+                    innerRadius={50}
+                    outerRadius={72}
+                    paddingAngle={3}
+                    dataKey="value"
+                    startAngle={90}
+                    endAngle={-270}
+                    strokeWidth={0}
+                  >
+                    {appointmentStats.map((e, i) => (
+                      <Cell key={i} fill={e.color} />
+                    ))}
                   </Pie>
                 </PieChart>
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                  <span className="text-[18px] font-semibold text-slate-900 leading-none">{appointmentStats.reduce((s, d) => s + d.value, 0)}</span>
-                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Total</span>
+                  <span className="text-[18px] font-semibold text-slate-900 leading-none">
+                    {appointmentStats.reduce((s, d) => s + d.value, 0)}
+                  </span>
+                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                    Total
+                  </span>
                 </div>
               </div>
               <div className="flex-1 space-y-3">
@@ -286,13 +394,19 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
                     <div key={d.name}>
                       <div className="flex items-center justify-between mb-1">
                         <div className="flex items-center gap-2">
-                          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: d.color }} />
+                          <span
+                            className="w-2 h-2 rounded-full"
+                            style={{ backgroundColor: d.color }}
+                          />
                           <span className="text-[12px] font-semibold text-slate-600">{d.name}</span>
                         </div>
                         <span className="text-[12px] font-semibold text-slate-900">{pct}%</span>
                       </div>
                       <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
-                        <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: d.color }} />
+                        <div
+                          className="h-full rounded-full"
+                          style={{ width: `${pct}%`, backgroundColor: d.color }}
+                        />
                       </div>
                     </div>
                   );
@@ -303,16 +417,42 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
 
           {/* No-show trend */}
           <div className="card p-6">
-            <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight mb-1">Taux d'Absence (No-Show)</h3>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-6">Évolution mensuelle</p>
+            <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight mb-1">
+              Taux d'Absence (No-Show)
+            </h3>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-6">
+              Évolution mensuelle
+            </p>
             <div className="h-52">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={noShowTrend} margin={{ top: 4, right: 0, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="#F1F5F9" />
-                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#CBD5E1', fontSize: 11, fontWeight: 600 }} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#CBD5E1', fontSize: 11, fontWeight: 600 }} unit="%" dx={-4} />
-                  <Tooltip content={<BlueTooltip />} cursor={{ stroke: '#e2405f', strokeWidth: 1, strokeDasharray: '4 4' }} />
-                  <Line type="monotone" dataKey="rate" stroke="#e2405f" strokeWidth={2.5} dot={false} activeDot={{ r: 4, fill: '#e2405f', stroke: '#fff', strokeWidth: 2 }} />
+                  <XAxis
+                    dataKey="month"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#CBD5E1', fontSize: 11, fontWeight: 600 }}
+                    dy={10}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#CBD5E1', fontSize: 11, fontWeight: 600 }}
+                    unit="%"
+                    dx={-4}
+                  />
+                  <Tooltip
+                    content={<BlueTooltip />}
+                    cursor={{ stroke: '#e2405f', strokeWidth: 1, strokeDasharray: '4 4' }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="rate"
+                    stroke="#e2405f"
+                    strokeWidth={2.5}
+                    dot={false}
+                    activeDot={{ r: 4, fill: '#e2405f', stroke: '#fff', strokeWidth: 2 }}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -324,28 +464,50 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
       {reportType === 'clinical' && (
         <div className="card overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-100">
-            <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight">Performance des Traitements</h3>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Actes réalisés ce semestre</p>
+            <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight">
+              Performance des Traitements
+            </h3>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
+              Actes réalisés ce semestre
+            </p>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full">
               <thead>
                 <tr className="border-b border-slate-100">
-                  {['Type Traitement', 'Nombre Actes', 'Durée Moy.', "Chiffre d'Affaires"].map((h, i) => (
-                    <th key={h} className={`px-6 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest ${i === 0 ? 'text-left' : 'text-right'}`}>{h}</th>
-                  ))}
+                  {['Type Traitement', 'Nombre Actes', 'Durée Moy.', "Chiffre d'Affaires"].map(
+                    (h, i) => (
+                      <th
+                        key={h}
+                        className={`px-6 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest ${i === 0 ? 'text-left' : 'text-right'}`}
+                      >
+                        {h}
+                      </th>
+                    )
+                  )}
                 </tr>
               </thead>
               <tbody>
                 {treatmentPerformance.map((item, idx) => {
                   const isLast = idx === treatmentPerformance.length - 1;
                   return (
-                    <tr key={idx} className={`hover:bg-slate-50/50 transition-colors ${!isLast ? 'border-b border-slate-100/60' : ''}`}>
-                      <td className="px-6 py-4 text-[13px] font-semibold text-slate-900">{item.name}</td>
-                      <td className="px-6 py-4 text-[13px] font-semibold text-slate-500 text-right">{item.count}</td>
-                      <td className="px-6 py-4 text-[13px] font-semibold text-slate-500 text-right">{item.avgDuration} min</td>
+                    <tr
+                      key={idx}
+                      className={`hover:bg-slate-50/50 transition-colors ${!isLast ? 'border-b border-slate-100/60' : ''}`}
+                    >
+                      <td className="px-6 py-4 text-[13px] font-semibold text-slate-900">
+                        {item.name}
+                      </td>
+                      <td className="px-6 py-4 text-[13px] font-semibold text-slate-500 text-right">
+                        {item.count}
+                      </td>
+                      <td className="px-6 py-4 text-[13px] font-semibold text-slate-500 text-right">
+                        {item.avgDuration} min
+                      </td>
                       <td className="px-6 py-4 text-right">
-                        <span className="text-[13px] font-semibold text-[#136cfb]">{item.revenue.toLocaleString('fr-FR')}</span>
+                        <span className="text-[13px] font-semibold text-[#136cfb]">
+                          {item.revenue.toLocaleString('fr-FR')}
+                        </span>
                         <span className="text-[10px] font-bold text-slate-400 ml-1">MAD</span>
                       </td>
                     </tr>
@@ -361,101 +523,205 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
 
   // ── Super Admin view ─────────────────────────────────────────────────────────
   const renderSuperAdminReports = () => (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-in fade-in duration-150">
-      {/* Retention Cohort */}
-      <div className="card overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
-          <div className="w-7 h-7 rounded-[6px] bg-blue-50 flex items-center justify-center text-[#136cfb]">
-            <IconUsers className="w-3.5 h-3.5" />
+    <div className="space-y-8 animate-in fade-in duration-150">
+      {/* KPI Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="card p-5 h-full flex flex-col justify-between group">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-10 h-10 rounded-[14px] bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-slate-100 transition-colors duration-300 ease-in-out">
+              <IconUsers className="w-5 h-5" />
+            </div>
+            <div className="badge badge-green gap-1 font-semibold rounded-[30px] px-2.5 py-1">
+              <IconTrendingUp className="w-3.5 h-3.5" />
+              <span>+12%</span>
+            </div>
           </div>
           <div>
-            <h3 className="text-[14px] font-semibold text-slate-900">Analyse de Rétention</h3>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Cohortes mensuelles</p>
+            <div className="text-[11px] font-bold text-slate-400 mb-1 uppercase tracking-widest">
+              Growth Rate
+            </div>
+            <div className="text-[26px] font-semibold text-slate-900 tracking-tight leading-none">
+              15.2%
+            </div>
+            <div className="text-[11px] font-medium text-slate-400 mt-2">Croissance annuelle estimée</div>
           </div>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-center">
-            <thead>
-              <tr className="border-b border-slate-100">
-                {['Cohorte', 'Taille', 'M1', 'M2', 'M3', 'M6', 'M12'].map((h) => (
-                  <th key={h} className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest first:text-left">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {cohorts.map((c, i) => {
-                const isLast = i === cohorts.length - 1;
-                return (
-                  <tr key={i} className={`hover:bg-slate-50/50 transition-colors ${!isLast ? 'border-b border-slate-100/60' : ''}`}>
-                    <td className="px-4 py-3 text-left text-[12px] font-semibold text-slate-900">{c.cohort}</td>
-                    <td className="px-4 py-3 text-[12px] font-semibold text-slate-400">{c.size}</td>
-                    {[c.m1, c.m2, c.m3, c.m6, c.m12].map((val, j) => (
-                      <td key={j} className="px-4 py-3 text-[12px] font-semibold text-[#136cfb]"
-                        style={{ opacity: typeof val === 'number' ? 0.3 + (val / 100) * 0.7 : 0.2 }}>
-                        {val}{typeof val === 'number' ? '%' : ''}
-                      </td>
-                    ))}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+
+        <div className="card p-5 h-full flex flex-col justify-between group">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-10 h-10 rounded-[14px] bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-slate-100 transition-colors duration-300 ease-in-out">
+              <IconActivity className="w-5 h-5" />
+            </div>
+          </div>
+          <div>
+            <div className="text-[11px] font-bold text-slate-400 mb-1 uppercase tracking-widest">
+              LTV (Valeur Vie Client)
+            </div>
+            <div className="text-[26px] font-semibold text-slate-900 tracking-tight leading-none">
+              65k <span className="text-[14px] font-mono text-slate-400">MAD</span>
+            </div>
+            <div className="text-[11px] font-medium text-slate-400 mt-2">Basé sur historique</div>
+          </div>
+        </div>
+
+        <div className="card p-5 h-full flex flex-col justify-between group">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-10 h-10 rounded-[14px] bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-slate-100 transition-colors duration-300 ease-in-out">
+              <IconLayers className="w-5 h-5" />
+            </div>
+            <div className="badge badge-red gap-1 font-semibold rounded-[30px] px-2.5 py-1">
+              <IconTrendingDown className="w-3.5 h-3.5" />
+              <span className="text-rose-700">-0.5%</span>
+            </div>
+          </div>
+          <div>
+            <div className="text-[11px] font-bold text-slate-400 mb-1 uppercase tracking-widest">
+              Churn Rate
+            </div>
+            <div className="text-[26px] font-semibold text-slate-900 tracking-tight leading-none">
+              1.2%
+            </div>
+            <div className="text-[11px] font-medium text-slate-400 mt-2">Désabonnements / mois</div>
+          </div>
+        </div>
+
+        <div className="card p-5 h-full flex flex-col justify-between group">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-10 h-10 rounded-[14px] bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-slate-100 transition-colors duration-300 ease-in-out">
+              <IconFileText className="w-5 h-5" />
+            </div>
+          </div>
+          <div>
+            <div className="text-[11px] font-bold text-slate-400 mb-1 uppercase tracking-widest">
+              CAC
+            </div>
+            <div className="text-[26px] font-semibold text-slate-900 tracking-tight leading-none">
+              2.5k <span className="text-[14px] font-mono text-slate-400">MAD</span>
+            </div>
+            <div className="text-[11px] font-medium text-slate-400 mt-2">Coût acquisition client</div>
+          </div>
         </div>
       </div>
 
-      {/* Feature Adoption */}
-      <div className="card p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-7 h-7 rounded-[6px] bg-violet-50 flex items-center justify-center text-violet-600">
-            <IconLayers className="w-3.5 h-3.5" />
-          </div>
-          <div>
-            <h3 className="text-[14px] font-semibold text-slate-900">Adoption des Fonctionnalités</h3>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">% cabinets actifs / semaine</p>
-          </div>
-        </div>
-        <div className="space-y-3.5">
-          {featureAdoption.map((f) => (
-            <div key={f.feature}>
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[12px] font-semibold text-slate-700">{f.feature}</span>
-                <span className="text-[12px] font-bold text-[#136cfb]">{f.usedBy}%</span>
-              </div>
-              <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full rounded-full bg-[#136cfb] transition-all duration-700" style={{ width: `${f.usedBy}%` }} />
-              </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Retention Cohort */}
+        <div className="card overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
+            <div className="w-7 h-7 rounded-[6px] bg-blue-50 flex items-center justify-center text-[#136cfb]">
+              <IconUsers className="w-3.5 h-3.5" />
             </div>
-          ))}
+            <div>
+              <h3 className="text-[14px] font-semibold text-slate-900">Analyse de Rétention</h3>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
+                Cohortes mensuelles
+              </p>
+            </div>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-center">
+              <thead>
+                <tr className="border-b border-slate-100">
+                  {['Cohorte', 'Taille', 'M1', 'M2', 'M3', 'M6', 'M12'].map((h) => (
+                    <th
+                      key={h}
+                      className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest first:text-left"
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {cohorts.map((c, i) => {
+                  const isLast = i === cohorts.length - 1;
+                  return (
+                    <tr
+                      key={i}
+                      className={`hover:bg-slate-50/50 transition-colors ${!isLast ? 'border-b border-slate-100/60' : ''}`}
+                    >
+                      <td className="px-4 py-3 text-left text-[12px] font-semibold text-slate-900">
+                        {c.cohort}
+                      </td>
+                      <td className="px-4 py-3 text-[12px] font-semibold text-slate-400">{c.size}</td>
+                      {[c.m1, c.m2, c.m3, c.m6, c.m12].map((val, j) => (
+                        <td
+                          key={j}
+                          className="px-4 py-3 text-[12px] font-semibold text-[#136cfb]"
+                          style={{ opacity: typeof val === 'number' ? 0.3 + (val / 100) * 0.7 : 0.2 }}
+                        >
+                          {val}
+                          {typeof val === 'number' ? '%' : ''}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
-        <p className="text-[10px] font-semibold text-slate-400 mt-4 text-center uppercase tracking-widest">
-          Utilisation au moins 1x / semaine
-        </p>
+
+        {/* Feature Adoption */}
+        <div className="card p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-7 h-7 rounded-[6px] bg-violet-50 flex items-center justify-center text-violet-600">
+              <IconLayers className="w-3.5 h-3.5" />
+            </div>
+            <div>
+              <h3 className="text-[14px] font-semibold text-slate-900">
+                Adoption des Fonctionnalités
+              </h3>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
+                % cabinets actifs / semaine
+              </p>
+            </div>
+          </div>
+          <div className="space-y-3.5">
+            {featureAdoption.map((f) => (
+              <div key={f.feature}>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[12px] font-semibold text-slate-700">{f.feature}</span>
+                  <span className="text-[12px] font-bold text-[#136cfb]">{f.usedBy}%</span>
+                </div>
+                <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-[#136cfb] transition-all duration-700"
+                    style={{ width: `${f.usedBy}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-[10px] font-semibold text-slate-400 mt-4 text-center uppercase tracking-widest">
+            Utilisation au moins 1x / semaine
+          </p>
+        </div>
       </div>
     </div>
   );
 
   // ── Root render ──────────────────────────────────────────────────────────────
   return (
-    <div className="space-y-6 font-sans animate-in fade-in duration-150 pb-10">
-      {/* Page header */}
-      <div className="flex items-start justify-between gap-4">
+    <div className="space-y-12 font-sans animate-in fade-in duration-150 pb-10">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-[22px] font-semibold tracking-tight text-slate-900">
+          <h1 className="text-[22px] font-semibold text-slate-900 tracking-tight">
             {isSuperAdmin ? 'Intelligence SaaS' : 'Rapports & Analyses'}
-          </h2>
-          <p className="text-[12px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+          </h1>
+          <p className="text-[13px] text-slate-500 mt-0.5">
             {isSuperAdmin
-              ? 'Performances globales de la plateforme'
-              : 'Indicateurs clés du cabinet'}
+              ? 'Performances globales de la plateforme.'
+              : 'Indicateurs clés de votre cabinet.'}
           </p>
         </div>
         {isSuperAdmin && (
           <div className="flex items-center gap-2">
-            <select className="text-[12px] font-semibold border border-slate-200/60 rounded-[30px] px-4 py-2 bg-white text-slate-700 outline-none cursor-pointer">
+            <select className="text-[13px] font-semibold border border-slate-200/60 rounded-[30px] px-4 py-2 bg-white text-slate-700 outline-none cursor-pointer">
               <option>Ce trimestre</option>
               <option>Cette année</option>
             </select>
-            <button className="w-9 h-9 rounded-[30px] border border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#136cfb] hover:border-[#136cfb]/40 transition-all">
+            <button className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#136cfb] hover:border-[#136cfb]/40 transition-all">
               <IconDownload className="w-4 h-4" />
             </button>
           </div>

@@ -72,9 +72,9 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
           // Handle Date object or string for start
           startTime: initialData.start
             ? new Date(initialData.start).toLocaleTimeString('fr-FR', {
-                hour: '2-digit',
-                minute: '2-digit',
-              })
+              hour: '2-digit',
+              minute: '2-digit',
+            })
             : '',
           duration: initialData.duration || defaultDuration,
           notes: initialData.notes || '',
@@ -142,232 +142,171 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
       subtitle="Planifiez une consultation ou un traitement"
       width="md"
     >
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6 p-6 sm:p-8">
-        {/* Patient Selection */}
-        <div className="space-y-2">
-          <label className="block text-[0.75rem] font-bold text-slate-400 uppercase tracking-widest">
-            Patient
-          </label>
-          <div className="mt-1 relative">
+      <form onSubmit={handleSubmit(handleFormSubmit)} className="flex flex-col h-full">
+        <div className="flex-1 overflow-y-auto space-y-6 p-6 sm:p-8">
+
+          {/* Patient Selection */}
+          <div className="space-y-1.5">
+            <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+              Patient
+            </label>
             <Controller
               name="patientId"
               control={control}
               render={({ field }) => (
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <input
                     type="text"
-                    className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-100/80 rounded-[8px] text-[0.875rem] font-medium text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm"
+                    className="input"
                     placeholder="Rechercher un patient par nom..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
-                  <div className="relative">
-                    <select
-                      {...field}
-                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm appearance-none"
-                    >
-                      <option value="" disabled>
-                        Sélectionner depuis les résultats
+                  <select
+                    {...field}
+                    className="input appearance-none"
+                  >
+                    <option value="" disabled>Sélectionner depuis les résultats</option>
+                    {patients.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.firstName} {p.lastName}
                       </option>
-                      {patients.map((p) => (
-                        <option key={p.id} value={p.id}>
-                          {p.firstName} {p.lastName}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-slate-400">
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    </div>
-                  </div>
+                    ))}
+                  </select>
+                  <p className="text-[11px] text-slate-400">
+                    Tapez au moins 2 lettres pour filtrer la liste.
+                  </p>
                 </div>
               )}
             />
-            <p className="mt-2 text-[0.75rem] font-medium text-slate-500">
-              Recherchez un patient puis sélectionnez-le dans la liste.
-            </p>
+            {errors.patientId && (
+              <p className="text-[11px] font-semibold text-rose-500">{errors.patientId.message}</p>
+            )}
           </div>
-          {errors.patientId && (
-            <p className="mt-2 text-[0.75rem] font-bold text-rose-500">
-              {errors.patientId.message}
-            </p>
-          )}
-        </div>
 
-        {/* Type */}
-        <div className="space-y-2">
-          <label className="block text-[0.75rem] font-bold text-slate-400 uppercase tracking-widest">
-            Type de rendez-vous
-          </label>
-          <div className="relative mt-1">
-            <select
-              {...register('type')}
-              className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm appearance-none"
-            >
+          {/* Type */}
+          <div className="space-y-1.5">
+            <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+              Type de rendez-vous
+            </label>
+            <select {...register('type')} className="input appearance-none">
               {Object.values(AppointmentType).map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
+                <option key={type} value={type}>{type}</option>
               ))}
             </select>
-            <div className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-slate-400">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
+            {errors.type && (
+              <p className="text-[11px] font-semibold text-rose-500">{errors.type.message}</p>
+            )}
+          </div>
+
+          {/* Date & Time */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                Date
+              </label>
+              <div className="relative">
+                <input
+                  type="date"
+                  {...register('date')}
+                  className="input pl-9"
                 />
-              </svg>
+                <IconCalendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+              </div>
+              {errors.date && (
+                <p className="text-[11px] font-semibold text-rose-500">{errors.date.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                Heure
+              </label>
+              <div className="relative">
+                <input
+                  type="time"
+                  {...register('startTime')}
+                  className="input pl-9"
+                />
+                <IconClock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+              </div>
+              {errors.startTime && (
+                <p className="text-[11px] font-semibold text-rose-500">{errors.startTime.message}</p>
+              )}
             </div>
           </div>
-          {errors.type && (
-            <p className="mt-2 text-[0.75rem] font-bold text-rose-500">{errors.type.message}</p>
-          )}
-        </div>
 
-        {/* Date & Time */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {/* Duration */}
           <div className="space-y-2">
-            <label className="block text-[0.75rem] font-bold text-slate-400 uppercase tracking-widest">
-              Date
+            <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+              Durée
             </label>
-            <div className="relative mt-1">
-              <input
-                type="date"
-                {...register('date')}
-                className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm"
-              />
-              <div className="pointer-events-none absolute top-1/2 -translate-y-1/2 left-4 text-slate-400">
-                <IconCalendar className="w-5 h-5" />
-              </div>
+            <div className="grid grid-cols-4 gap-2">
+              {[15, 30, 45, 60].map((mins) => (
+                <button
+                  key={mins}
+                  type="button"
+                  onClick={() => setValue('duration', mins)}
+                  className={`flex items-center justify-center rounded-[30px] py-2 text-[13px] font-semibold transition-all duration-200 ${watch('duration') === mins
+                      ? 'bg-slate-900 text-white'
+                      : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                    }`}
+                >
+                  {mins} m
+                </button>
+              ))}
             </div>
-            {errors.date && (
-              <p className="mt-2 text-[0.75rem] font-bold text-rose-500">{errors.date.message}</p>
+            <input
+              type="number"
+              {...register('duration', { valueAsNumber: true })}
+              className="input mt-2"
+              placeholder="Durée personnalisée (min)"
+            />
+            {errors.duration && (
+              <p className="text-[11px] font-semibold text-rose-500">{errors.duration.message}</p>
             )}
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-[0.75rem] font-bold text-slate-400 uppercase tracking-widest">
-              Heure
+          {/* Status */}
+          <div className="space-y-1.5">
+            <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+              Statut
             </label>
-            <div className="relative mt-1">
-              <input
-                type="time"
-                {...register('startTime')}
-                className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm"
-              />
-              <div className="pointer-events-none absolute top-1/2 -translate-y-1/2 left-4 text-slate-400">
-                <IconClock className="w-5 h-5" />
-              </div>
-            </div>
-            {errors.startTime && (
-              <p className="mt-2 text-[0.75rem] font-bold text-rose-500">
-                {errors.startTime.message}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Duration */}
-        <div className="space-y-3">
-          <label className="block text-[0.75rem] font-bold text-slate-400 uppercase tracking-widest">
-            Durée
-          </label>
-          <div className="grid grid-cols-4 gap-2">
-            {[15, 30, 45, 60].map((mins) => (
-              <button
-                key={mins}
-                type="button"
-                onClick={() => setValue('duration', mins)}
-                className={`flex items-center justify-center rounded-[30px] py-2.5 text-[0.875rem] font-bold transition-all ${
-                  watch('duration') === mins
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-200/50 scale-[1.02]'
-                    : 'bg-white border border-slate-100/80 text-slate-700 hover:bg-slate-50 hover:border-slate-200'
-                }`}
-              >
-                {mins} m
-              </button>
-            ))}
-          </div>
-          {/* Custom duration */}
-          <input
-            type="number"
-            {...register('duration', { valueAsNumber: true })}
-            className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm"
-            placeholder="Personnalisée (min)"
-          />
-          {errors.duration && (
-            <p className="mt-2 text-[0.75rem] font-bold text-rose-500">{errors.duration.message}</p>
-          )}
-        </div>
-
-        {/* Status */}
-        <div className="space-y-2">
-          <label className="block text-[0.75rem] font-bold text-slate-400 uppercase tracking-widest">
-            Statut
-          </label>
-          <div className="relative mt-1">
-            <select
-              {...register('status')}
-              className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm appearance-none"
-            >
+            <select {...register('status')} className="input appearance-none">
               {Object.values(AppointmentStatus).map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
+                <option key={status} value={status}>{status}</option>
               ))}
             </select>
-            <div className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-slate-400">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </div>
           </div>
+
+          {/* Notes */}
+          <div className="space-y-1.5">
+            <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+              Notes <span className="normal-case text-slate-300">(optionnel)</span>
+            </label>
+            <textarea
+              {...register('notes')}
+              rows={3}
+              className="input resize-none leading-relaxed"
+              placeholder="Motif de la visite, instructions particulières..."
+            />
+          </div>
+
         </div>
 
-        {/* Notes */}
-        <div className="space-y-2">
-          <label className="block text-[0.75rem] font-bold text-slate-400 uppercase tracking-widest">
-            Notes (optionnel)
-          </label>
-          <textarea
-            {...register('notes')}
-            rows={3}
-            className="w-full px-5 py-4 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-medium text-slate-700 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm resize-none leading-relaxed"
-            placeholder="Motif de la visite, instructions particulières..."
-          />
-        </div>
-
-        {/* Form Actions */}
-        <div className="flex justify-end gap-4 pt-6 mt-8 border-t border-slate-100/80">
+        {/* Form Actions — sticky footer */}
+        <div className="flex items-center justify-end gap-3 p-6 border-t border-slate-100 bg-white">
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-3.5 bg-white border border-slate-200 text-slate-600 text-[0.875rem] font-bold rounded-[8px] hover:bg-slate-50 hover:text-slate-900 transition-colors"
+            className="btn-secondary"
           >
             Annuler
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn-primary py-3.5 px-8 rounded-[8px] text-[0.875rem] disabled:opacity-50"
+            className="btn-primary disabled:opacity-50"
           >
             {isSubmitting
               ? 'Enregistrement...'

@@ -17,6 +17,7 @@ import {
   IconBriefcase,
   IconLifeBuoy,
 } from '../components/Icons';
+import { SuperAdminSidebar } from '../components/SuperAdminSidebar';
 
 export const AdminLayout: React.FC = () => {
   const currentUser = useMedicomStore((s) => s.currentUser);
@@ -89,85 +90,16 @@ export const AdminLayout: React.FC = () => {
         onClose={() => setIsCommandPaletteOpen(false)}
       />
 
-      <div className="flex h-screen bg-gray-50 font-sans text-gray-800 antialiased overflow-hidden">
-        <aside
-          className={`flex-shrink-0 bg-gray-50 border-r border-gray-100/60 transition-all duration-200 flex flex-col z-30 ${isSidebarCollapsed ? 'w-[64px]' : 'w-[240px]'}`}
-        >
-          <div className="h-16 flex items-center px-4 pt-2 shrink-0">
-            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-sm shrink-0">
-              M
-            </div>
-            {!isSidebarCollapsed && (
-              <div className="ml-3 flex flex-col min-w-0">
-                <span className="font-semibold text-gray-900 text-sm tracking-tight truncate">
-                  Medicom Admin
-                </span>
-                <span className="text-xs text-gray-500 truncate">Super Admin Portal</span>
-              </div>
-            )}
-          </div>
+      <div className="flex h-screen bg-[#FAFAFA] font-sans text-slate-900 antialiased overflow-hidden sa-shell">
+        <SuperAdminSidebar
+          user={currentUser}
+          onLogout={handleLogout}
+          isSidebarCollapsed={isSidebarCollapsed}
+          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        />
 
-          <nav className="flex-1 overflow-y-auto py-6 space-y-1 scrollbar-hide">
-            {menuItems.map((item) => (
-              <button
-                key={item.path}
-                onClick={() => navigate(item.path)}
-                className={`w-full flex items-center gap-2.5 px-3 h-11 mx-2 rounded-xl text-sm font-bold transition-all group relative ${
-                  isActive(item.path)
-                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200/50'
-                    : 'text-gray-600 hover:bg-white hover:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.02)] hover:text-gray-900 border border-transparent hover:border-gray-100/50'
-                }`}
-                style={{ width: 'calc(100% - 16px)' }}
-                title={isSidebarCollapsed ? item.label : ''}
-              >
-                <div className={`flex items-center gap-2.5 ${isSidebarCollapsed ? 'mx-auto' : ''}`}>
-                  <item.icon
-                    className={`w-[18px] h-[18px] ${isActive(item.path) ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-600'}`}
-                  />
-                  {!isSidebarCollapsed && <span className="truncate">{item.label}</span>}
-                </div>
-              </button>
-            ))}
-          </nav>
-
-          <div className="p-3 border-t border-gray-200 shrink-0">
-            <div
-              className={`flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer ${isSidebarCollapsed ? 'justify-center' : ''}`}
-            >
-              <img
-                src={currentUser.avatar}
-                alt=""
-                className="w-8 h-8 rounded-full border border-gray-200 shrink-0 bg-white"
-              />
-              {!isSidebarCollapsed && (
-                <div className="flex-1 min-w-0 text-left">
-                  <p className="text-sm font-semibold text-gray-900 truncate">{currentUser.name}</p>
-                  <p className="text-xs text-gray-500 truncate">Super Admin</p>
-                </div>
-              )}
-              {!isSidebarCollapsed && (
-                <button
-                  onClick={handleLogout}
-                  className="p-1.5 text-gray-400 hover:text-gray-600 rounded-md transition-colors"
-                >
-                  <IconLogOut className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-            {isSidebarCollapsed && (
-              <button
-                onClick={handleLogout}
-                className="mt-2 w-full flex justify-center p-2 text-gray-400 hover:text-gray-600 rounded-md hover:bg-gray-100 transition-colors"
-                title="Logout"
-              >
-                <IconLogOut className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-        </aside>
-
-        <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-gray-50">
-          <header className="h-16 glass-header flex items-center justify-between px-8 shrink-0 z-20">
+        <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-white">
+          <header className="h-16 flex items-center justify-between px-6 border-b border-slate-200/50 bg-white shrink-0 z-20">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
@@ -218,7 +150,7 @@ export const AdminLayout: React.FC = () => {
                   )}
                 </button>
                 {isNotificationsOpen && (
-                  <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg ring-1 ring-gray-200 overflow-hidden z-50 animate-in fade-in slide-in-from-top-1">
+                  <div className="absolute right-0 mt-2 w-80 card ring-1 ring-slate-200/50 overflow-hidden z-50 animate-in fade-in slide-in-from-top-1">
                     <div className="px-4 py-3 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                       <span className="text-xs font-semibold text-gray-900 uppercase tracking-wider">
                         Notifications{' '}
@@ -271,8 +203,8 @@ export const AdminLayout: React.FC = () => {
             </div>
           </header>
 
-          <div className="flex-1 overflow-auto bg-gray-50">
-            <div className="max-w-7xl mx-auto p-8 animate-in fade-in duration-300">
+          <div className="flex-1 overflow-auto bg-white">
+            <div className="w-full px-6 py-6 lg:py-8 lg:px-8 animate-in fade-in duration-300">
               <Outlet />
             </div>
           </div>

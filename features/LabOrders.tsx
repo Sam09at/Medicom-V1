@@ -132,7 +132,7 @@ export const LabOrders = () => {
         </div>
         <button
           onClick={() => setIsCreateOpen(true)}
-          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-[8px] text-sm font-medium transition-colors shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-[20px] text-sm font-medium transition-colors "
         >
           <IconPlus className="w-4 h-4" />
           Nouvelle Commande
@@ -145,7 +145,7 @@ export const LabOrders = () => {
           return (
             <div
               key={status}
-              className="bg-white p-4 rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] flex items-center justify-between"
+              className="bg-white p-4 rounded-[20px] border border-slate-200  flex items-center justify-between"
             >
               <div>
                 <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">
@@ -177,7 +177,7 @@ export const LabOrders = () => {
         })}
       </div>
 
-      <div className="bg-white rounded-[8px] border border-slate-200 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] overflow-hidden">
+      <div className="bg-white rounded-[20px] border border-slate-200  overflow-hidden">
         <table className="min-w-full divide-y divide-gray-100">
           <thead>
             <tr className="bg-slate-50">
@@ -306,7 +306,7 @@ export const LabOrders = () => {
               </div>
             </div>
 
-            <div className="bg-slate-50 p-4 rounded-[8px] border border-slate-200 space-y-2">
+            <div className="bg-slate-50 p-4 rounded-[20px] border border-slate-200 space-y-2">
               <h4 className="font-bold text-sm text-slate-900 mb-2">Informations</h4>
               <div className="flex justify-between text-sm">
                 <span className="text-slate-500">Labo</span> <span>{selectedOrder.labName}</span>
@@ -344,7 +344,7 @@ export const LabOrders = () => {
             {selectedOrder.status !== 'Fitted' && (
               <div className="pt-4 border-t border-slate-100">
                 <button
-                  className="w-full bg-blue-600 text-white py-2 rounded-[8px] font-medium text-sm hover:bg-blue-700 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                  className="w-full bg-blue-600 text-white py-2 rounded-[20px] font-medium text-sm hover:bg-blue-700 "
                   onClick={() => {
                     const nextIdx = STATUS_STEPS.indexOf(selectedOrder.status) + 1;
                     if (nextIdx < STATUS_STEPS.length) {
@@ -372,7 +372,7 @@ export const LabOrders = () => {
             <label className="block text-sm font-medium text-slate-700 mb-1">Patient</label>
             <select
               required
-              className="w-full border-slate-300 rounded-[8px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] p-2 text-sm border focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full border-slate-300 rounded-[20px]  p-2 text-sm border focus:ring-2 focus:ring-blue-500 outline-none"
               value={newOrder.patientId}
               onChange={(e) => setNewOrder({ ...newOrder, patientId: e.target.value })}
             >
@@ -390,7 +390,7 @@ export const LabOrders = () => {
               <label className="block text-sm font-medium text-slate-700 mb-1">Laboratoire</label>
               <select
                 required
-                className="w-full border-slate-300 rounded-[8px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] p-2 text-sm border focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full border-slate-300 rounded-[20px]  p-2 text-sm border focus:ring-2 focus:ring-blue-500 outline-none"
                 value={newOrder.labContactId}
                 onChange={(e) => setNewOrder({ ...newOrder, labContactId: e.target.value })}
               >
@@ -410,14 +410,14 @@ export const LabOrders = () => {
               <input
                 type="date"
                 required
-                className="w-full border-slate-300 rounded-[8px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] p-2 text-sm border focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full border-slate-300 rounded-[20px]  p-2 text-sm border focus:ring-2 focus:ring-blue-500 outline-none"
                 value={newOrder.dueDate}
                 onChange={(e) => setNewOrder({ ...newOrder, dueDate: e.target.value })}
               />
             </div>
           </div>
 
-          <div className="p-4 bg-slate-50 border border-slate-200 rounded-[8px] space-y-4">
+          <div className="p-4 bg-slate-50 border border-slate-200 rounded-[20px] space-y-4">
             <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
               <IconTooth className="w-4 h-4 text-slate-500" /> Détails du travail
             </h4>
@@ -427,7 +427,7 @@ export const LabOrders = () => {
                   Type de travail
                 </label>
                 <select
-                  className="w-full border-slate-300 rounded-[8px] p-2 text-sm border bg-white outline-none"
+                  className="w-full border-slate-300 rounded-[20px] p-2 text-sm border bg-white outline-none"
                   value={newOrder.type}
                   onChange={(e) => setNewOrder({ ...newOrder, type: e.target.value })}
                 >
@@ -444,7 +444,7 @@ export const LabOrders = () => {
                 <input
                   type="text"
                   placeholder="Ex: 16, 26"
-                  className="w-full border-slate-300 rounded-[8px] p-2 text-sm border bg-white outline-none"
+                  className="w-full border-slate-300 rounded-[20px] p-2 text-sm border bg-white outline-none"
                   value={newOrder.tooth}
                   onChange={(e) => setNewOrder({ ...newOrder, tooth: e.target.value })}
                 />
@@ -473,7 +473,7 @@ export const LabOrders = () => {
             </label>
             <textarea
               rows={3}
-              className="w-full border-slate-300 rounded-[8px] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] p-2 text-sm border focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full border-slate-300 rounded-[20px]  p-2 text-sm border focus:ring-2 focus:ring-blue-500 outline-none"
               placeholder="Instructions particulières pour le prothésiste..."
               value={newOrder.notes}
               onChange={(e) => setNewOrder({ ...newOrder, notes: e.target.value })}
@@ -490,7 +490,7 @@ export const LabOrders = () => {
             </button>
             <button
               type="submit"
-              className="flex-1 py-2 text-sm font-medium text-white bg-blue-600 rounded-[8px] hover:bg-blue-700 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+              className="flex-1 py-2 text-sm font-medium text-white bg-blue-600 rounded-[20px] hover:bg-blue-700 "
             >
               Créer la commande
             </button>

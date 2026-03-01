@@ -31,7 +31,7 @@ const Tooth: React.FC<ToothProps> = ({ number, data, onClick, onContextMenu, isS
   const surfaces = data?.surfaces || [];
 
   // Visual mapping
-  let baseClasses = 'bg-white border-slate-200/60 text-slate-500 hover:border-blue-400 shadow-sm';
+  let baseClasses = 'bg-white border-slate-200/60 text-slate-500 hover:border-blue-400 ';
   let content = null;
 
   if (status === 'Caries') baseClasses = 'bg-red-50/50 border-red-200 text-red-600';
@@ -46,7 +46,7 @@ const Tooth: React.FC<ToothProps> = ({ number, data, onClick, onContextMenu, isS
   if (status === 'Planned')
     baseClasses = 'bg-emerald-50/50 border-emerald-200 text-emerald-600 border-dashed';
 
-  if (isSelected) baseClasses += ' ring-2 ring-blue-500 shadow-md ring-offset-2';
+  if (isSelected) baseClasses += ' ring-2 ring-blue-500  ring-offset-2';
 
   const hasSurface = (s: ToothSurface) => surfaces.includes(s);
 
@@ -61,7 +61,7 @@ const Tooth: React.FC<ToothProps> = ({ number, data, onClick, onContextMenu, isS
 
       {/* Status Indicators */}
       {status === 'Caries' && (
-        <div className="absolute w-2.5 h-2.5 rounded-full bg-red-400 top-1 right-1 shadow-sm"></div>
+        <div className="absolute w-2.5 h-2.5 rounded-full bg-red-400 top-1 right-1 "></div>
       )}
       {status === 'Crown' && (
         <div className="absolute inset-x-0 top-0 h-1.5 bg-amber-400 rounded-t-xl opacity-80"></div>
@@ -209,7 +209,7 @@ export const Odontogram: React.FC<OdontogramProps> = ({
       {/* Context Popover */}
       {selectedTooth && !readOnly && (
         <div
-          className="absolute z-50 bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.1)] border border-slate-100/80 p-5 w-72 animate-in fade-in zoom-in-95 duration-200"
+          className="absolute z-50 bg-white/95 backdrop-blur-md rounded-2xl  border border-slate-100/80 p-5 w-72 animate-in fade-in zoom-in-95 duration-200"
           style={{ left: popoverPos.x, top: popoverPos.y }}
           onClick={(e) => e.stopPropagation()}
         >
@@ -256,7 +256,7 @@ export const Odontogram: React.FC<OdontogramProps> = ({
                   <button
                     key={s}
                     onClick={() => toggleSurface(s as ToothSurface)}
-                    className={`w-8 h-8 text-[0.65rem] rounded-xl flex items-center justify-center border transition-all ${statusMap[selectedTooth]?.surfaces.includes(s as ToothSurface) ? 'bg-blue-50 border-blue-200 text-blue-700 font-bold shadow-sm' : 'bg-slate-50 border-slate-200/50 text-slate-500 hover:bg-white hover:border-slate-300'}`}
+                    className={`w-8 h-8 text-[0.65rem] rounded-xl flex items-center justify-center border transition-all ${statusMap[selectedTooth]?.surfaces.includes(s as ToothSurface) ? 'bg-blue-50 border-blue-200 text-blue-700 font-bold ' : 'bg-slate-50 border-slate-200/50 text-slate-500 hover:bg-white hover:border-slate-300'}`}
                     title={s}
                   >
                     {s[0]}

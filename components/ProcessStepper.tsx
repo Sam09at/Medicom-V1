@@ -25,9 +25,9 @@ export const ProcessStepper: React.FC<ProcessStepperProps> = ({ steps, className
               <div
                 className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 border-2 transition-all ${
                   step.status === 'completed'
-                    ? 'bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-200/50'
+                    ? 'bg-blue-600 border-blue-600 text-white  shadow-blue-200/50'
                     : step.status === 'current'
-                      ? 'bg-white border-blue-600 text-blue-600 ring-4 ring-blue-50 shadow-sm'
+                      ? 'bg-white border-blue-600 text-blue-600 ring-4 ring-blue-50 '
                       : 'bg-slate-50 border-slate-200/60 text-slate-400'
                 }`}
               >
@@ -49,9 +49,7 @@ export const ProcessStepper: React.FC<ProcessStepperProps> = ({ steps, className
               {!isLast && (
                 <div
                   className={`w-0.5 h-full my-2 rounded-full ${
-                    step.status === 'completed'
-                      ? 'bg-blue-600/80 shadow-[0_0_8px_rgba(37,99,235,0.4)]'
-                      : 'bg-slate-200/60'
+                    step.status === 'completed' ? 'bg-blue-600/80 ' : 'bg-slate-200/60'
                   }`}
                 />
               )}

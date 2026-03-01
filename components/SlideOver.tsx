@@ -75,7 +75,7 @@ export const SlideOver: React.FC<SlideOverProps> = ({
             className={`absolute inset-y-0 right-0 flex max-w-full`}
           >
             <div
-              className={`w-screen ${WIDTH_CLASSES[width]} bg-white shadow-[-2px_0_16px_rgba(0,0,0,0.06)] flex flex-col h-full border-l border-gray-100`}
+              className={`w-screen ${WIDTH_CLASSES[width]} bg-white  flex flex-col h-full border-l border-gray-100`}
             >
               <header className="h-14 px-5 border-b border-gray-100 sticky top-0 bg-white/80 backdrop-blur-sm flex items-center justify-between shrink-0">
                 <div>

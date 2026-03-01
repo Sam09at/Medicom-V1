@@ -96,7 +96,7 @@ export const CURRENT_USER_CLINIC_ADMIN: User = {
 
 export const CURRENT_USER_ADMIN: User = {
   id: 'u99',
-  name: 'Sami Benjekkoun',
+  name: 'Sami Atif',
   role: 'super_admin',
   avatar: 'https://picsum.photos/id/1005/100/100',
   enabledModules: DEFAULT_MODULES,

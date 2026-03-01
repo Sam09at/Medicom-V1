@@ -280,7 +280,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
   ];
 
   return (
-    <div className="flex h-full bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] m-6 rounded-[2.5rem] border border-slate-100/50 relative font-sans overflow-hidden">
+    <div className="flex h-full bg-white  m-6 rounded-[2.5rem] border border-slate-100/50 relative font-sans overflow-hidden">
       {/* Left Sidebar: Process Stepper */}
       <div className="w-80 border-r border-slate-100/60 bg-white/50 p-8 hidden lg:block overflow-y-auto">
         <div className="mb-10">
@@ -299,7 +299,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
         {/* AI Modal */}
         {showAiModal && (
           <div className="absolute inset-0 bg-white/90 backdrop-blur-sm z-50 flex items-center justify-center p-8">
-            <div className="bg-white border border-slate-200 shadow-2xl rounded-[8px] max-w-lg w-full p-6 text-center animate-in zoom-in-95 duration-200">
+            <div className="bg-white border border-slate-200  rounded-[20px] max-w-lg w-full p-6 text-center animate-in zoom-in-95 duration-200">
               <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
                 <IconWand className="w-6 h-6" />
               </div>
@@ -307,7 +307,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
               <div className="grid grid-cols-1 gap-3">
                 <button
                   onClick={generateAiLetter}
-                  className="p-3 border border-slate-200 rounded-[8px] hover:border-purple-500 hover:bg-purple-50 text-sm font-medium text-slate-700 transition-colors"
+                  className="p-3 border border-slate-200 rounded-[20px] hover:border-purple-500 hover:bg-purple-50 text-sm font-medium text-slate-700 transition-colors"
                 >
                   Générer compte-rendu
                 </button>
@@ -386,7 +386,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
                       value={vitals.bpSystolic}
                       onChange={(e) => setVitals({ ...vitals, bpSystolic: e.target.value })}
                       placeholder="120"
-                      className="w-full px-5 py-3.5 bg-slate-50 border border-transparent hover:bg-slate-100 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none"
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-transparent hover:bg-slate-100 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 rounded-[20px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none"
                     />
                     <span className="py-3.5 font-bold text-slate-300">/</span>
                     <input
@@ -394,7 +394,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
                       value={vitals.bpDiastolic}
                       onChange={(e) => setVitals({ ...vitals, bpDiastolic: e.target.value })}
                       placeholder="80"
-                      className="w-full px-5 py-3.5 bg-slate-50 border border-transparent hover:bg-slate-100 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none"
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-transparent hover:bg-slate-100 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 rounded-[20px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none"
                     />
                   </div>
                 </div>
@@ -407,7 +407,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
                     value={vitals.weight}
                     onChange={(e) => setVitals({ ...vitals, weight: e.target.value })}
                     placeholder="70"
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-transparent hover:bg-slate-100 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-transparent hover:bg-slate-100 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 rounded-[20px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none"
                   />
                 </div>
                 <div className="space-y-2.5">
@@ -419,7 +419,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
                     value={vitals.temp}
                     onChange={(e) => setVitals({ ...vitals, temp: e.target.value })}
                     placeholder="37"
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-transparent hover:bg-slate-100 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-transparent hover:bg-slate-100 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 rounded-[20px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none"
                   />
                 </div>
                 <div className="space-y-2.5">
@@ -431,7 +431,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
                     value={vitals.heartRate}
                     onChange={(e) => setVitals({ ...vitals, heartRate: e.target.value })}
                     placeholder="75"
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-transparent hover:bg-slate-100 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-transparent hover:bg-slate-100 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 rounded-[20px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none"
                   />
                 </div>
               </div>
@@ -460,7 +460,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
                 </div>
               </div>
 
-              <div className="bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/50 rounded-[2rem] p-6 sm:p-10 overflow-x-auto">
+              <div className="bg-white  border border-slate-100/50 rounded-[2rem] p-6 sm:p-10 overflow-x-auto">
                 <Odontogram statusMap={toothStatus} onToothUpdate={handleToothUpdate} />
               </div>
 
@@ -488,14 +488,14 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
               </div>
 
               {/* Procedure Input */}
-              <div className="bg-slate-50/50 p-6 rounded-3xl border border-transparent shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] space-y-6">
+              <div className="bg-slate-50/50 p-6 rounded-3xl border border-transparent  space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
                   <div className="sm:col-span-6">
                     <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">
                       Acte
                     </label>
                     <select
-                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] appearance-none"
+                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[20px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20  appearance-none"
                       value={selectedActId}
                       onChange={(e) => setSelectedActId(e.target.value)}
                     >
@@ -514,7 +514,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
                     <input
                       type="text"
                       placeholder="Ex: 16"
-                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[20px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 "
                       value={selectedTeethForAct}
                       onChange={(e) => setSelectedTeethForAct(e.target.value)}
                     />
@@ -523,7 +523,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
                     <button
                       onClick={() => selectedActId && toggleFavoriteAct(selectedActId)}
                       disabled={!selectedActId}
-                      className={`p-3.5 rounded-[8px] transition-all shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] ${favoriteActs.includes(selectedActId) ? 'bg-amber-100/50 text-amber-500 hover:bg-amber-100' : 'bg-white border border-slate-100/80 text-slate-400 hover:bg-slate-50'}`}
+                      className={`p-3.5 rounded-[20px] transition-all  ${favoriteActs.includes(selectedActId) ? 'bg-amber-100/50 text-amber-500 hover:bg-amber-100' : 'bg-white border border-slate-100/80 text-slate-400 hover:bg-slate-50'}`}
                       title="Favori"
                     >
                       <Star
@@ -534,7 +534,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
                     <button
                       onClick={addProcedure}
                       disabled={!selectedActId}
-                      className="flex-1 btn-primary py-3.5 rounded-[8px] text-[0.875rem]"
+                      className="flex-1 btn-primary py-3.5 rounded-[20px] text-[0.875rem]"
                     >
                       Ajouter
                     </button>
@@ -564,7 +564,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
                                 },
                               ]);
                             }}
-                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-amber-50/80 text-amber-600 hover:bg-amber-100 border border-amber-100/60 rounded-[30px] text-[0.75rem] font-bold transition-all shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-amber-50/80 text-amber-600 hover:bg-amber-100 border border-amber-100/60 rounded-[30px] text-[0.75rem] font-bold transition-all "
                           >
                             <Star className="w-3.5 h-3.5" fill="currentColor" /> {act.name}
                           </button>
@@ -575,7 +575,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
                 )}
               </div>
 
-              <div className="bg-white border border-slate-100/50 rounded-3xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+              <div className="bg-white border border-slate-100/50 rounded-3xl overflow-hidden ">
                 <table className="min-w-full">
                   <thead className="bg-slate-50/50 border-b border-slate-100/50">
                     <tr>
@@ -616,7 +616,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
                           <td className="px-6 py-4 text-right">
                             <button
                               onClick={() => removeProcedure(proc.id)}
-                              className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-[8px] transition-all opacity-0 group-hover:opacity-100"
+                              className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-[20px] transition-all opacity-0 group-hover:opacity-100"
                             >
                               <IconTrash className="w-4 h-4" />
                             </button>
@@ -688,7 +688,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
                 <div className="flex gap-3">
                   <button
                     onClick={toggleRecording}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-[8px] text-sm font-bold transition-all shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] ${
+                    className={`flex items-center gap-2 px-4 py-2 rounded-[20px] text-sm font-bold transition-all  ${
                       isRecording
                         ? 'bg-red-50 text-red-600 border-2 border-red-200 animate-pulse'
                         : 'bg-white border-2 border-slate-100 text-slate-600 hover:bg-slate-50'
@@ -701,7 +701,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
                   </button>
                   <button
                     onClick={() => setShowAiModal(true)}
-                    className="flex items-center gap-2 bg-purple-50 text-purple-600 hover:text-purple-700 px-4 py-2 rounded-[8px] text-sm font-bold hover:bg-purple-100 transition-colors shadow-none"
+                    className="flex items-center gap-2 bg-purple-50 text-purple-600 hover:text-purple-700 px-4 py-2 rounded-[20px] text-sm font-bold hover:bg-purple-100 transition-colors shadow-none"
                   >
                     <IconWand className="w-4 h-4" /> Assistant IA
                   </button>
@@ -712,7 +712,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
                 {noteTemplates.length > 0 && (
                   <div>
                     <select
-                      className="w-full sm:w-auto px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] appearance-none"
+                      className="w-full sm:w-auto px-5 py-3.5 bg-white border border-slate-100/80 rounded-[20px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20  appearance-none"
                       onChange={(e) => {
                         const template = noteTemplates.find((t: any) => t.id === e.target.value);
                         if (template) {
@@ -737,7 +737,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
                   rows={12}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="w-full px-6 py-5 bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] border border-slate-100/80 hover:border-slate-200 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 rounded-3xl text-[0.875rem] font-medium text-slate-700 transition-all outline-none resize-none leading-relaxed"
+                  className="w-full px-6 py-5 bg-white  border border-slate-100/80 hover:border-slate-200 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 rounded-3xl text-[0.875rem] font-medium text-slate-700 transition-all outline-none resize-none leading-relaxed"
                   placeholder="Observations cliniques, diagnostic..."
                 />
               </div>

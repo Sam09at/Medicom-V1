@@ -26,7 +26,7 @@ const ToastItem: React.FC<{ toast: ToastMessage; removeToast: (id: string) => vo
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: 8, opacity: 0 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
-      className={`relative flex items-start gap-3 p-3 shadow-[-2px_0_16px_rgba(0,0,0,0.06)] border-l-2 min-w-[300px] w-72 bg-white overflow-hidden ${
+      className={`relative flex items-start gap-3 p-3  border-l-2 min-w-[300px] w-72 bg-white overflow-hidden ${
         toast.type === 'success'
           ? 'border-green-500'
           : toast.type === 'error'

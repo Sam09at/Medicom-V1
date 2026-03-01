@@ -102,7 +102,9 @@ export const MedicalRecord = () => {
       <div className="space-y-6 font-sans animate-in fade-in duration-150 pb-10">
         {/* Header */}
         <div>
-          <h2 className="text-[22px] font-semibold tracking-tight text-slate-900">Dossiers Médicaux</h2>
+          <h2 className="text-[22px] font-semibold tracking-tight text-slate-900">
+            Dossiers Médicaux
+          </h2>
           <p className="text-[12px] font-bold text-slate-400 uppercase tracking-widest mt-1">
             Sélectionnez un patient pour consulter son historique
           </p>
@@ -131,7 +133,8 @@ export const MedicalRecord = () => {
             >
               {/* Avatar */}
               <div className="w-10 h-10 rounded-full bg-blue-50 text-[#136cfb] flex items-center justify-center text-[13px] font-bold shrink-0">
-                {patient.firstName[0]}{patient.lastName[0]}
+                {patient.firstName[0]}
+                {patient.lastName[0]}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-[13.5px] font-semibold text-slate-900 truncate group-hover:text-[#136cfb] transition-colors">
@@ -141,8 +144,18 @@ export const MedicalRecord = () => {
                   {patient.age} ans · {patient.phone}
                 </div>
               </div>
-              <svg className="w-4 h-4 text-slate-300 group-hover:text-[#136cfb] transition-colors shrink-0 -translate-x-1 group-hover:translate-x-0 duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-4 h-4 text-slate-300 group-hover:text-[#136cfb] transition-colors shrink-0 -translate-x-1 group-hover:translate-x-0 duration-200"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </div>
           ))}
@@ -161,20 +174,20 @@ export const MedicalRecord = () => {
   // ── Patient Detail ─────────────────────────────────────────────────────
   return (
     <div className="space-y-6 font-sans animate-in fade-in duration-150 pb-10">
-
       {/* Header */}
       <div className="flex items-center justify-between gap-4 pb-5 border-b border-slate-100">
         <div className="flex items-center gap-4">
           <button
             onClick={() => setSelectedPatient(null)}
-            className="w-9 h-9 rounded-[8px] border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-300 transition-all"
+            className="w-9 h-9 rounded-[20px] border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-300 transition-all"
           >
             <IconArrowLeft className="w-4 h-4" />
           </button>
           {/* Patient avatar + info */}
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-blue-50 text-[#136cfb] flex items-center justify-center text-[13px] font-bold shrink-0">
-              {selectedPatient.firstName[0]}{selectedPatient.lastName[0]}
+              {selectedPatient.firstName[0]}
+              {selectedPatient.lastName[0]}
             </div>
             <div>
               <h2 className="text-[18px] font-semibold tracking-tight text-slate-900 leading-tight">
@@ -189,7 +202,9 @@ export const MedicalRecord = () => {
                   {selectedPatient.gender === 'M' ? 'Homme' : 'Femme'}
                 </span>
                 <span className="text-slate-300 text-[11px]">·</span>
-                <span className="text-[12px] font-medium text-slate-400 font-mono">{selectedPatient.phone}</span>
+                <span className="text-[12px] font-medium text-slate-400 font-mono">
+                  {selectedPatient.phone}
+                </span>
               </div>
             </div>
           </div>
@@ -204,10 +219,11 @@ export const MedicalRecord = () => {
             <button
               key={id}
               onClick={() => setActiveTab(id as any)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-[30px] text-[12px] font-semibold transition-all ${activeTab === id
-                  ? 'bg-white text-[#136cfb] shadow-sm'
+              className={`flex items-center gap-2 px-4 py-2 rounded-[30px] text-[12px] font-semibold transition-all ${
+                activeTab === id
+                  ? 'bg-white text-[#136cfb] '
                   : 'text-slate-500 hover:text-slate-700'
-                }`}
+              }`}
             >
               <Icon className="w-3.5 h-3.5" />
               {label}
@@ -218,7 +234,6 @@ export const MedicalRecord = () => {
 
       {/* Body */}
       <div className="flex flex-col lg:flex-row gap-6">
-
         {/* Main content */}
         <div className="flex-1 min-w-0">
           {activeTab === 'history' && (
@@ -231,7 +246,9 @@ export const MedicalRecord = () => {
               ) : timeline.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 card border-dashed">
                   <IconClock className="w-6 h-6 text-slate-300 mb-3" />
-                  <p className="text-[13px] font-semibold text-slate-400">Aucun historique disponible</p>
+                  <p className="text-[13px] font-semibold text-slate-400">
+                    Aucun historique disponible
+                  </p>
                 </div>
               ) : (
                 <div>
@@ -239,16 +256,23 @@ export const MedicalRecord = () => {
                     const ts = TYPE_STYLE[event.type] ?? TYPE_STYLE.Note;
                     const isLast = i === timeline.length - 1;
                     return (
-                      <div key={event.id} className={`flex gap-4 py-4 ${!isLast ? 'border-b border-slate-100' : ''}`}>
+                      <div
+                        key={event.id}
+                        className={`flex gap-4 py-4 ${!isLast ? 'border-b border-slate-100' : ''}`}
+                      >
                         {/* Icon */}
-                        <div className={`w-8 h-8 rounded-[8px] flex items-center justify-center shrink-0 mt-0.5 ${ts.bg} ${ts.text}`}>
+                        <div
+                          className={`w-8 h-8 rounded-[20px] flex items-center justify-center shrink-0 mt-0.5 ${ts.bg} ${ts.text}`}
+                        >
                           <event.icon className="w-4 h-4" />
                         </div>
                         {/* Content */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-4 mb-1">
                             <div>
-                              <span className={`text-[10px] font-bold uppercase tracking-widest ${ts.text}`}>
+                              <span
+                                className={`text-[10px] font-bold uppercase tracking-widest ${ts.text}`}
+                              >
                                 {event.type}
                               </span>
                               <h4 className="text-[14px] font-semibold text-slate-900 leading-tight mt-0.5">
@@ -256,7 +280,11 @@ export const MedicalRecord = () => {
                               </h4>
                             </div>
                             <span className="text-[11px] font-semibold text-slate-400 shrink-0 mt-0.5">
-                              {new Date(event.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
+                              {new Date(event.date).toLocaleDateString('fr-FR', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric',
+                              })}
                             </span>
                           </div>
                           <p className="text-[12.5px] font-medium text-slate-500 leading-relaxed bg-slate-50 px-3 py-2 rounded-[6px] mt-2">
@@ -264,7 +292,10 @@ export const MedicalRecord = () => {
                           </p>
                           <div className="flex items-center gap-2 mt-2">
                             <div className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[9px] font-bold text-slate-500">
-                              {event.author.split(' ').map((n) => n[0]).join('')}
+                              {event.author
+                                .split(' ')
+                                .map((n) => n[0])
+                                .join('')}
                             </div>
                             <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
                               Par {event.author}
@@ -282,12 +313,14 @@ export const MedicalRecord = () => {
           {activeTab === 'chart' && (
             <div className="card p-6">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 rounded-[8px] bg-blue-50 flex items-center justify-center text-[#136cfb]">
+                <div className="w-8 h-8 rounded-[20px] bg-blue-50 flex items-center justify-center text-[#136cfb]">
                   <IconTooth className="w-4 h-4" />
                 </div>
-                <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight">Odontogramme Actuel</h3>
+                <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight">
+                  Odontogramme Actuel
+                </h3>
               </div>
-              <div className="bg-slate-50/50 p-6 rounded-[8px] border border-slate-100 flex justify-center overflow-x-auto">
+              <div className="bg-slate-50/50 p-6 rounded-[20px] border border-slate-100 flex justify-center overflow-x-auto">
                 <Odontogram statusMap={{}} readOnly={true} />
               </div>
             </div>
@@ -310,7 +343,9 @@ export const MedicalRecord = () => {
                 { label: 'Téléphone', value: selectedPatient.phone },
               ].map(({ label, value }) => (
                 <div key={label} className="border-b border-slate-100 pb-4 last:border-0 last:pb-0">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{label}</div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+                    {label}
+                  </div>
                   <div className="text-[13px] font-semibold text-slate-900 truncate">{value}</div>
                 </div>
               ))}

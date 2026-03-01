@@ -18,13 +18,39 @@ import { AppointmentForm } from '../features/AppointmentForm';
 // Constants
 const HOURS = Array.from({ length: 13 }, (_, i) => i + 8); // 8:00 to 20:00
 const DAYS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
-const TYPE_STYLES: Record<string, { bg: string; text: string; border?: string; iconBg?: string }> = {
-  Consultation: { bg: 'bg-indigo-50/50', text: 'text-indigo-700', border: 'border-indigo-100/50', iconBg: 'bg-indigo-500' },
-  'Séance Traitement': { bg: 'bg-purple-50/50', text: 'text-purple-700', border: 'border-purple-100/50', iconBg: 'bg-purple-500' },
-  Contrôle: { bg: 'bg-emerald-50/50', text: 'text-emerald-700', border: 'border-emerald-100/50', iconBg: 'bg-emerald-500' },
-  Urgence: { bg: 'bg-rose-50/50', text: 'text-rose-700', border: 'border-rose-100/50', iconBg: 'bg-rose-500' },
-  'Pause / Absence': { bg: 'bg-slate-100/50', text: 'text-slate-500', border: 'border-slate-200/50', iconBg: 'bg-slate-400' },
-};
+const TYPE_STYLES: Record<string, { bg: string; text: string; border?: string; iconBg?: string }> =
+  {
+    Consultation: {
+      bg: 'bg-indigo-50/50',
+      text: 'text-indigo-700',
+      border: 'border-indigo-100/50',
+      iconBg: 'bg-indigo-500',
+    },
+    'Séance Traitement': {
+      bg: 'bg-purple-50/50',
+      text: 'text-purple-700',
+      border: 'border-purple-100/50',
+      iconBg: 'bg-purple-500',
+    },
+    Contrôle: {
+      bg: 'bg-emerald-50/50',
+      text: 'text-emerald-700',
+      border: 'border-emerald-100/50',
+      iconBg: 'bg-emerald-500',
+    },
+    Urgence: {
+      bg: 'bg-rose-50/50',
+      text: 'text-rose-700',
+      border: 'border-rose-100/50',
+      iconBg: 'bg-rose-500',
+    },
+    'Pause / Absence': {
+      bg: 'bg-slate-100/50',
+      text: 'text-slate-500',
+      border: 'border-slate-200/50',
+      iconBg: 'bg-slate-400',
+    },
+  };
 
 // Helper components
 const MiniCalendar = ({
@@ -78,12 +104,13 @@ const MiniCalendar = ({
           <button
             key={i}
             disabled={!d}
-            className={`h-8 w-8 text-[0.75rem] rounded-[30px] flex items-center justify-center transition-all ${!d
-              ? 'invisible'
-              : d === currentDate.getDate()
-                ? 'bg-[#0F0F0F] text-white font-bold shadow-[0_2px_8px_-2px_rgba(0,0,0,0.15)]'
-                : 'text-slate-600 hover:bg-slate-50 font-bold hover:text-slate-900'
-              }`}
+            className={`h-8 w-8 text-[0.75rem] rounded-[30px] flex items-center justify-center transition-all ${
+              !d
+                ? 'invisible'
+                : d === currentDate.getDate()
+                  ? 'bg-[#0F0F0F] text-white font-bold '
+                  : 'text-slate-600 hover:bg-slate-50 font-bold hover:text-slate-900'
+            }`}
             onClick={() => {
               if (d) {
                 const newDate = new Date(currentDate);
@@ -393,7 +420,7 @@ export const CalendarView: React.FC = () => {
                           draggable
                           onDragStart={(e) => handleDragStart(e, apt)}
                           onClick={(e) => handleEventClick(e, apt)}
-                          className={`absolute left-1 right-1 rounded-[8px] p-3 text-xs cursor-pointer shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_20px_-4px_rgba(0,0,0,0.1)] transition-all flex flex-col overflow-hidden ${style.bg} z-10 group opacity-95 hover:opacity-100 hover:z-20 border ${style.border || 'border-transparent'}`}
+                          className={`absolute left-1 right-1 rounded-[20px] p-3 text-xs cursor-pointer  hover: transition-all flex flex-col overflow-hidden ${style.bg} z-10 group opacity-95 hover:opacity-100 hover:z-20 border ${style.border || 'border-transparent'}`}
                           style={{ top: `${top}px`, height: `${height}px` }}
                           title={`${apt.patientName} - ${apt.type}`}
                         >
@@ -463,7 +490,7 @@ export const CalendarView: React.FC = () => {
             return (
               <div
                 key={i}
-                className={`group rounded-[30px] h-36 p-3 transition-all cursor-pointer border ${isToday ? 'bg-blue-50/30 border-blue-100 shadow-[0_4px_12px_-2px_rgba(37,99,235,0.05)]' : 'bg-white border-slate-100/60 hover:border-blue-200/60 hover:shadow-sm'}`}
+                className={`group rounded-[30px] h-36 p-3 transition-all cursor-pointer border ${isToday ? 'bg-blue-50/30 border-blue-100 ' : 'bg-white border-slate-100/60 hover:border-blue-200/60 hover:'}`}
                 onClick={() => handleSlotClick(date, 9)}
               >
                 <div className="flex justify-between items-start mb-2">
@@ -473,7 +500,7 @@ export const CalendarView: React.FC = () => {
                     {date.getDate()}
                   </div>
                   {dayEvents.length > 0 && (
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 "></div>
                   )}
                 </div>
                 <div className="space-y-1 overflow-y-auto max-h-[85px] pr-0.5 scrollbar-hide">
@@ -481,7 +508,7 @@ export const CalendarView: React.FC = () => {
                     <div
                       key={apt.id}
                       onClick={(e) => handleEventClick(e, apt)}
-                      className={`text-[0.625rem] px-2 py-1 rounded-[8px] font-bold truncate transition-transform hover:scale-[1.02] active:scale-[0.98] ${TYPE_STYLES[apt.type]?.bg || 'bg-slate-100'} ${TYPE_STYLES[apt.type]?.text || 'text-slate-700'}`}
+                      className={`text-[0.625rem] px-2 py-1 rounded-[20px] font-bold truncate transition-transform hover:scale-[1.02] active:scale-[0.98] ${TYPE_STYLES[apt.type]?.bg || 'bg-slate-100'} ${TYPE_STYLES[apt.type]?.text || 'text-slate-700'}`}
                     >
                       {new Date(apt.start).toLocaleTimeString([], {
                         hour: '2-digit',
@@ -543,7 +570,9 @@ export const CalendarView: React.FC = () => {
                   >
                     {isActive && <IconCheck className="w-3.5 h-3.5 text-white" />}
                   </div>
-                  <span className={`truncate ${isActive ? 'text-slate-900' : 'text-slate-400 group-hover:text-slate-600'}`}>
+                  <span
+                    className={`truncate ${isActive ? 'text-slate-900' : 'text-slate-400 group-hover:text-slate-600'}`}
+                  >
                     {type}
                   </span>
                 </button>
@@ -554,7 +583,7 @@ export const CalendarView: React.FC = () => {
       </aside>
 
       {/* Main Calendar */}
-      <div className="flex-1 flex flex-col min-w-0 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] m-6 rounded-[2.5rem] border border-slate-100/50 overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 bg-white  m-6 rounded-[2.5rem] border border-slate-100/50 overflow-hidden">
         {/* Toolbar */}
         <header className="h-20 border-b border-slate-100/60 flex items-center justify-between px-8 flex-shrink-0 bg-white/80 backdrop-blur-md">
           <div className="flex items-center gap-8">
@@ -564,19 +593,19 @@ export const CalendarView: React.FC = () => {
             <div className="flex bg-slate-100/80 p-1.5 rounded-[30px]">
               <button
                 onClick={() => setView('day')}
-                className={`px-4 py-1.5 text-xs font-bold rounded-[30px] transition-all ${view === 'day' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                className={`px-4 py-1.5 text-xs font-bold rounded-[30px] transition-all ${view === 'day' ? 'bg-white text-slate-900 ' : 'text-slate-500 hover:text-slate-700'}`}
               >
                 Jour
               </button>
               <button
                 onClick={() => setView('week')}
-                className={`px-4 py-1.5 text-xs font-bold rounded-[30px] transition-all ${view === 'week' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                className={`px-4 py-1.5 text-xs font-bold rounded-[30px] transition-all ${view === 'week' ? 'bg-white text-slate-900 ' : 'text-slate-500 hover:text-slate-700'}`}
               >
                 Semaine
               </button>
               <button
                 onClick={() => setView('month')}
-                className={`px-4 py-1.5 text-xs font-bold rounded-[30px] transition-all ${view === 'month' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                className={`px-4 py-1.5 text-xs font-bold rounded-[30px] transition-all ${view === 'month' ? 'bg-white text-slate-900 ' : 'text-slate-500 hover:text-slate-700'}`}
               >
                 Mois
               </button>
@@ -596,19 +625,19 @@ export const CalendarView: React.FC = () => {
             </div>
             <div className="flex gap-1.5 border border-slate-100/80 rounded-[30px] p-1.5 bg-slate-50/30">
               <button
-                className="p-1.5 hover:bg-white hover:shadow-sm rounded-[30px] text-slate-500 transition-all active:scale-95"
+                className="p-1.5 hover:bg-white hover: rounded-[30px] text-slate-500 transition-all active:scale-95"
                 onClick={prev}
               >
                 <IconChevronLeft className="w-5 h-5" />
               </button>
               <button
-                className="px-5 py-1.5 text-xs font-bold text-slate-700 hover:bg-white hover:shadow-sm rounded-[30px] transition-all uppercase tracking-wider active:scale-95"
+                className="px-5 py-1.5 text-xs font-bold text-slate-700 hover:bg-white hover: rounded-[30px] transition-all uppercase tracking-wider active:scale-95"
                 onClick={today}
               >
                 Aujourd'hui
               </button>
               <button
-                className="p-1.5 hover:bg-white hover:shadow-sm rounded-[30px] text-slate-500 transition-all active:scale-95"
+                className="p-1.5 hover:bg-white hover: rounded-[30px] text-slate-500 transition-all active:scale-95"
                 onClick={next}
               >
                 <IconChevronRight className="w-5 h-5" />

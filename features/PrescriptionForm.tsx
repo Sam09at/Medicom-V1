@@ -50,44 +50,44 @@ export const PrescriptionForm: React.FC<PrescriptionFormProps> = ({
         </h3>
         <button
           onClick={handlePrint}
-          className="flex items-center gap-2 px-4 py-2 bg-slate-50 text-slate-700 font-bold rounded-xl hover:bg-slate-100 transition-colors border border-slate-200/50 shadow-sm"
+          className="flex items-center gap-2 px-4 py-2 bg-slate-50 text-slate-700 font-bold rounded-xl hover:bg-slate-100 transition-colors border border-slate-200/50 "
         >
           <IconPrinter className="w-4 h-4" /> Imprimer
         </button>
       </div>
 
       {/* Input Form */}
-      <div className="bg-slate-50/50 p-6 rounded-3xl border border-transparent shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] space-y-4">
+      <div className="bg-slate-50/50 p-6 rounded-3xl border border-transparent  space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <input
             placeholder="Médicament (ex: Amoxicilline 1g)"
             value={newDrug.name}
             onChange={(e) => setNewDrug({ ...newDrug, name: e.target.value })}
-            className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-2xl text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm"
+            className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-2xl text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 "
           />
           <input
             placeholder="Posologie (ex: 1 comprimé)"
             value={newDrug.dosage}
             onChange={(e) => setNewDrug({ ...newDrug, dosage: e.target.value })}
-            className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-2xl text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm"
+            className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-2xl text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 "
           />
           <input
             placeholder="Fréquence (ex: 2 fois par jour)"
             value={newDrug.frequency}
             onChange={(e) => setNewDrug({ ...newDrug, frequency: e.target.value })}
-            className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-2xl text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm"
+            className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-2xl text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 "
           />
           <input
             placeholder="Durée (ex: 7 jours)"
             value={newDrug.duration}
             onChange={(e) => setNewDrug({ ...newDrug, duration: e.target.value })}
-            className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-2xl text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-sm"
+            className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-2xl text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 "
           />
         </div>
         <button
           onClick={addDrug}
           disabled={!newDrug.name}
-          className="w-full btn-primary py-3.5 rounded-2xl text-[0.875rem] font-bold shadow-sm"
+          className="w-full btn-primary py-3.5 rounded-2xl text-[0.875rem] font-bold "
         >
           Ajouter le médicament
         </button>
@@ -98,7 +98,7 @@ export const PrescriptionForm: React.FC<PrescriptionFormProps> = ({
         {drugs.map((drug, i) => (
           <div
             key={i}
-            className="flex justify-between items-center p-4 bg-white border border-slate-100/80 rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] group hover:border-slate-200 transition-all"
+            className="flex justify-between items-center p-4 bg-white border border-slate-100/80 rounded-2xl  group hover:border-slate-200 transition-all"
           >
             <div>
               <div className="text-[0.875rem] font-bold text-slate-900 tracking-tight">

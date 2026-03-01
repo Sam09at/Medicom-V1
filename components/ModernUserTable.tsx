@@ -26,11 +26,13 @@ export const ModernUserTable: React.FC<ModernUserTableProps> = ({ users, onToggl
   );
 
   return (
-    <div className="bg-white border border-slate-200/60 rounded-[12px] shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col h-full overflow-hidden">
+    <div className="bg-white border border-slate-200/60 rounded-[20px]  flex flex-col h-full overflow-hidden">
       {/* Table Header / Toolbar */}
       <div className="px-6 py-5 border-b border-slate-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white">
         <div>
-          <h3 className="text-[16px] font-semibold text-slate-900 tracking-tight">Utilisateurs Actifs</h3>
+          <h3 className="text-[16px] font-semibold text-slate-900 tracking-tight">
+            Utilisateurs Actifs
+          </h3>
           <p className="text-[13px] text-slate-500 mt-1">
             Gérez les accès administrateurs et les comptes staff
           </p>
@@ -43,10 +45,10 @@ export const ModernUserTable: React.FC<ModernUserTableProps> = ({ users, onToggl
               placeholder="Filtrer..."
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="pl-9 pr-3 py-1.5 text-[13px] text-slate-900 placeholder:text-slate-400 border border-slate-200/60 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-[0_1px_2px_rgba(0,0,0,0.03)] w-full sm:w-64 transition-all"
+              className="pl-9 pr-3 py-1.5 text-[13px] text-slate-900 placeholder:text-slate-400 border border-slate-200/60 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500  w-full sm:w-64 transition-all"
             />
           </div>
-          <button className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200/60 rounded-[6px] text-[13px] font-medium text-slate-700 hover:bg-slate-50 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-colors cursor-pointer">
+          <button className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200/60 rounded-[6px] text-[13px] font-medium text-slate-700 hover:bg-slate-50  transition-colors cursor-pointer">
             <IconFilter className="w-4 h-4" /> Filtres
           </button>
         </div>
@@ -91,7 +93,7 @@ export const ModernUserTable: React.FC<ModernUserTableProps> = ({ users, onToggl
               <tr key={user.id} className="hover:bg-slate-50/50 transition-colors group">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
-                    <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-[12px] font-semibold text-slate-700 border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+                    <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-[12px] font-semibold text-slate-700 border border-slate-200/60 ">
                       {user.name.charAt(0)}
                     </div>
                     <div className="ml-4">
@@ -110,10 +112,11 @@ export const ModernUserTable: React.FC<ModernUserTableProps> = ({ users, onToggl
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
-                    className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-[4px] text-[11px] font-bold border ${user.status === 'Active'
-                      ? 'bg-emerald-50 text-emerald-700 border-emerald-100/50'
-                      : 'bg-red-50 text-red-700 border-red-100/50'
-                      }`}
+                    className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-[4px] text-[11px] font-bold border ${
+                      user.status === 'Active'
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-100/50'
+                        : 'bg-red-50 text-red-700 border-red-100/50'
+                    }`}
                   >
                     <span
                       className={`w-1.5 h-1.5 rounded-full ${user.status === 'Active' ? 'bg-emerald-500' : 'bg-red-500'}`}
@@ -128,10 +131,11 @@ export const ModernUserTable: React.FC<ModernUserTableProps> = ({ users, onToggl
                   <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={() => onToggleStatus(user.id)}
-                      className={`p-1.5 rounded-[6px] border shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-colors cursor-pointer ${user.status === 'Active'
-                        ? 'bg-white text-slate-600 border-slate-200/60 hover:text-red-600 hover:border-red-200'
-                        : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
-                        }`}
+                      className={`p-1.5 rounded-[6px] border  transition-colors cursor-pointer ${
+                        user.status === 'Active'
+                          ? 'bg-white text-slate-600 border-slate-200/60 hover:text-red-600 hover:border-red-200'
+                          : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                      }`}
                       title={user.status === 'Active' ? 'Suspendre' : 'Activer'}
                     >
                       {user.status === 'Active' ? (
@@ -140,7 +144,7 @@ export const ModernUserTable: React.FC<ModernUserTableProps> = ({ users, onToggl
                         <IconCheck className="w-4 h-4" />
                       )}
                     </button>
-                    <button className="p-1.5 rounded-[6px] bg-white text-slate-600 border border-slate-200/60 hover:border-slate-300 shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-colors cursor-pointer">
+                    <button className="p-1.5 rounded-[6px] bg-white text-slate-600 border border-slate-200/60 hover:border-slate-300  transition-colors cursor-pointer">
                       <IconMoreHorizontal className="w-4 h-4" />
                     </button>
                   </div>
@@ -159,12 +163,12 @@ export const ModernUserTable: React.FC<ModernUserTableProps> = ({ users, onToggl
         </div>
         <div className="flex gap-2">
           <button
-            className="px-3 py-1.5 text-[12px] font-bold text-slate-700 border border-slate-200/60 bg-white rounded-[6px] hover:bg-slate-50 disabled:opacity-50 transition-colors shadow-sm cursor-pointer disabled:cursor-not-allowed"
+            className="px-3 py-1.5 text-[12px] font-bold text-slate-700 border border-slate-200/60 bg-white rounded-[6px] hover:bg-slate-50 disabled:opacity-50 transition-colors  cursor-pointer disabled:cursor-not-allowed"
             disabled
           >
             Précédent
           </button>
-          <button className="px-3 py-1.5 text-[12px] font-bold text-slate-700 border border-slate-200/60 bg-white rounded-[6px] hover:bg-slate-50 transition-colors shadow-sm cursor-pointer">
+          <button className="px-3 py-1.5 text-[12px] font-bold text-slate-700 border border-slate-200/60 bg-white rounded-[6px] hover:bg-slate-50 transition-colors  cursor-pointer">
             Suivant
           </button>
         </div>

@@ -1165,7 +1165,6 @@ export const IconLockOpen = ({ className }: { className?: string }) => (
   </svg>
 );
 
-
 export const IconShoppingBag = ({ className }: { className?: string }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

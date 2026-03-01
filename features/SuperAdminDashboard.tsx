@@ -33,15 +33,17 @@ import { useNavigate } from 'react-router-dom';
 const KPICard = ({ label, value, trend, icon: Icon }: any) => (
   <div className="card p-5 h-full flex flex-col justify-between group">
     <div className="flex items-start justify-between mb-4">
-      <div className="w-8 h-8 rounded-[6px] bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-slate-100 transition-colors">
-        <Icon className="w-4 h-4" />
+      <div className="w-10 h-10 rounded-[14px] bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-slate-100 transition-colors duration-300 ease-in-out">
+        <Icon className="w-5 h-5" />
       </div>
       {trend !== undefined && (
-        <div className={`badge ${trend >= 0 ? 'badge-green' : 'badge-red'} gap-1 font-semibold`}>
+        <div
+          className={`badge ${trend >= 0 ? 'badge-green' : 'badge-red'} gap-1 font-semibold rounded-[30px] px-2.5 py-1`}
+        >
           {trend >= 0 ? (
-            <IconTrendingUp className="w-3 h-3" />
+            <IconTrendingUp className="w-3.5 h-3.5" />
           ) : (
-            <IconTrendingDown className="w-3 h-3" />
+            <IconTrendingDown className="w-3.5 h-3.5" />
           )}
           <span>{trend >= 0 ? `+${Math.abs(trend)}%` : `-${Math.abs(trend)}%`}</span>
         </div>
@@ -147,87 +149,64 @@ export const SuperAdminDashboard: React.FC = () => {
     );
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-300">
+    <div className="space-y-12 animate-in fade-in duration-300">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-[22px] font-semibold text-slate-900 tracking-tight">
             Command Center
           </h1>
-          <p className="text-[13px] text-slate-500 mt-0.5">
-            Vue temps réel de la performance SaaS
-          </p>
+          <p className="text-[13px] text-slate-500 mt-0.5">Vue temps réel de la performance SaaS</p>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="badge badge-gray gap-2 px-3 py-1.5">
-            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-            Système Opérationnel
-          </span>
-          <span className="text-[11px] text-slate-400 font-mono">v0.15.0</span>
+        <div className="flex items-center gap-4">
+          <div className="flex gap-3 mr-4">
+            <button onClick={() => navigate('/admin/cabinets/new')} className="sa-btn">
+              <IconPlus className="w-4 h-4" />
+              Nouveau cabinet
+            </button>
+            <button onClick={() => navigate('/admin/crm')} className="sa-btn-ghost">
+              <IconUsers className="w-4 h-4" />
+              Voir leads
+            </button>
+            <button
+              onClick={() => navigate('/admin/support?priority=high')}
+              className="sa-btn-danger"
+            >
+              <IconAlertTriangle className="w-4 h-4" />
+              Tickets urgents
+            </button>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="badge badge-gray gap-2 px-3 py-1.5 rounded-[30px]">
+              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+              Système Opérationnel
+            </span>
+            <span className="text-[11px] text-slate-400 font-mono">v0.15.0</span>
+          </div>
         </div>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="flex gap-3">
-        <button
-          onClick={() => navigate('/admin/cabinets/new')}
-          className="btn-primary flex-1 py-2"
-        >
-          <IconPlus className="w-4 h-4" />
-          Nouveau cabinet
-        </button>
-        <button
-          onClick={() => navigate('/admin/crm')}
-          className="btn-secondary flex-1 py-2"
-        >
-          <IconUsers className="w-4 h-4" />
-          Voir leads
-        </button>
-        <button
-          onClick={() => navigate('/admin/support?priority=high')}
-          className="btn-secondary flex-1 py-2 text-rose-600 hover:text-rose-700 hover:bg-rose-50 hover:border-rose-100"
-        >
-          <IconAlertTriangle className="w-4 h-4" />
-          Tickets urgents
-        </button>
       </div>
 
       {/* KPI Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <KPICard
-          label="Tenants Actifs"
-          value={activeTenants}
-          trend={5}
-          icon={IconUsers}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <KPICard label="Tenants Actifs" value={activeTenants} trend={5} icon={IconUsers} />
         <KPICard
           label="MRR Global"
           value={`${mrrData?.currentMRR.toLocaleString('fr-FR')} MAD`}
           trend={mrrData?.growth || 0}
           icon={IconDollarSign}
         />
-        <KPICard
-          label="Nouveaux (7j)"
-          value={newSignups}
-          trend={12}
-          icon={IconTrendingUp}
-        />
+        <KPICard label="Nouveaux (7j)" value={newSignups} trend={12} icon={IconTrendingUp} />
         <KPICard
           label="Risque Churn"
           value={riskTenants.length}
           trend={-2}
           icon={IconTrendingDown}
         />
-        <KPICard
-          label="Tickets Urgents"
-          value={urgentTickets}
-          trend={0}
-          icon={IconMessageSquare}
-        />
+        <KPICard label="Tickets Urgents" value={urgentTickets} trend={0} icon={IconMessageSquare} />
       </div>
 
       {/* Charts + Activity Feed */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* MRR Line Chart */}
         <div className="lg:col-span-2 card p-6">
           <div className="flex justify-between items-start mb-6">
@@ -264,10 +243,11 @@ export const SuperAdminDashboard: React.FC = () => {
                 <Tooltip
                   cursor={{ stroke: '#136cfb', strokeWidth: 1, strokeDasharray: '4 2' }}
                   contentStyle={{
-                    borderRadius: '8px',
+                    borderRadius: '12px',
                     border: '1px solid #E2E8F0',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.06)',
+                    boxShadow: 'none',
                     fontSize: '12px',
+                    fontWeight: 600,
                   }}
                   formatter={(value: any) => [`${value.toLocaleString('fr-FR')} MAD`, 'MRR']}
                 />
@@ -298,7 +278,10 @@ export const SuperAdminDashboard: React.FC = () => {
               </div>
             ) : (
               activityFeed.map((item) => (
-                <div key={item.id} className="flex gap-3 py-3 border-b border-slate-100 last:border-0 group">
+                <div
+                  key={item.id}
+                  className="flex gap-3 py-3 border-b border-slate-100 last:border-0 group"
+                >
                   <div className="shrink-0 mt-0.5">
                     <div className="w-7 h-7 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center group-hover:bg-blue-50/60 transition-colors">
                       {item.type.includes('tenant') ? (

@@ -215,7 +215,7 @@ const UserSupport = ({ user }: { user: User }) => {
 
   if (view === 'new') {
     return (
-      <div className="max-w-2xl mx-auto bg-white rounded-[8px] border border-gray-200 shadow-sm p-8 font-sans">
+      <div className="max-w-2xl mx-auto bg-white rounded-[20px] border border-gray-200  p-8 font-sans">
         <button
           onClick={() => setView('list')}
           className="flex items-center text-sm text-gray-500 hover:text-gray-900 mb-6 transition-colors"
@@ -235,7 +235,7 @@ const UserSupport = ({ user }: { user: User }) => {
               value={newSubject}
               onChange={(e) => setNewSubject(e.target.value)}
               placeholder="Ex: Problème d'impression..."
-              className="w-full border-gray-300 rounded-[8px] shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 border"
+              className="w-full border-gray-300 rounded-[20px]  focus:border-blue-500 focus:ring-blue-500 p-2.5 border"
             />
           </div>
 
@@ -245,7 +245,7 @@ const UserSupport = ({ user }: { user: User }) => {
               <select
                 value={newCategory}
                 onChange={(e) => setNewCategory(e.target.value)}
-                className="w-full border-gray-300 rounded-[8px] shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 border"
+                className="w-full border-gray-300 rounded-[20px]  focus:border-blue-500 focus:ring-blue-500 p-2.5 border"
               >
                 <option value="Technical">Technique</option>
                 <option value="Billing">Facturation</option>
@@ -258,7 +258,7 @@ const UserSupport = ({ user }: { user: User }) => {
               <select
                 value={newPriority}
                 onChange={(e) => setNewPriority(e.target.value)}
-                className="w-full border-gray-300 rounded-[8px] shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 border"
+                className="w-full border-gray-300 rounded-[20px]  focus:border-blue-500 focus:ring-blue-500 p-2.5 border"
               >
                 <option value="Low">Basse (Information)</option>
                 <option value="Normal">Normale (Gênant)</option>
@@ -277,21 +277,21 @@ const UserSupport = ({ user }: { user: User }) => {
               value={newDesc}
               onChange={(e) => setNewDesc(e.target.value)}
               placeholder="Décrivez les étapes pour reproduire le problème..."
-              className="w-full border-gray-300 rounded-[8px] shadow-sm focus:border-blue-500 focus:ring-blue-500 p-3 border"
+              className="w-full border-gray-300 rounded-[20px]  focus:border-blue-500 focus:ring-blue-500 p-3 border"
             />
           </div>
 
           <div className="pt-4 flex items-center justify-end gap-3">
             <button
               onClick={() => setView('list')}
-              className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-300 rounded-[8px] transition-colors"
+              className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-300 rounded-[20px] transition-colors"
             >
               Annuler
             </button>
             <button
               onClick={handleCreateTicket}
               disabled={!newSubject || !newDesc}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-[8px] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-[20px]  disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Envoyer le ticket
             </button>
@@ -303,7 +303,7 @@ const UserSupport = ({ user }: { user: User }) => {
 
   if (view === 'detail' && activeTicket) {
     return (
-      <div className="flex flex-col h-[calc(100vh-140px)] bg-white rounded-[8px] border border-gray-200 shadow-sm overflow-hidden font-sans">
+      <div className="flex flex-col h-[calc(100vh-140px)] bg-white rounded-[20px] border border-gray-200  overflow-hidden font-sans">
         <div className="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-gray-50/50">
           <div className="flex items-center gap-4">
             <button
@@ -330,11 +330,11 @@ const UserSupport = ({ user }: { user: User }) => {
               >
                 <img
                   src={msg.senderAvatar}
-                  className="w-8 h-8 rounded-full border border-gray-100 shadow-sm object-cover"
+                  className="w-8 h-8 rounded-full border border-gray-100  object-cover"
                   alt=""
                 />
                 <div
-                  className={`max-w-[70%] ${msg.senderId === user.id ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-800'} p-4 rounded-[8px] shadow-sm text-sm`}
+                  className={`max-w-[70%] ${msg.senderId === user.id ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-800'} p-4 rounded-[20px]  text-sm`}
                 >
                   <div
                     className={`font-bold text-xs mb-1 ${msg.senderId === user.id ? 'text-blue-100' : 'text-gray-500'}`}
@@ -354,11 +354,11 @@ const UserSupport = ({ user }: { user: User }) => {
               value={replyText}
               onChange={(e) => setReplyText(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSendReply()}
-              className="w-full pl-4 pr-12 py-3 border border-gray-200 rounded-full bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all shadow-sm outline-none"
+              className="w-full pl-4 pr-12 py-3 border border-gray-200 rounded-full bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all  outline-none"
             />
             <button
               onClick={handleSendReply}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors shadow-sm"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors "
             >
               <IconSend className="w-4 h-4" />
             </button>
@@ -379,7 +379,7 @@ const UserSupport = ({ user }: { user: User }) => {
         </div>
         <button
           onClick={() => setView('new')}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-[8px] text-sm font-medium shadow-sm transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-[20px] text-sm font-medium  transition-colors"
         >
           <IconPlus className="w-4 h-4" /> Nouveau Ticket
         </button>
@@ -388,7 +388,7 @@ const UserSupport = ({ user }: { user: User }) => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
           {tickets.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-[8px] border border-gray-200 border-dashed">
+            <div className="text-center py-12 bg-white rounded-[20px] border border-gray-200 border-dashed">
               <IconTicket className="w-12 h-12 text-gray-300 mx-auto mb-3" />
               <h3 className="text-lg font-medium text-gray-900">Aucun ticket</h3>
               <p className="text-gray-500">Vous n'avez pas encore de demande de support.</p>
@@ -401,7 +401,7 @@ const UserSupport = ({ user }: { user: User }) => {
                   setActiveTicket(ticket);
                   setView('detail');
                 }}
-                className="bg-white p-4 rounded-[8px] border border-gray-200 hover:border-blue-300 hover:shadow-md cursor-pointer transition-all group"
+                className="bg-white p-4 rounded-[20px] border border-gray-200 hover:border-blue-300 hover: cursor-pointer transition-all group"
               >
                 <div className="flex justify-between items-start mb-2">
                   <div className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">
@@ -426,7 +426,7 @@ const UserSupport = ({ user }: { user: User }) => {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-[8px] p-6 text-white shadow-md">
+          <div className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-[20px] p-6 text-white ">
             <h3 className="font-bold text-lg mb-2">Besoin d'une réponse rapide ?</h3>
             <p className="text-indigo-100 text-sm mb-4">
               Notre base de connaissances contient des guides détaillés pour la plupart des
@@ -437,12 +437,12 @@ const UserSupport = ({ user }: { user: User }) => {
               <input
                 type="text"
                 placeholder="Comment changer mon mot de passe ?"
-                className="w-full pl-9 pr-4 py-2 rounded text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none shadow-sm"
+                className="w-full pl-9 pr-4 py-2 rounded text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none "
               />
             </div>
           </div>
 
-          <div className="bg-white rounded-[8px] border border-gray-200 p-5 shadow-sm">
+          <div className="bg-white rounded-[20px] border border-gray-200 p-5 ">
             <h3 className="font-bold text-gray-900 mb-4 text-sm uppercase tracking-wide">
               Articles populaires
             </h3>
@@ -471,12 +471,223 @@ const UserSupport = ({ user }: { user: User }) => {
   );
 };
 
+// --- SUPER ADMIN VIEW ---
+
+const SuperAdminSupport = () => {
+  const [activeTab, setActiveTab] = useState<'all' | 'open' | 'urgent'>('all');
+
+  return (
+    <div className="space-y-12 font-sans animate-in fade-in duration-300">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-[22px] font-semibold text-slate-900 tracking-tight">
+            Support Center
+          </h1>
+          <p className="text-[13px] text-slate-500 mt-0.5">
+            Gérez les tickets clients et suivez la résolution.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Chercher un ticket..."
+              className="pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-[30px] text-[13px] focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 w-64 transition-all"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* KPI Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="card p-5 h-full flex flex-col justify-between group">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-10 h-10 rounded-[14px] bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-slate-100 transition-colors duration-300 ease-in-out">
+              <IconTicket className="w-5 h-5" />
+            </div>
+            <div className="badge badge-gray gap-1 font-semibold rounded-[30px] px-2.5 py-1">
+              <span>Total Open</span>
+            </div>
+          </div>
+          <div>
+            <div className="text-[11px] font-bold text-slate-400 mb-1 uppercase tracking-widest">
+              Tickets Ouverts
+            </div>
+            <div className="text-[26px] font-semibold text-slate-900 tracking-tight leading-none">
+              24
+            </div>
+          </div>
+        </div>
+
+        <div className="card p-5 h-full flex flex-col justify-between group">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-10 h-10 rounded-[14px] bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-slate-100 transition-colors duration-300 ease-in-out">
+              <IconAlertTriangle className="w-5 h-5 text-rose-500" />
+            </div>
+          </div>
+          <div>
+            <div className="text-[11px] font-bold text-slate-400 mb-1 uppercase tracking-widest">
+              Priorité Haute
+            </div>
+            <div className="text-[26px] font-semibold text-rose-600 tracking-tight leading-none">
+              3
+            </div>
+          </div>
+        </div>
+
+        <div className="card p-5 h-full flex flex-col justify-between group">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-10 h-10 rounded-[14px] bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-slate-100 transition-colors duration-300 ease-in-out">
+              <IconClock className="w-5 h-5" />
+            </div>
+          </div>
+          <div>
+            <div className="text-[11px] font-bold text-slate-400 mb-1 uppercase tracking-widest">
+              Temps Réponse Moy.
+            </div>
+            <div className="text-[26px] font-semibold text-slate-900 tracking-tight leading-none">
+              1.2h
+            </div>
+          </div>
+        </div>
+
+        <div className="card p-5 h-full flex flex-col justify-between group">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-10 h-10 rounded-[14px] bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-slate-100 transition-colors duration-300 ease-in-out">
+              <IconCheck className="w-5 h-5" />
+            </div>
+          </div>
+          <div>
+            <div className="text-[11px] font-bold text-slate-400 mb-1 uppercase tracking-widest">
+              Résolus (Aujourd'hui)
+            </div>
+            <div className="text-[26px] font-semibold text-emerald-600 tracking-tight leading-none">
+              12
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content Area */}
+      <div className="card overflow-hidden">
+        <div className="px-6 py-4 flex items-center gap-2 border-b border-slate-100">
+          <button
+            onClick={() => setActiveTab('all')}
+            className={`px-3 py-1.5 rounded-[30px] text-[12px] font-semibold transition-colors ${activeTab === 'all' ? 'bg-slate-100 text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+          >
+            Tous les tickets
+          </button>
+          <button
+            onClick={() => setActiveTab('open')}
+            className={`px-3 py-1.5 rounded-[30px] text-[12px] font-semibold transition-colors ${activeTab === 'open' ? 'bg-slate-100 text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+          >
+            En attente
+          </button>
+          <button
+            onClick={() => setActiveTab('urgent')}
+            className={`px-3 py-1.5 rounded-[30px] text-[12px] font-semibold transition-colors ${activeTab === 'urgent' ? 'bg-rose-50 text-rose-700' : 'text-rose-600/70 hover:text-rose-700'}`}
+          >
+            Urgents
+          </button>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-slate-100">
+            <thead className="bg-[#FAFAFA]">
+              <tr>
+                <th className="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                  Ticket
+                </th>
+                <th className="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                  Statut
+                </th>
+                <th className="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                  Client
+                </th>
+                <th className="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                  Assigné
+                </th>
+                <th className="px-6 py-4 text-right text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                  Dernière MAJ
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 bg-white">
+              {MOCK_TICKETS.map((ticket) => (
+                <tr
+                  key={ticket.id}
+                  className="hover:bg-slate-50/50 transition-colors cursor-pointer group"
+                >
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-slate-900 text-[13px] group-hover:text-blue-600 transition-colors">
+                          {ticket.subject}
+                        </span>
+                        {ticket.priority === 'High' && (
+                          <IconAlertTriangle className="w-3.5 h-3.5 text-rose-500" />
+                        )}
+                      </div>
+                      <div className="text-[12px] text-slate-500 flex items-center gap-2">
+                        <span className="font-mono text-[10px] text-slate-400">{ticket.id}</span>
+                        <span>•</span>
+                        <span>{ticket.category}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <StatusBadge status={ticket.status} />
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={ticket.user.avatar}
+                        className="w-7 h-7 rounded-full bg-slate-100"
+                        alt=""
+                      />
+                      <div>
+                        <div className="text-[13px] font-medium text-slate-900">
+                          {ticket.user.name}
+                        </div>
+                        <div className="text-[11px] text-slate-500">{ticket.user.clinicName}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    {ticket.assignedTo ? (
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={ticket.assignedTo.avatar}
+                          className="w-6 h-6 rounded-full"
+                          alt=""
+                        />
+                        <span className="text-[12px] font-medium text-slate-700">
+                          {ticket.assignedTo.name}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-[12px] text-slate-400 italic">Non assigné</span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-right text-[12px] text-slate-500">
+                    <div className="flex items-center justify-end gap-1.5">
+                      <IconClock className="w-3.5 h-3.5 text-slate-400" />
+                      {ticket.lastUpdate}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const Support: React.FC<SupportProps> = ({ user }) => {
   if (!user) return null;
-  // Admin component is unchanged from previous, just re-using structure
-  return user.role === 'super_admin' ? (
-    <div className="text-center p-10 text-gray-500">Vue Support Admin (déjà implémentée)</div>
-  ) : (
-    <UserSupport user={user} />
-  );
+  return user.role === 'super_admin' ? <SuperAdminSupport /> : <UserSupport user={user} />;
 };

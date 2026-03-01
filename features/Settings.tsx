@@ -412,7 +412,7 @@ export const Settings: React.FC = () => {
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
             onClick={() => setIsServiceModalOpen(false)}
           ></div>
-          <div className="bg-white rounded-[8px] shadow-xl w-full max-w-sm relative z-10 p-6 space-y-4 animate-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-[20px]  w-full max-w-sm relative z-10 p-6 space-y-4 animate-in zoom-in-95 duration-200">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-bold text-slate-900">
                 {editingService ? "Modifier l'acte" : 'Nouvel Acte'}
@@ -427,7 +427,7 @@ export const Settings: React.FC = () => {
                 <input
                   type="text"
                   required
-                  className="w-full border border-slate-300 rounded-[8px] p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-slate-300 rounded-[20px] p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
                   value={newService.name}
                   onChange={(e) => setNewService({ ...newService, name: e.target.value })}
                 />
@@ -438,18 +438,20 @@ export const Settings: React.FC = () => {
                   <input
                     type="text"
                     required
-                    className="w-full border border-slate-300 rounded-[8px] p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-slate-300 rounded-[20px] p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
                     value={newService.code}
                     onChange={(e) => setNewService({ ...newService, code: e.target.value })}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Prix (MAD)</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Prix (MAD)
+                  </label>
                   <input
                     type="number"
                     required
                     min="0"
-                    className="w-full border border-slate-300 rounded-[8px] p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-slate-300 rounded-[20px] p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
                     value={newService.price}
                     onChange={(e) =>
                       setNewService({ ...newService, price: parseInt(e.target.value) })
@@ -460,7 +462,7 @@ export const Settings: React.FC = () => {
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Durée (min)</label>
                 <select
-                  className="w-full border border-slate-300 rounded-[8px] p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  className="w-full border border-slate-300 rounded-[20px] p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                   value={newService.durationMinutes}
                   onChange={(e) =>
                     setNewService({ ...newService, durationMinutes: parseInt(e.target.value) })
@@ -487,7 +489,7 @@ export const Settings: React.FC = () => {
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
             onClick={() => setIsUserModalOpen(false)}
           ></div>
-          <div className="bg-white rounded-[8px] shadow-xl w-full max-w-sm relative z-10 p-6 space-y-4 animate-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-[20px]  w-full max-w-sm relative z-10 p-6 space-y-4 animate-in zoom-in-95 duration-200">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-bold text-slate-900">Inviter un membre</h3>
               <button onClick={() => setIsUserModalOpen(false)}>
@@ -500,7 +502,7 @@ export const Settings: React.FC = () => {
                 <input
                   type="text"
                   required
-                  className="w-full border border-slate-300 rounded-[8px] p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-slate-300 rounded-[20px] p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Ex: Sarah Benani"
                   value={newUser.name}
                   onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
@@ -511,7 +513,7 @@ export const Settings: React.FC = () => {
                 <input
                   type="email"
                   required
-                  className="w-full border border-slate-300 rounded-[8px] p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-slate-300 rounded-[20px] p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="email@cabinet.ma"
                   value={newUser.email}
                   onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
@@ -520,7 +522,7 @@ export const Settings: React.FC = () => {
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Rôle</label>
                 <select
-                  className="w-full border border-slate-300 rounded-[8px] p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  className="w-full border border-slate-300 rounded-[20px] p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                   value={newUser.role}
                   onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
                 >
@@ -536,56 +538,56 @@ export const Settings: React.FC = () => {
           </div>
         </div>
       )}
-      <div className="bg-white rounded-[2.5rem] border border-slate-100/50 overflow-hidden min-h-[700px] flex shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+      <div className="bg-white rounded-[2rem] border border-slate-200/60 overflow-hidden min-h-[700px] flex">
         {/* Settings Sidebar */}
         <div className="w-72 border-r border-slate-100/50 bg-slate-50/30 p-6">
           <nav className="space-y-1.5 flex flex-col">
             <button
               onClick={() => setActiveTab('general')}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-[0.875rem] font-bold rounded-[8px] transition-all ${activeTab === 'general' ? 'bg-white text-blue-600 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-slate-100/80' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 border border-transparent'}`}
+              className={`w-full flex items-center gap-3 px-4 py-3 text-[0.875rem] font-bold rounded-[20px] transition-all ${activeTab === 'general' ? 'bg-white text-blue-600 border border-slate-100/80' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 border border-transparent'}`}
             >
               <IconHome className="w-5 h-5" /> Général
             </button>
             <button
               onClick={() => setActiveTab('services')}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-[0.875rem] font-bold rounded-[8px] transition-all ${activeTab === 'services' ? 'bg-white text-blue-600 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-slate-100/80' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 border border-transparent'}`}
+              className={`w-full flex items-center gap-3 px-4 py-3 text-[0.875rem] font-bold rounded-[20px] transition-all ${activeTab === 'services' ? 'bg-white text-blue-600 border border-slate-100/80' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 border border-transparent'}`}
             >
               <IconDollarSign className="w-5 h-5" /> Services & Tarifs
             </button>
             <button
               onClick={() => setActiveTab('schedule')}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-[0.875rem] font-bold rounded-[8px] transition-all ${activeTab === 'schedule' ? 'bg-white text-blue-600 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-slate-100/80' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 border border-transparent'}`}
+              className={`w-full flex items-center gap-3 px-4 py-3 text-[0.875rem] font-bold rounded-[20px] transition-all ${activeTab === 'schedule' ? 'bg-white text-blue-600 border border-slate-100/80' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 border border-transparent'}`}
             >
               <IconClock className="w-5 h-5" /> Horaires
             </button>
             <button
               onClick={() => setActiveTab('notifications')}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-[0.875rem] font-bold rounded-[8px] transition-all ${activeTab === 'notifications' ? 'bg-white text-blue-600 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-slate-100/80' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 border border-transparent'}`}
+              className={`w-full flex items-center gap-3 px-4 py-3 text-[0.875rem] font-bold rounded-[20px] transition-all ${activeTab === 'notifications' ? 'bg-white text-blue-600 border border-slate-100/80' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 border border-transparent'}`}
             >
               <IconMessage className="w-5 h-5" /> Notifications & SMS
             </button>
             <button
               onClick={() => setActiveTab('widget')}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-[0.875rem] font-bold rounded-[8px] transition-all ${activeTab === 'widget' ? 'bg-white text-blue-600 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-slate-100/80' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 border border-transparent'}`}
+              className={`w-full flex items-center gap-3 px-4 py-3 text-[0.875rem] font-bold rounded-[20px] transition-all ${activeTab === 'widget' ? 'bg-white text-blue-600 border border-slate-100/80' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 border border-transparent'}`}
             >
               <IconGlobe className="w-5 h-5" /> Widget Réservation
             </button>
             <button
               onClick={() => setActiveTab('users')}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-[0.875rem] font-bold rounded-[8px] transition-all ${activeTab === 'users' ? 'bg-white text-blue-600 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-slate-100/80' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 border border-transparent'}`}
+              className={`w-full flex items-center gap-3 px-4 py-3 text-[0.875rem] font-bold rounded-[20px] transition-all ${activeTab === 'users' ? 'bg-white text-blue-600 border border-slate-100/80' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 border border-transparent'}`}
             >
               <IconUsers className="w-5 h-5" /> Équipe & Accès
             </button>
             <button
               onClick={() => setActiveTab('language')}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-[0.875rem] font-bold rounded-[8px] transition-all ${activeTab === 'language' ? 'bg-white text-blue-600 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-slate-100/80' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 border border-transparent'}`}
+              className={`w-full flex items-center gap-3 px-4 py-3 text-[0.875rem] font-bold rounded-[20px] transition-all ${activeTab === 'language' ? 'bg-white text-blue-600 border border-slate-100/80' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 border border-transparent'}`}
             >
               <IconGlobe className="w-5 h-5" /> Langue
             </button>
             {currentUser?.role === 'doctor' && (
               <button
                 onClick={() => setActiveTab('doctor_prefs')}
-                className={`w-full flex items-center gap-3 px-4 py-3 text-[0.875rem] font-bold rounded-[8px] transition-all ${activeTab === 'doctor_prefs' ? 'bg-white text-blue-600 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-slate-100/80' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 border border-transparent'}`}
+                className={`w-full flex items-center gap-3 px-4 py-3 text-[0.875rem] font-bold rounded-[20px] transition-all ${activeTab === 'doctor_prefs' ? 'bg-white text-blue-600 border border-slate-100/80' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 border border-transparent'}`}
               >
                 <IconSettings className="w-5 h-5" /> Préférences
               </button>
@@ -594,13 +596,13 @@ export const Settings: React.FC = () => {
         </div>
 
         {/* Content */}
-        <div className="flex-1 p-10 bg-white overflow-y-auto">
+        <div className="flex-1 p-12 lg:p-14 bg-white overflow-y-auto">
           {/* --- GENERAL TAB --- */}
           {activeTab === 'general' && (
             <div className="space-y-10 max-w-3xl animate-in fade-in slide-in-from-bottom-4 duration-300">
               <div>
                 <h3 className="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-[8px] bg-slate-50 flex items-center justify-center text-slate-600">
+                  <div className="w-10 h-10 rounded-[20px] bg-slate-50 flex items-center justify-center text-slate-600">
                     <IconHome className="w-5 h-5" />
                   </div>
                   Profil du Cabinet
@@ -610,10 +612,10 @@ export const Settings: React.FC = () => {
                 </p>
               </div>
 
-              <div className="bg-slate-50/50 p-6 sm:p-8 rounded-3xl border border-transparent shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] space-y-8">
+              <div className="bg-slate-50/50 p-6 sm:p-8 rounded-3xl border border-transparent  space-y-8">
                 {/* Logo Section */}
                 <div className="flex items-center gap-6">
-                  <div className="w-24 h-24 bg-white rounded-[8px] border-2 border-dashed border-slate-200 flex items-center justify-center text-slate-400 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
+                  <div className="w-24 h-24 bg-white rounded-[20px] border-2 border-dashed border-slate-200 flex items-center justify-center text-slate-400 ">
                     Logo
                   </div>
                   <div>
@@ -635,7 +637,7 @@ export const Settings: React.FC = () => {
                       type="text"
                       value={clinicInfo.name}
                       onChange={(e) => setClinicInfo({ ...clinicInfo, name: e.target.value })}
-                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[20px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 "
                     />
                   </div>
 
@@ -647,7 +649,7 @@ export const Settings: React.FC = () => {
                       rows={2}
                       value={clinicInfo.address}
                       onChange={(e) => setClinicInfo({ ...clinicInfo, address: e.target.value })}
-                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] resize-none"
+                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[20px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20  resize-none"
                     />
                   </div>
 
@@ -659,7 +661,7 @@ export const Settings: React.FC = () => {
                       type="text"
                       value={clinicInfo.phone}
                       onChange={(e) => setClinicInfo({ ...clinicInfo, phone: e.target.value })}
-                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[20px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 "
                     />
                   </div>
 
@@ -671,7 +673,7 @@ export const Settings: React.FC = () => {
                       type="email"
                       value={clinicInfo.email}
                       onChange={(e) => setClinicInfo({ ...clinicInfo, email: e.target.value })}
-                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[20px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 "
                     />
                   </div>
 
@@ -683,7 +685,7 @@ export const Settings: React.FC = () => {
                       type="text"
                       value={clinicInfo.ice}
                       onChange={(e) => setClinicInfo({ ...clinicInfo, ice: e.target.value })}
-                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100/80 rounded-[20px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none "
                     />
                   </div>
 
@@ -695,7 +697,7 @@ export const Settings: React.FC = () => {
                       type="text"
                       value={clinicInfo.website}
                       onChange={(e) => setClinicInfo({ ...clinicInfo, website: e.target.value })}
-                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[20px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 "
                     />
                   </div>
                 </div>
@@ -706,7 +708,7 @@ export const Settings: React.FC = () => {
                   id="save-btn"
                   type="button"
                   onClick={handleSave}
-                  className="btn-primary py-3.5 px-6 rounded-[8px] text-[0.875rem]"
+                  className="btn-primary py-3.5 px-6 rounded-[20px] text-[0.875rem]"
                 >
                   Enregistrer les modifications
                 </button>
@@ -719,7 +721,7 @@ export const Settings: React.FC = () => {
             <div className="space-y-10 max-w-3xl animate-in fade-in slide-in-from-bottom-4 duration-300">
               <div>
                 <h3 className="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-[8px] bg-slate-50 flex items-center justify-center text-slate-600">
+                  <div className="w-10 h-10 rounded-[20px] bg-slate-50 flex items-center justify-center text-slate-600">
                     <IconMessage className="w-5 h-5" />
                   </div>
                   Configuration SMS
@@ -729,7 +731,7 @@ export const Settings: React.FC = () => {
                 </p>
               </div>
 
-              <div className="bg-slate-50/50 p-6 sm:p-8 rounded-3xl border border-transparent shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] space-y-8">
+              <div className="bg-slate-50/50 p-6 sm:p-8 rounded-3xl border border-transparent  space-y-8">
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-[0.875rem] font-bold text-slate-900">
@@ -741,7 +743,7 @@ export const Settings: React.FC = () => {
                   </div>
                   <button
                     onClick={() => setSmsEnabled(!smsEnabled)}
-                    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${smsEnabled ? 'bg-blue-600 shadow-md shadow-blue-200/50' : 'bg-slate-200'}`}
+                    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${smsEnabled ? 'bg-blue-600  shadow-blue-200/50' : 'bg-slate-200'}`}
                   >
                     <span
                       className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${smsEnabled ? 'translate-x-5' : 'translate-x-0'}`}
@@ -758,7 +760,7 @@ export const Settings: React.FC = () => {
                       <select
                         value={reminderTime}
                         onChange={(e) => setReminderTime(e.target.value)}
-                        className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] appearance-none"
+                        className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[20px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20  appearance-none"
                       >
                         <option value="2">2 heures avant</option>
                         <option value="24">24 heures avant (recommandé)</option>
@@ -775,7 +777,7 @@ export const Settings: React.FC = () => {
                           rows={4}
                           value={messageTemplate}
                           onChange={(e) => setMessageTemplate(e.target.value)}
-                          className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-medium text-slate-700 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] resize-none leading-relaxed"
+                          className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[20px] text-[0.875rem] font-medium text-slate-700 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20  resize-none leading-relaxed"
                         />
                       </div>
                       <p className="mt-2 text-[0.75rem] font-medium text-slate-500">
@@ -783,7 +785,7 @@ export const Settings: React.FC = () => {
                       </p>
                     </div>
 
-                    <div className="flex items-start gap-3 p-4 bg-blue-50/50 text-blue-700 rounded-[8px] text-[0.8125rem] font-medium border border-blue-100/50">
+                    <div className="flex items-start gap-3 p-4 bg-blue-50/50 text-blue-700 rounded-[20px] text-[0.8125rem] font-medium border border-blue-100/50">
                       <IconCheck className="w-5 h-5 shrink-0 text-blue-500" />
                       <p>
                         Les patients ont la possibilité de se désinscrire (opt-out) à tout moment en
@@ -798,7 +800,7 @@ export const Settings: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleSave}
-                  className="btn-primary py-3.5 px-6 rounded-[8px] text-[0.875rem]"
+                  className="btn-primary py-3.5 px-6 rounded-[20px] text-[0.875rem]"
                 >
                   Enregistrer les paramètres SMS
                 </button>
@@ -812,7 +814,7 @@ export const Settings: React.FC = () => {
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                   <h3 className="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-[8px] bg-slate-50 flex items-center justify-center text-slate-600">
+                    <div className="w-10 h-10 rounded-[20px] bg-slate-50 flex items-center justify-center text-slate-600">
                       <IconUsers className="w-5 h-5" />
                     </div>
                     Équipe & Accès
@@ -823,13 +825,13 @@ export const Settings: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setIsUserModalOpen(true)}
-                  className="btn-primary py-3 px-5 rounded-[8px] flex items-center gap-2 text-[0.875rem]"
+                  className="btn-primary py-3 px-5 rounded-[20px] flex items-center gap-2 text-[0.875rem]"
                 >
                   <IconUserPlus className="w-5 h-5" /> Inviter un membre
                 </button>
               </div>
 
-              <div className="bg-white border border-slate-100/50 rounded-3xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+              <div className="bg-white border border-slate-100/50 rounded-3xl overflow-hidden ">
                 <table className="min-w-full">
                   <thead className="bg-slate-50/50 border-b border-slate-100/50">
                     <tr>
@@ -867,7 +869,7 @@ export const Settings: React.FC = () => {
                       <tr key={member.id} className="hover:bg-slate-50/30 transition-colors group">
                         <td className="px-6 py-5 whitespace-nowrap">
                           <div className="flex items-center">
-                            <div className="h-10 w-10 rounded-full bg-slate-100/80 border border-slate-200/50 flex items-center justify-center text-[0.875rem] font-bold text-slate-500 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
+                            <div className="h-10 w-10 rounded-full bg-slate-100/80 border border-slate-200/50 flex items-center justify-center text-[0.875rem] font-bold text-slate-500 ">
                               {member.name.substring(0, 1)}
                             </div>
                             <div className="ml-4">
@@ -911,7 +913,7 @@ export const Settings: React.FC = () => {
                           {member.lastActive}
                         </td>
                         <td className="px-6 py-5 whitespace-nowrap text-right">
-                          <button className="p-2 text-slate-300 hover:text-slate-600 hover:bg-slate-100 rounded-[8px] transition-all opacity-0 group-hover:opacity-100">
+                          <button className="p-2 text-slate-300 hover:text-slate-600 hover:bg-slate-100 rounded-[20px] transition-all opacity-0 group-hover:opacity-100">
                             <IconMoreHorizontal className="w-5 h-5" />
                           </button>
                         </td>
@@ -929,7 +931,7 @@ export const Settings: React.FC = () => {
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                   <h3 className="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-[8px] bg-slate-50 flex items-center justify-center text-slate-600">
+                    <div className="w-10 h-10 rounded-[20px] bg-slate-50 flex items-center justify-center text-slate-600">
                       <IconDollarSign className="w-5 h-5" />
                     </div>
                     Catalogue des Actes
@@ -940,13 +942,13 @@ export const Settings: React.FC = () => {
                 </div>
                 <button
                   onClick={() => openServiceModal()}
-                  className="btn-primary py-3 px-5 rounded-[8px] flex items-center gap-2 text-[0.875rem]"
+                  className="btn-primary py-3 px-5 rounded-[20px] flex items-center gap-2 text-[0.875rem]"
                 >
                   <IconPlus className="w-5 h-5" /> Ajouter un acte
                 </button>
               </div>
 
-              <div className="bg-white border border-slate-100/50 rounded-3xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+              <div className="bg-white border border-slate-100/50 rounded-3xl overflow-hidden ">
                 <table className="min-w-full">
                   <thead className="bg-slate-50/50 border-b border-slate-100/50">
                     <tr>
@@ -1001,13 +1003,13 @@ export const Settings: React.FC = () => {
                           <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             <button
                               onClick={() => openServiceModal(service)}
-                              className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-[8px] transition-all"
+                              className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-[20px] transition-all"
                             >
                               <IconEdit className="w-5 h-5" />
                             </button>
                             <button
                               onClick={() => deleteService(service.id)}
-                              className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-[8px] transition-all"
+                              className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-[20px] transition-all"
                             >
                               <IconTrash className="w-5 h-5" />
                             </button>
@@ -1026,7 +1028,7 @@ export const Settings: React.FC = () => {
             <div className="space-y-10 max-w-3xl animate-in fade-in slide-in-from-bottom-4 duration-300">
               <div>
                 <h3 className="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-[8px] bg-slate-50 flex items-center justify-center text-slate-600">
+                  <div className="w-10 h-10 rounded-[20px] bg-slate-50 flex items-center justify-center text-slate-600">
                     <IconClock className="w-5 h-5" />
                   </div>
                   Horaires d'ouverture
@@ -1036,7 +1038,7 @@ export const Settings: React.FC = () => {
                 </p>
               </div>
 
-              <div className="bg-white border border-slate-100/50 rounded-[2rem] overflow-hidden divide-y divide-slate-50 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+              <div className="bg-white border border-slate-100/50 rounded-[2rem] overflow-hidden divide-y divide-slate-50 ">
                 {schedule.map((day, idx) => (
                   <div
                     key={day.day}
@@ -1063,18 +1065,18 @@ export const Settings: React.FC = () => {
                             type="time"
                             value={day.open}
                             onChange={(e) => updateSchedule(idx, 'open', e.target.value)}
-                            className="w-28 px-4 py-2.5 bg-slate-50 border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] text-center"
+                            className="w-28 px-4 py-2.5 bg-slate-50 border border-slate-100/80 rounded-[20px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20  text-center"
                           />
                           <span className="text-[0.875rem] font-medium text-slate-400">à</span>
                           <input
                             type="time"
                             value={day.close}
                             onChange={(e) => updateSchedule(idx, 'close', e.target.value)}
-                            className="w-28 px-4 py-2.5 bg-slate-50 border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] text-center"
+                            className="w-28 px-4 py-2.5 bg-slate-50 border border-slate-100/80 rounded-[20px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20  text-center"
                           />
                         </>
                       ) : (
-                        <span className="px-4 py-2 text-[0.75rem] font-bold uppercase tracking-wider text-slate-400 bg-slate-100/50 rounded-[8px]">
+                        <span className="px-4 py-2 text-[0.75rem] font-bold uppercase tracking-wider text-slate-400 bg-slate-100/50 rounded-[20px]">
                           Fermé
                         </span>
                       )}
@@ -1087,7 +1089,7 @@ export const Settings: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleSave}
-                  className="btn-primary py-3.5 px-6 rounded-[8px] text-[0.875rem]"
+                  className="btn-primary py-3.5 px-6 rounded-[20px] text-[0.875rem]"
                 >
                   Enregistrer les horaires
                 </button>
@@ -1100,7 +1102,7 @@ export const Settings: React.FC = () => {
             <div className="space-y-10 max-w-3xl animate-in fade-in slide-in-from-bottom-4 duration-300">
               <div>
                 <h3 className="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-[8px] bg-slate-50 flex items-center justify-center text-slate-600">
+                  <div className="w-10 h-10 rounded-[20px] bg-slate-50 flex items-center justify-center text-slate-600">
                     <IconGlobe className="w-5 h-5" />
                   </div>
                   Widget de Réservation
@@ -1121,7 +1123,7 @@ export const Settings: React.FC = () => {
                       type="text"
                       value={widgetTitle}
                       onChange={(e) => setWidgetTitle(e.target.value)}
-                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                      className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[20px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 "
                     />
                   </div>
                   <div className="space-y-2">
@@ -1133,14 +1135,14 @@ export const Settings: React.FC = () => {
                         <button
                           key={color}
                           onClick={() => setWidgetColor(color)}
-                          className={`w-10 h-10 rounded-full border-[3px] transition-all shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] hover:scale-110 ${widgetColor === color ? 'border-slate-900 scale-110' : 'border-transparent'}`}
+                          className={`w-10 h-10 rounded-full border-[3px] transition-all  hover:scale-110 ${widgetColor === color ? 'border-slate-900 scale-110' : 'border-transparent'}`}
                           style={{ backgroundColor: color }}
                         />
                       ))}
                     </div>
                   </div>
 
-                  <div className="bg-slate-50/50 p-6 rounded-[8px] border border-slate-100/80 relative group shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)]">
+                  <div className="bg-slate-50/50 p-6 rounded-[20px] border border-slate-100/80 relative group ">
                     <div className="flex justify-between items-center mb-3">
                       <h4 className="text-[0.875rem] font-bold text-slate-900 flex items-center gap-2">
                         <IconCode className="w-4 h-4 text-slate-500" /> Intégration
@@ -1163,14 +1165,14 @@ export const Settings: React.FC = () => {
                     <p className="text-[0.75rem] font-medium text-slate-500 mb-4">
                       Copiez ce code dans votre site web (WordPress, Wix...).
                     </p>
-                    <div className="bg-slate-800 text-slate-300 p-4 rounded-[8px] font-mono text-[0.8125rem] overflow-x-auto shadow-inner">
+                    <div className="bg-slate-800 text-slate-300 p-4 rounded-[20px] font-mono text-[0.8125rem] overflow-x-auto ">
                       {widgetCode}
                     </div>
                   </div>
                 </div>
 
                 {/* Preview */}
-                <div className="bg-white border border-slate-100/80 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col h-[420px]">
+                <div className="bg-white border border-slate-100/80 rounded-3xl  overflow-hidden flex flex-col h-[420px]">
                   <div className="bg-slate-50/80 px-4 py-3 border-b border-slate-100/80 flex items-center gap-3">
                     <div className="flex gap-1.5">
                       <div className="w-3 h-3 rounded-full bg-red-400"></div>
@@ -1186,10 +1188,10 @@ export const Settings: React.FC = () => {
                       {widgetTitle}
                     </h4>
                     <div className="w-full max-w-xs space-y-3">
-                      <div className="h-12 bg-slate-50 rounded-[8px] border border-slate-100/80 w-full animate-pulse"></div>
-                      <div className="h-12 bg-slate-50 rounded-[8px] border border-slate-100/80 w-full animate-pulse delay-75"></div>
+                      <div className="h-12 bg-slate-50 rounded-[20px] border border-slate-100/80 w-full animate-pulse"></div>
+                      <div className="h-12 bg-slate-50 rounded-[20px] border border-slate-100/80 w-full animate-pulse delay-75"></div>
                       <button
-                        className="w-full h-12 rounded-[8px] text-white font-bold text-[0.875rem] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] transition-transform hover:scale-[1.02]"
+                        className="w-full h-12 rounded-[20px] text-white font-bold text-[0.875rem]  transition-transform hover:scale-[1.02]"
                         style={{ backgroundColor: widgetColor }}
                       >
                         Voir les disponibilités
@@ -1205,7 +1207,7 @@ export const Settings: React.FC = () => {
             <div className="space-y-10 max-w-3xl animate-in fade-in slide-in-from-bottom-4 duration-300">
               <div>
                 <h3 className="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-[8px] bg-slate-50 flex items-center justify-center text-slate-600">
+                  <div className="w-10 h-10 rounded-[20px] bg-slate-50 flex items-center justify-center text-slate-600">
                     <IconGlobe className="w-5 h-5" />
                   </div>
                   Langue de l'interface
@@ -1225,8 +1227,8 @@ export const Settings: React.FC = () => {
                     onClick={() => handleLanguageChange(lang.code)}
                     className={`p-6 rounded-3xl border text-left transition-all ${
                       currentLang === lang.code
-                        ? 'border-blue-500 bg-blue-50/50 ring-4 ring-blue-500/10 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]'
-                        : 'border-slate-200/60 hover:border-slate-300 hover:bg-slate-50/50 hover:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] bg-white'
+                        ? 'border-blue-500 bg-blue-50/50 ring-4 ring-blue-500/10 '
+                        : 'border-slate-200/60 hover:border-slate-300 hover:bg-slate-50/50 hover: bg-white'
                     }`}
                   >
                     <div className="text-3xl mb-4">{lang.flag}</div>
@@ -1242,7 +1244,7 @@ export const Settings: React.FC = () => {
                   </button>
                 ))}
               </div>
-              <div className="bg-amber-50/80 border border-amber-200/60 rounded-[8px] p-4 text-[0.875rem] font-medium text-amber-800 mt-8 flex gap-3">
+              <div className="bg-amber-50/80 border border-amber-200/60 rounded-[20px] p-4 text-[0.875rem] font-medium text-amber-800 mt-8 flex gap-3">
                 <span className="text-xl">⚠️</span>
                 <p>
                   <strong>Note :</strong> La traduction arabe et anglaise couvre les éléments
@@ -1257,7 +1259,7 @@ export const Settings: React.FC = () => {
             <div className="space-y-10 max-w-3xl animate-in fade-in slide-in-from-bottom-4 duration-300">
               <div>
                 <h3 className="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-[8px] bg-slate-50 flex items-center justify-center text-slate-600">
+                  <div className="w-10 h-10 rounded-[20px] bg-slate-50 flex items-center justify-center text-slate-600">
                     <IconSettings className="w-5 h-5" />
                   </div>
                   Préférences du Médecin
@@ -1267,7 +1269,7 @@ export const Settings: React.FC = () => {
                 </p>
               </div>
 
-              <div className="bg-slate-50/50 p-6 sm:p-8 rounded-3xl border border-transparent shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] space-y-8">
+              <div className="bg-slate-50/50 p-6 sm:p-8 rounded-3xl border border-transparent  space-y-8">
                 <div className="flex items-center justify-between">
                   <div>
                     <label
@@ -1283,7 +1285,7 @@ export const Settings: React.FC = () => {
                   <button
                     id="auto-status"
                     onClick={() => setAutoStatusConsultation(!autoStatusConsultation)}
-                    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${autoStatusConsultation ? 'bg-blue-600 shadow-md shadow-blue-200/50' : 'bg-slate-200'}`}
+                    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${autoStatusConsultation ? 'bg-blue-600  shadow-blue-200/50' : 'bg-slate-200'}`}
                   >
                     <span
                       className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${autoStatusConsultation ? 'translate-x-5' : 'translate-x-0'}`}
@@ -1306,7 +1308,7 @@ export const Settings: React.FC = () => {
                   <button
                     id="auto-remove"
                     onClick={() => setAutoRemoveConsultation(!autoRemoveConsultation)}
-                    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${autoRemoveConsultation ? 'bg-blue-600 shadow-md shadow-blue-200/50' : 'bg-slate-200'}`}
+                    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${autoRemoveConsultation ? 'bg-blue-600  shadow-blue-200/50' : 'bg-slate-200'}`}
                   >
                     <span
                       className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${autoRemoveConsultation ? 'translate-x-5' : 'translate-x-0'}`}
@@ -1327,7 +1329,7 @@ export const Settings: React.FC = () => {
                       <select
                         value={defaultCalendarView}
                         onChange={(e) => setDefaultCalendarView(e.target.value as any)}
-                        className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] appearance-none"
+                        className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[20px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20  appearance-none"
                       >
                         <option value="day">Jour</option>
                         <option value="week">Semaine</option>
@@ -1342,7 +1344,7 @@ export const Settings: React.FC = () => {
                       <select
                         value={defaultSlotDuration}
                         onChange={(e) => setDefaultSlotDuration(Number(e.target.value))}
-                        className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] appearance-none"
+                        className="w-full px-5 py-3.5 bg-white border border-slate-100/80 rounded-[20px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20  appearance-none"
                       >
                         <option value={15}>15 min</option>
                         <option value={30}>30 min</option>
@@ -1375,7 +1377,7 @@ export const Settings: React.FC = () => {
                     {noteTemplates.map((template, idx) => (
                       <div
                         key={template.id}
-                        className="bg-white border border-slate-100/80 p-5 rounded-3xl space-y-4 relative shadow-[0_4px_12px_rgba(0,0,0,0.02)] group hover:shadow-[0_8px_20px_rgba(0,0,0,0.04)] transition-all"
+                        className="bg-white border border-slate-100/80 p-5 rounded-3xl space-y-4 relative  group hover: transition-all"
                       >
                         <button
                           onClick={() =>
@@ -1391,7 +1393,7 @@ export const Settings: React.FC = () => {
                           </label>
                           <input
                             type="text"
-                            className="w-full px-4 py-2 bg-slate-50 border border-slate-100/80 rounded-[8px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                            className="w-full px-4 py-2 bg-slate-50 border border-slate-100/80 rounded-[20px] text-[0.875rem] font-bold text-slate-900 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 "
                             placeholder="Ex: Contrôle post-traitement"
                             value={template.title}
                             onChange={(e) => {
@@ -1407,7 +1409,7 @@ export const Settings: React.FC = () => {
                           </label>
                           <textarea
                             rows={3}
-                            className="w-full px-4 py-3 bg-slate-50 border border-slate-100/80 rounded-[8px] text-[0.875rem] font-medium text-slate-700 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] resize-none leading-relaxed"
+                            className="w-full px-4 py-3 bg-slate-50 border border-slate-100/80 rounded-[20px] text-[0.875rem] font-medium text-slate-700 transition-all outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20  resize-none leading-relaxed"
                             placeholder="Contenu synthétique..."
                             value={template.content}
                             onChange={(e) => {
@@ -1433,7 +1435,7 @@ export const Settings: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleSave}
-                  className="btn-primary py-3.5 px-6 rounded-[8px] text-[0.875rem]"
+                  className="btn-primary py-3.5 px-6 rounded-[20px] text-[0.875rem]"
                 >
                   Enregistrer les préférences
                 </button>
