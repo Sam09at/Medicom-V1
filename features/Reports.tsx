@@ -523,178 +523,157 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
 
   // ── Super Admin view ─────────────────────────────────────────────────────────
   const renderSuperAdminReports = () => (
-    <div className="space-y-8 animate-in fade-in duration-150">
-      {/* KPI Grid */}
+    <div className="space-y-10 animate-in fade-in duration-300">
+      {/* Platform Growth Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="card p-5 h-full flex flex-col justify-between group">
-          <div className="flex items-start justify-between mb-4">
-            <div className="w-10 h-10 rounded-[14px] bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-slate-100 transition-colors duration-300 ease-in-out">
-              <IconUsers className="w-5 h-5" />
+        {[
+          {
+            label: 'Growth Rate',
+            value: '15.2%',
+            trend: '+12%',
+            trendColor: 'green',
+            sub: 'Croissance annuelle estimée',
+            icon: IconUsers
+          },
+          {
+            label: 'LTV (Lifetime Value)',
+            value: '65k MAD',
+            sub: 'Basé sur historique global',
+            icon: IconActivity
+          },
+          {
+            label: 'Churn Rate',
+            value: '1.2%',
+            trend: '-0.5%',
+            trendColor: 'red',
+            sub: 'Annulations mensuelles',
+            icon: IconLayers
+          },
+          {
+            label: 'CAC',
+            value: '2.5k MAD',
+            sub: 'Coût d\'acquisition client',
+            icon: IconFileText
+          }
+        ].map((kpi, i) => (
+          <div key={i} className="bg-white border border-black/[0.06] p-6 rounded-[24px] hover:border-black/[0.12] transition-colors group">
+            <div className="flex items-start justify-between mb-4">
+              <div className="w-10 h-10 rounded-[14px] bg-slate-50 flex items-center justify-center text-slate-500 group-hover:bg-black group-hover:text-white transition-all duration-300">
+                <kpi.icon className="w-5 h-5" />
+              </div>
+              {kpi.trend && (
+                <div className={`flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full ${kpi.trendColor === 'green' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-rose-50 text-rose-600 border border-rose-100'
+                  }`}>
+                  {kpi.trendColor === 'green' ? <IconTrendingUp className="w-3 h-3" /> : <IconTrendingDown className="w-3 h-3" />}
+                  {kpi.trend}
+                </div>
+              )}
             </div>
-            <div className="badge badge-green gap-1 font-semibold rounded-[30px] px-2.5 py-1">
-              <IconTrendingUp className="w-3.5 h-3.5" />
-              <span>+12%</span>
+            <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+              {kpi.label}
             </div>
-          </div>
-          <div>
-            <div className="text-[11px] font-bold text-slate-400 mb-1 uppercase tracking-widest">
-              Growth Rate
+            <div className="text-[28px] font-bold text-[#0f0f10] tracking-tight leading-none mb-2">
+              {kpi.value}
             </div>
-            <div className="text-[26px] font-semibold text-slate-900 tracking-tight leading-none">
-              15.2%
-            </div>
-            <div className="text-[11px] font-medium text-slate-400 mt-2">Croissance annuelle estimée</div>
-          </div>
-        </div>
-
-        <div className="card p-5 h-full flex flex-col justify-between group">
-          <div className="flex items-start justify-between mb-4">
-            <div className="w-10 h-10 rounded-[14px] bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-slate-100 transition-colors duration-300 ease-in-out">
-              <IconActivity className="w-5 h-5" />
-            </div>
-          </div>
-          <div>
-            <div className="text-[11px] font-bold text-slate-400 mb-1 uppercase tracking-widest">
-              LTV (Valeur Vie Client)
-            </div>
-            <div className="text-[26px] font-semibold text-slate-900 tracking-tight leading-none">
-              65k <span className="text-[14px] font-mono text-slate-400">MAD</span>
-            </div>
-            <div className="text-[11px] font-medium text-slate-400 mt-2">Basé sur historique</div>
-          </div>
-        </div>
-
-        <div className="card p-5 h-full flex flex-col justify-between group">
-          <div className="flex items-start justify-between mb-4">
-            <div className="w-10 h-10 rounded-[14px] bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-slate-100 transition-colors duration-300 ease-in-out">
-              <IconLayers className="w-5 h-5" />
-            </div>
-            <div className="badge badge-red gap-1 font-semibold rounded-[30px] px-2.5 py-1">
-              <IconTrendingDown className="w-3.5 h-3.5" />
-              <span className="text-rose-700">-0.5%</span>
-            </div>
-          </div>
-          <div>
-            <div className="text-[11px] font-bold text-slate-400 mb-1 uppercase tracking-widest">
-              Churn Rate
-            </div>
-            <div className="text-[26px] font-semibold text-slate-900 tracking-tight leading-none">
-              1.2%
-            </div>
-            <div className="text-[11px] font-medium text-slate-400 mt-2">Désabonnements / mois</div>
-          </div>
-        </div>
-
-        <div className="card p-5 h-full flex flex-col justify-between group">
-          <div className="flex items-start justify-between mb-4">
-            <div className="w-10 h-10 rounded-[14px] bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-slate-100 transition-colors duration-300 ease-in-out">
-              <IconFileText className="w-5 h-5" />
+            <div className="text-[12px] font-medium text-slate-400">
+              {kpi.sub}
             </div>
           </div>
-          <div>
-            <div className="text-[11px] font-bold text-slate-400 mb-1 uppercase tracking-widest">
-              CAC
-            </div>
-            <div className="text-[26px] font-semibold text-slate-900 tracking-tight leading-none">
-              2.5k <span className="text-[14px] font-mono text-slate-400">MAD</span>
-            </div>
-            <div className="text-[11px] font-medium text-slate-400 mt-2">Coût acquisition client</div>
-          </div>
-        </div>
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Retention Cohort */}
-        <div className="card overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
-            <div className="w-7 h-7 rounded-[6px] bg-blue-50 flex items-center justify-center text-[#136cfb]">
-              <IconUsers className="w-3.5 h-3.5" />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Retention Cohort Table */}
+        <div className="lg:col-span-2 bg-white border border-black/[0.06] rounded-[24px] overflow-hidden">
+          <div className="px-6 py-5 border-b border-black/[0.04] flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-[10px] bg-blue-50 flex items-center justify-center text-[#136cfb]">
+                <IconUsers className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="text-[15px] font-bold text-[#0f0f10]">Analyse de Rétention</h3>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-1">Cohortes mensuelles</p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-[14px] font-semibold text-slate-900">Analyse de Rétention</h3>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
-                Cohortes mensuelles
-              </p>
-            </div>
+            <button className="text-[12px] font-bold text-slate-500 hover:text-black transition-colors">Détails</button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-center">
               <thead>
-                <tr className="border-b border-slate-100">
+                <tr className="bg-slate-50/50">
                   {['Cohorte', 'Taille', 'M1', 'M2', 'M3', 'M6', 'M12'].map((h) => (
-                    <th
-                      key={h}
-                      className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest first:text-left"
-                    >
+                    <th key={h} className="px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest first:text-left border-b border-black/[0.03]">
                       {h}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody>
-                {cohorts.map((c, i) => {
-                  const isLast = i === cohorts.length - 1;
-                  return (
-                    <tr
-                      key={i}
-                      className={`hover:bg-slate-50/50 transition-colors ${!isLast ? 'border-b border-slate-100/60' : ''}`}
-                    >
-                      <td className="px-4 py-3 text-left text-[12px] font-semibold text-slate-900">
-                        {c.cohort}
-                      </td>
-                      <td className="px-4 py-3 text-[12px] font-semibold text-slate-400">{c.size}</td>
-                      {[c.m1, c.m2, c.m3, c.m6, c.m12].map((val, j) => (
-                        <td
-                          key={j}
-                          className="px-4 py-3 text-[12px] font-semibold text-[#136cfb]"
-                          style={{ opacity: typeof val === 'number' ? 0.3 + (val / 100) * 0.7 : 0.2 }}
-                        >
-                          {val}
-                          {typeof val === 'number' ? '%' : ''}
+              <tbody className="divide-y divide-black/[0.03]">
+                {cohorts.map((c, i) => (
+                  <tr key={i} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-5 py-4 text-left text-[13px] font-bold text-[#0f0f10]">
+                      {c.cohort}
+                    </td>
+                    <td className="px-5 py-4 text-[13px] font-semibold text-slate-500">{c.size}</td>
+                    {[c.m1, c.m2, c.m3, c.m6, c.m12].map((val, j) => {
+                      const percentage = typeof val === 'number' ? val : 0;
+                      return (
+                        <td key={j} className="px-2 py-4">
+                          <div
+                            className="inline-flex items-center justify-center w-12 py-1.5 rounded-[8px] text-[12px] font-bold"
+                            style={{
+                              backgroundColor: typeof val === 'number' ? `rgba(19, 108, 251, ${percentage / 100})` : 'transparent',
+                              color: percentage > 45 ? '#fff' : '#136cfb',
+                              opacity: typeof val === 'number' ? 1 : 0.2
+                            }}
+                          >
+                            {val}{typeof val === 'number' ? '%' : ''}
+                          </div>
                         </td>
-                      ))}
-                    </tr>
-                  );
-                })}
+                      );
+                    })}
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         </div>
 
-        {/* Feature Adoption */}
-        <div className="card p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-7 h-7 rounded-[6px] bg-violet-50 flex items-center justify-center text-violet-600">
-              <IconLayers className="w-3.5 h-3.5" />
+        {/* Feature Adoption / Quick List */}
+        <div className="bg-white border border-black/[0.06] rounded-[24px] p-6">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-8 h-8 rounded-[10px] bg-violet-50 flex items-center justify-center text-violet-600">
+              <IconLayers className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-[14px] font-semibold text-slate-900">
-                Adoption des Fonctionnalités
-              </h3>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
-                % cabinets actifs / semaine
-              </p>
+              <h3 className="text-[15px] font-bold text-[#0f0f10]">Adoption Products</h3>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">Activités hebdomadaires</p>
             </div>
           </div>
-          <div className="space-y-3.5">
+
+          <div className="space-y-6">
             {featureAdoption.map((f) => (
               <div key={f.feature}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[12px] font-semibold text-slate-700">{f.feature}</span>
-                  <span className="text-[12px] font-bold text-[#136cfb]">{f.usedBy}%</span>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[13px] font-bold text-slate-600">{f.feature}</span>
+                  <span className="text-[13px] font-extrabold text-[#0f0f10]">{f.usedBy}%</span>
                 </div>
                 <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                   <div
-                    className="h-full rounded-full bg-[#136cfb] transition-all duration-700"
+                    className="h-full rounded-full bg-black transition-all duration-1000"
                     style={{ width: `${f.usedBy}%` }}
                   />
                 </div>
               </div>
             ))}
           </div>
-          <p className="text-[10px] font-semibold text-slate-400 mt-4 text-center uppercase tracking-widest">
-            Utilisation au moins 1x / semaine
-          </p>
+
+          <div className="mt-10 p-4 rounded-[20px] bg-slate-50 border border-slate-100">
+            <p className="text-[11px] font-medium text-slate-500 text-center uppercase tracking-widest mb-3">Besoin de plus de data ?</p>
+            <button className="w-full sa-btn !rounded-full">
+              Exporter Rapport Complet
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -702,7 +681,7 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
 
   // ── Root render ──────────────────────────────────────────────────────────────
   return (
-    <div className="space-y-12 font-sans animate-in fade-in duration-150 pb-10">
+    <div className="space-y-12 font-sans pb-10">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

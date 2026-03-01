@@ -291,7 +291,7 @@ const UserSupport = ({ user }: { user: User }) => {
             <button
               onClick={handleCreateTicket}
               disabled={!newSubject || !newDesc}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-[20px]  disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 text-sm font-medium text-white bg-[#0f0f10] hover:bg-black rounded-[20px] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Envoyer le ticket
             </button>
@@ -477,7 +477,7 @@ const SuperAdminSupport = () => {
   const [activeTab, setActiveTab] = useState<'all' | 'open' | 'urgent'>('all');
 
   return (
-    <div className="space-y-12 font-sans animate-in fade-in duration-300">
+    <div className="space-y-12 font-sans">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
