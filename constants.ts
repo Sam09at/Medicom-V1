@@ -20,6 +20,7 @@ export const DEFAULT_MODULES: ModuleConfiguration = {
   billing: true,
   reports: true,
   support: true,
+  landingPageBuilder: false,
 };
 
 export const STARTER_MODULES: ModuleConfiguration = {
@@ -34,6 +35,7 @@ export const STARTER_MODULES: ModuleConfiguration = {
   billing: true,
   reports: false,
   support: true,
+  landingPageBuilder: false,
 };
 
 export const PRO_MODULES: ModuleConfiguration = {
@@ -48,20 +50,64 @@ export const PRO_MODULES: ModuleConfiguration = {
   billing: true,
   reports: true,
   support: true,
+  landingPageBuilder: false,
 };
 
 export const ASSISTANT_MODULES: ModuleConfiguration = {
   dashboard: true,
   calendar: true,
   patients: true,
-  treatments: false, // No clinical treatments
+  treatments: false,
   inventory: true,
   labOrders: true,
   documents: true,
-  records: false, // No medical records/notes
+  records: false,
   billing: true,
-  reports: false, // No financial intelligence
+  reports: false,
   support: true,
+  landingPageBuilder: false,
+};
+
+export const PREMIUM_MODULES: ModuleConfiguration = {
+  dashboard: true,
+  calendar: true,
+  patients: true,
+  treatments: true,
+  inventory: true,
+  labOrders: true,
+  documents: true,
+  records: true,
+  billing: true,
+  reports: true,
+  support: true,
+  landingPageBuilder: false,
+};
+
+export const MODULE_CONFIGURATIONS: Record<string, ModuleConfiguration> = {
+  essentiel: STARTER_MODULES,
+  pro: PRO_MODULES,
+  premium: PREMIUM_MODULES,
+};
+
+export const PLAN_PRICING: Record<string, { mad: number; label: string; stripePriceId: string; features: string[] }> = {
+  essentiel: {
+    mad: 499,
+    label: 'Essentiel',
+    stripePriceId: 'price_essentiel',
+    features: ['Dashboard', 'Calendrier', 'Patients', 'Facturation', 'Support'],
+  },
+  pro: {
+    mad: 999,
+    label: 'Pro',
+    stripePriceId: 'price_pro',
+    features: ['Tout Essentiel', 'Traitements', 'Inventaire', 'Documents', 'Rapports'],
+  },
+  premium: {
+    mad: 1499,
+    label: 'Premium',
+    stripePriceId: 'price_premium',
+    features: ['Tout Pro', 'Ordres Labo', 'Dossiers complets', 'Analytics avancés'],
+  },
 };
 
 export const CURRENT_USER_DOCTOR: User = {

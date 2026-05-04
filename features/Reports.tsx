@@ -176,7 +176,7 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
   ] as const;
 
   const renderClinicReports = () => (
-    <div className="space-y-12 animate-in fade-in duration-150">
+    <div className="space-y-6">
       {/* Controls bar */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
         {/* Tab switcher */}
@@ -523,7 +523,7 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
 
   // ── Super Admin view ─────────────────────────────────────────────────────────
   const renderSuperAdminReports = () => (
-    <div className="space-y-10 animate-in fade-in duration-300">
+    <div className="space-y-6">
       {/* Platform Growth Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
@@ -556,9 +556,9 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
             icon: IconFileText
           }
         ].map((kpi, i) => (
-          <div key={i} className="bg-white border border-black/[0.06] p-6 rounded-[24px] hover:border-black/[0.12] transition-colors group">
-            <div className="flex items-start justify-between mb-4">
-              <div className="w-10 h-10 rounded-[14px] bg-slate-50 flex items-center justify-center text-slate-500 group-hover:bg-black group-hover:text-white transition-all duration-300">
+          <div key={i} className="bg-white border border-slate-100 p-5 rounded-[12px]">
+            <div className="flex items-start justify-between mb-3">
+              <div className="w-9 h-9 rounded-[10px] bg-slate-50 flex items-center justify-center text-slate-500">
                 <kpi.icon className="w-5 h-5" />
               </div>
               {kpi.trend && (
@@ -572,7 +572,7 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
             <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">
               {kpi.label}
             </div>
-            <div className="text-[28px] font-bold text-[#0f0f10] tracking-tight leading-none mb-2">
+            <div className="text-[26px] font-semibold text-slate-900 tracking-tight leading-none mb-1">
               {kpi.value}
             </div>
             <div className="text-[12px] font-medium text-slate-400">
@@ -584,8 +584,8 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Retention Cohort Table */}
-        <div className="lg:col-span-2 bg-white border border-black/[0.06] rounded-[24px] overflow-hidden">
-          <div className="px-6 py-5 border-b border-black/[0.04] flex items-center justify-between">
+        <div className="lg:col-span-2 bg-white border border-slate-100 rounded-[12px] overflow-hidden">
+          <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-[10px] bg-blue-50 flex items-center justify-center text-[#136cfb]">
                 <IconUsers className="w-4 h-4" />
@@ -602,7 +602,7 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
               <thead>
                 <tr className="bg-slate-50/50">
                   {['Cohorte', 'Taille', 'M1', 'M2', 'M3', 'M6', 'M12'].map((h) => (
-                    <th key={h} className="px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest first:text-left border-b border-black/[0.03]">
+                    <th key={h} className="px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest first:text-left border-b border-slate-100">
                       {h}
                     </th>
                   ))}
@@ -640,7 +640,7 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
         </div>
 
         {/* Feature Adoption / Quick List */}
-        <div className="bg-white border border-black/[0.06] rounded-[24px] p-6">
+        <div className="bg-white border border-slate-100 rounded-[12px] p-6">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-8 h-8 rounded-[10px] bg-violet-50 flex items-center justify-center text-violet-600">
               <IconLayers className="w-4 h-4" />
@@ -681,7 +681,7 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
 
   // ── Root render ──────────────────────────────────────────────────────────────
   return (
-    <div className="space-y-12 font-sans pb-10">
+    <div className="space-y-6 font-sans pb-10">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

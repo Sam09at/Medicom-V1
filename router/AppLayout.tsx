@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useMedicomStore } from '../store';
 import { SearchResult, ModuleConfiguration } from '../types';
-import { MOCK_PATIENTS, MOCK_NOTIFICATIONS } from '../constants';
+import { MOCK_PATIENTS } from '../constants';
+import { signOut } from '../lib/api/auth';
 import { CommandPalette } from '../components/CommandPalette';
 import { useWaitingRoom } from '../hooks/useWaitingRoom';
 
@@ -41,7 +42,7 @@ export const AppLayout: React.FC = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+  const [notifications, setNotifications] = useState<{ id: string; title: string; message: string; time: string; read: boolean }[]>([]);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
   const searchRef = useRef<HTMLDivElement>(null);
@@ -168,10 +169,11 @@ export const AppLayout: React.FC = () => {
     setNotifications(notifications.map((n) => ({ ...n, read: true })));
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await signOut();
     useMedicomStore.getState().setCurrentUser(null);
     useMedicomStore.getState().setCurrentTenant(null);
-    navigate('/');
+    navigate('/login', { replace: true });
   };
 
   const pathParts = location.pathname.split('/').filter(Boolean);
@@ -206,10 +208,12 @@ export const AppLayout: React.FC = () => {
           <nav className="flex-1 overflow-y-auto py-3 scrollbar-hide">
             <div className="space-y-0.5 px-3">
               {menuGroups.map((group, idx) => {
-                const availableItems = group.items.filter(
-                  (item) => item.module === null || (modules as any)[item.module]
-                );
-                if (availableItems.length === 0) return null;
+                const groupItems = group.items.map(item => ({
+                  ...item,
+                  locked: item.module !== null && !(modules as unknown as Record<string, boolean>)[item.module],
+                }));
+                const visibleItems = groupItems.filter(item => !item.locked || item.module !== null);
+                if (visibleItems.length === 0) return null;
 
                 return (
                   <React.Fragment key={idx}>
@@ -219,38 +223,100 @@ export const AppLayout: React.FC = () => {
                     {idx > 0 && isSidebarCollapsed && (
                       <div className="my-2 mx-auto w-4 h-px bg-slate-100" />
                     )}
-                    {availableItems.map((item) => (
-                      <button
-                        key={item.path}
-                        onClick={() => navigate(item.path)}
-                        className={`w-full flex items-center justify-between h-10 px-3 rounded-[8px] text-[13.5px] transition-all duration-200 ease-out group relative ${isActive(item.path)
-                            ? 'bg-[#136cfb] text-white font-medium'
-                            : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
-                          }`}
-                        title={isSidebarCollapsed ? item.label : ''}
-                      >
-                        <div className={`flex items-center gap-3 ${isSidebarCollapsed ? 'mx-auto' : ''}`}>
-                          <item.icon className="w-[16px] h-[16px] shrink-0 text-inherit" />
-                          {!isSidebarCollapsed && <span className="truncate">{item.label}</span>}
-                        </div>
+                    {groupItems.map((item) => {
+                      if (item.locked) {
+                        return (
+                          <div
+                            key={item.path}
+                            className="w-full flex items-center justify-between h-10 px-3 rounded-[8px] text-[13.5px] relative opacity-50 cursor-not-allowed group"
+                            title={isSidebarCollapsed ? `${item.label} (Upgrade requis)` : ''}
+                          >
+                            <div className={`flex items-center gap-3 ${isSidebarCollapsed ? 'mx-auto' : ''}`}>
+                              <item.icon className="w-[16px] h-[16px] shrink-0 text-slate-400" />
+                              {!isSidebarCollapsed && <span className="truncate text-slate-400">{item.label}</span>}
+                            </div>
+                            {!isSidebarCollapsed && (
+                              <svg className="w-3 h-3 text-slate-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                              </svg>
+                            )}
+                          </div>
+                        );
+                      }
+                      return (
+                        <button
+                          key={item.path}
+                          onClick={() => navigate(item.path)}
+                          className={`w-full flex items-center justify-between h-10 px-3 rounded-[8px] text-[13.5px] transition-all duration-200 ease-out group relative ${isActive(item.path)
+                              ? 'bg-[#136cfb] text-white font-medium'
+                              : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                            }`}
+                          title={isSidebarCollapsed ? item.label : ''}
+                        >
+                          <div className={`flex items-center gap-3 ${isSidebarCollapsed ? 'mx-auto' : ''}`}>
+                            <item.icon className="w-[16px] h-[16px] shrink-0 text-inherit" />
+                            {!isSidebarCollapsed && <span className="truncate">{item.label}</span>}
+                          </div>
 
-                        {!isSidebarCollapsed && item.badge !== undefined && item.badge > 0 && (
-                          <span className={`${isActive(item.path) ? 'bg-white text-[#136cfb]' : 'bg-slate-100 text-slate-600'} rounded-[30px] px-1.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] ml-auto shrink-0 font-semibold`}>
-                            {item.badge}
-                          </span>
-                        )}
-                        {isSidebarCollapsed && item.badge !== undefined && item.badge > 0 && (
-                          <span className={`absolute top-1.5 right-2 w-1.5 h-1.5 ${isActive(item.path) ? 'bg-white' : 'bg-[#136cfb]'} rounded-full`}></span>
-                        )}
-                      </button>
-                    ))}
+                          {!isSidebarCollapsed && item.badge !== undefined && item.badge > 0 && (
+                            <span className={`${isActive(item.path) ? 'bg-white text-[#136cfb]' : 'bg-slate-100 text-slate-600'} rounded-[30px] px-1.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] ml-auto shrink-0 font-semibold`}>
+                              {item.badge}
+                            </span>
+                          )}
+                          {isSidebarCollapsed && item.badge !== undefined && item.badge > 0 && (
+                            <span className={`absolute top-1.5 right-2 w-1.5 h-1.5 ${isActive(item.path) ? 'bg-white' : 'bg-[#136cfb]'} rounded-full`}></span>
+                          )}
+                        </button>
+                      );
+                    })}
                   </React.Fragment>
                 );
               })}
             </div>
           </nav>
 
-          <div className="p-3 border-t border-slate-100 shrink-0">
+          {/* Plan badge */}
+          {(() => {
+            const plan = currentUser.plan || 'Starter';
+            const planKey = plan.toLowerCase() === 'premium' ? 'Premium' : plan.toLowerCase() === 'pro' ? 'Pro' : 'Essentiel';
+            const isPremium = planKey === 'Premium';
+            const planStyle = isPremium
+              ? 'bg-blue-50 text-blue-700 border-blue-100'
+              : planKey === 'Pro'
+                ? 'bg-violet-50 text-violet-700 border-violet-100'
+                : 'bg-slate-50 text-slate-500 border-slate-100';
+            return (
+              <div className={`mx-3 mb-2 ${isSidebarCollapsed ? 'flex justify-center' : ''}`}>
+                {isSidebarCollapsed ? (
+                  <div className={`px-1.5 py-0.5 border rounded text-[9px] font-bold uppercase tracking-wider ${planStyle}`} title={planKey}>
+                    {planKey.charAt(0)}
+                  </div>
+                ) : (
+                  <div className={`rounded-[10px] border p-2.5 ${isPremium ? 'bg-blue-50 border-blue-100' : 'bg-slate-50 border-slate-100'}`}>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className={`text-[10px] font-bold uppercase tracking-widest ${isPremium ? 'text-blue-600' : planKey === 'Pro' ? 'text-violet-600' : 'text-slate-500'}`}>
+                        Plan {planKey}
+                      </span>
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full border ${planStyle}`}>ACTIF</span>
+                    </div>
+                    {!isPremium && (
+                      <button
+                        onClick={() => navigate('/app/settings')}
+                        className="w-full flex items-center justify-center gap-1.5 py-1.5 bg-[#0f0f10] text-white text-[11px] font-semibold rounded-[8px] hover:bg-slate-800 transition-colors"
+                      >
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                        Passer à {planKey === 'Pro' ? 'Premium' : 'Pro'}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
+          <div className="px-3 pb-3 border-t border-slate-100 pt-2.5 shrink-0">
             <div
               className={`flex items-center gap-2 ${isSidebarCollapsed ? 'justify-center' : ''}`}
             >

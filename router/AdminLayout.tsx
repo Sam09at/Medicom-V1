@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useMedicomStore } from '../store';
 import { CommandPalette } from '../components/CommandPalette';
-import { MOCK_NOTIFICATIONS } from '../constants';
+import { signOut } from '../lib/api/auth';
 import {
   IconActivity,
   IconSettings,
@@ -26,7 +26,7 @@ export const AdminLayout: React.FC = () => {
 
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+  const [notifications, setNotifications] = useState<{ id: string; title: string; message: string; time: string; read: boolean }[]>([]);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
   const notifRef = useRef<HTMLDivElement>(null);
@@ -71,10 +71,11 @@ export const AdminLayout: React.FC = () => {
     setNotifications(notifications.map((n) => ({ ...n, read: true })));
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await signOut();
     useMedicomStore.getState().setCurrentUser(null);
     useMedicomStore.getState().setCurrentTenant(null);
-    navigate('/');
+    navigate('/login', { replace: true });
   };
 
   const pathParts = location.pathname.split('/').filter(Boolean);
@@ -203,10 +204,16 @@ export const AdminLayout: React.FC = () => {
             </div>
           </header>
 
-          <div className="flex-1 overflow-auto bg-white">
-            <div className="w-full px-4 py-6 lg:py-8 lg:px-6">
-              <Outlet />
-            </div>
+          <div className="flex-1 overflow-auto bg-white flex flex-col">
+            {location.pathname.startsWith('/admin/landing-pages/') || location.pathname.startsWith('/admin/messaging') ? (
+              <div className="flex-1 flex flex-col min-h-0">
+                <Outlet />
+              </div>
+            ) : (
+              <div className="w-full px-4 py-6 lg:py-8 lg:px-6">
+                <Outlet />
+              </div>
+            )}
           </div>
         </main>
       </div>

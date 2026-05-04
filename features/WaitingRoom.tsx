@@ -122,8 +122,7 @@ export const WaitingRoom: React.FC = () => {
         </button>
 
         <div className="flex-1 flex gap-8">
-          <div className="w-2/3 bg-blue-600 rounded-3xl flex flex-col items-center justify-center p-12  relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-700 opacity-50"></div>
+          <div className="w-2/3 bg-blue-600 rounded-[20px] flex flex-col items-center justify-center p-12 relative overflow-hidden">
             <div className="relative z-10 text-center">
               <h2 className="text-3xl font-medium text-blue-100 uppercase tracking-widest mb-8">
                 Patient Appelé
@@ -141,7 +140,7 @@ export const WaitingRoom: React.FC = () => {
             </div>
           </div>
 
-          <div className="w-1/3 bg-slate-800 rounded-3xl p-8 flex flex-col border border-slate-700">
+          <div className="w-1/3 bg-slate-800 rounded-[20px] p-8 flex flex-col border border-slate-700">
             <h3 className="text-2xl font-bold text-slate-400 mb-6 uppercase tracking-wide border-b border-slate-700 pb-4">
               Prochains Patients
             </h3>

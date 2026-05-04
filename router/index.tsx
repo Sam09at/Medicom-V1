@@ -8,7 +8,6 @@ import { LoadingSpinner } from '../components/LoadingSpinner';
 // ── Eager imports (needed on first paint) ──
 import { Dashboard } from '../features/Dashboard';
 import { CalendarView } from '../components/CalendarView';
-import { MockLoginPicker } from '../dev/MockLoginPicker';
 import { useMedicomStore } from '../store';
 import { MOCK_APPOINTMENTS, MOCK_PATIENTS } from '../constants';
 import { CabinetStats, AppointmentStatus, Appointment, Patient } from '../types';
@@ -63,6 +62,30 @@ const Cabinets = React.lazy(() =>
 const CRM = React.lazy(() => import('../features/CRM').then((m) => ({ default: m.CRM })));
 const SaaSAdministration = React.lazy(() =>
   import('../features/SaaSAdministration').then((m) => ({ default: m.SaaSAdministration }))
+);
+const LoginPage = React.lazy(() =>
+  import('../features/Auth/LoginPage').then((m) => ({ default: m.LoginPage }))
+);
+const ForgotPasswordPage = React.lazy(() =>
+  import('../features/Auth/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage }))
+);
+const ResetPasswordPage = React.lazy(() =>
+  import('../features/Auth/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage }))
+);
+const LandingPageList = React.lazy(() =>
+  import('../features/LandingPageBuilder').then((m) => ({ default: m.LandingPageList }))
+);
+const LandingPageEditor = React.lazy(() =>
+  import('../features/LandingPageBuilder').then((m) => ({ default: m.LandingPageEditor }))
+);
+const FullPageBuilder = React.lazy(() =>
+  import('../features/LandingPageBuilder').then((m) => ({ default: m.FullPageBuilder }))
+);
+const Messaging = React.lazy(() =>
+  import('../features/Messaging').then((m) => ({ default: m.Messaging }))
+);
+const PublicLandingPage = React.lazy(() =>
+  import('../features/PublicLandingPage').then((m) => ({ default: m.PublicLandingPage }))
 );
 
 /** Suspense wrapper for lazy-loaded routes */
@@ -260,10 +283,9 @@ const UnauthorizedPage = () => {
   const { setCurrentUser, setCurrentTenant } = useMedicomStore();
 
   const handleBackToLogin = () => {
-    // Clear any stale user state so RoleGuard/RootRedirect shows login
     setCurrentUser(null);
     setCurrentTenant(null);
-    navigate('/', { replace: true });
+    navigate('/login', { replace: true });
   };
 
   return (
@@ -290,7 +312,22 @@ const UnauthorizedPage = () => {
 // ── Smart root redirect ──
 const RootRedirect = () => {
   const user = useMedicomStore((s) => s.currentUser);
-  if (!user) return <MockLoginPicker />;
+  const isAuthLoading = useMedicomStore((s) => s.isAuthLoading);
+
+  // While Supabase resolves the session, show a spinner to prevent a flash of
+  // the login page for users who are already authenticated.
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
+          <span className="text-sm text-slate-400 font-medium">Chargement…</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) return <Navigate to="/login" replace />;
   if (user.role === 'super_admin') return <Navigate to="/admin/dashboard" replace />;
   return <Navigate to="/app/dashboard" replace />;
 };
@@ -411,6 +448,22 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: 'landing-pages',
+        element: (
+          <Lazy>
+            <LandingPageList />
+          </Lazy>
+        ),
+      },
+      {
+        path: 'landing-pages/:tenantId',
+        element: (
+          <Lazy>
+            <LandingPageEditor />
+          </Lazy>
+        ),
+      },
+      {
         path: 'crm',
         element: (
           <Lazy>
@@ -429,6 +482,14 @@ export const router = createBrowserRouter([
       { path: 'reports', element: <ReportsPage /> },
       { path: 'support', element: <SupportPage /> },
       {
+        path: 'messaging',
+        element: (
+          <Lazy>
+            <Messaging />
+          </Lazy>
+        ),
+      },
+      {
         path: 'settings',
         element: (
           <Lazy>
@@ -446,7 +507,11 @@ export const router = createBrowserRouter([
       </RoleGuard>
     ),
   },
-  { path: '/login', element: <MockLoginPicker /> },
+  { path: '/builder/:tenantId', element: <Lazy><FullPageBuilder /></Lazy> },
+  { path: '/c/:slug', element: <Lazy><PublicLandingPage /></Lazy> },
+  { path: '/login', element: <Lazy><LoginPage /></Lazy> },
+  { path: '/forgot-password', element: <Lazy><ForgotPasswordPage /></Lazy> },
+  { path: '/reset-password', element: <Lazy><ResetPasswordPage /></Lazy> },
   { path: '/unauthorized', element: <UnauthorizedPage /> },
   { path: '*', element: <Navigate to="/" replace /> },
 ]);

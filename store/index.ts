@@ -24,6 +24,8 @@ interface MedicomStore {
   setCurrentUser: (user: User | null) => void;
   setCurrentTenant: (tenant: TenantDetailed | null) => void;
   setAuthLoading: (v: boolean) => void;
+  /** Clears auth state synchronously. Callers must also call signOut() from lib/api/auth. */
+  logout: () => void;
 
   /**
    * Dev-only action: initialize auth from a mock role.
@@ -31,6 +33,11 @@ interface MedicomStore {
    * Will be removed in Phase 14 when real Supabase auth replaces it.
    */
   initializeFromMock: (role: UserRole) => void;
+
+  // ── Public Booking Badges ──
+  unreadPublicBookings: number;
+  incrementPublicBookings: () => void;
+  clearPublicBookings: () => void;
 
   // ── UI Actions ──
   showToast: (toast: Omit<ToastMessage, 'id'>) => void;
@@ -53,6 +60,7 @@ export const useMedicomStore = create<MedicomStore>()(
     toasts: [],
     isSidebarCollapsed: false,
     waitingRoomFilter: 'all',
+    unreadPublicBookings: 0,
 
     // ── Auth Actions ──
     setCurrentUser: (user) =>
@@ -68,6 +76,13 @@ export const useMedicomStore = create<MedicomStore>()(
     setAuthLoading: (v) =>
       set((state) => {
         state.isAuthLoading = v;
+      }),
+
+    logout: () =>
+      set((state) => {
+        state.currentUser = null;
+        state.currentTenant = null;
+        state.isAuthLoading = false;
       }),
 
     initializeFromMock: (role) =>
@@ -128,6 +143,16 @@ export const useMedicomStore = create<MedicomStore>()(
             ...prefs,
           } as any;
         }
+      }),
+
+    incrementPublicBookings: () =>
+      set((state) => {
+        state.unreadPublicBookings += 1;
+      }),
+
+    clearPublicBookings: () =>
+      set((state) => {
+        state.unreadPublicBookings = 0;
       }),
   }))
 );

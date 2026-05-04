@@ -7,6 +7,7 @@ export const ERROR_CODES = {
   AUTH_INVALID_CREDENTIALS: 'AUTH_INVALID_CREDENTIALS',
   AUTH_SESSION_EXPIRED: 'AUTH_SESSION_EXPIRED',
   AUTH_UNAUTHORIZED: 'AUTH_UNAUTHORIZED',
+  AUTH_PROFILE_NOT_FOUND: 'AUTH_PROFILE_NOT_FOUND',
 
   // ── Tenant ──
   TENANT_NOT_FOUND: 'TENANT_NOT_FOUND',
@@ -41,6 +42,7 @@ const USER_MESSAGES: Record<ErrorCode, string> = {
   AUTH_INVALID_CREDENTIALS: 'Identifiants invalides.',
   AUTH_SESSION_EXPIRED: 'Votre session a expiré. Veuillez vous reconnecter.',
   AUTH_UNAUTHORIZED: "Vous n'avez pas les permissions nécessaires.",
+  AUTH_PROFILE_NOT_FOUND: 'Profil utilisateur introuvable. Contactez votre administrateur.',
   TENANT_NOT_FOUND: 'Cabinet introuvable.',
   TENANT_SUSPENDED: 'Ce cabinet est suspendu. Contactez le support.',
   PATIENT_NOT_FOUND: 'Patient introuvable.',
@@ -101,6 +103,13 @@ export function fromSupabaseError(
   if (error.code === '23P01') {
     // exclusion_violation (appointment overlap)
     return new MedicomError(ERROR_CODES.APPOINTMENT_CONFLICT, error.message, 409);
+  }
+  if (error.code === '42501') {
+    // insufficient_privilege — RLS policy denied the query
+    return new MedicomError(ERROR_CODES.AUTH_UNAUTHORIZED, error.message, 403);
+  }
+  if (error.message?.includes('JWT expired')) {
+    return new MedicomError(ERROR_CODES.AUTH_SESSION_EXPIRED, error.message, 401);
   }
   return new MedicomError(fallbackCode, error.message, 500, { pgCode: error.code });
 }

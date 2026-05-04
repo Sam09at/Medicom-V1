@@ -1,3 +1,11 @@
+export type ClinicSpecialty =
+  | 'dentistry' | 'orthodontics' | 'pediatric_dentistry' | 'oral_surgery'
+  | 'periodontology' | 'endodontics' | 'general_medicine' | 'cardiology'
+  | 'dermatology' | 'psychology' | 'pediatrics' | 'gynecology'
+  | 'ophthalmology' | 'orthopedics' | 'ent' | 'other';
+
+export type PlanTier = 'starter' | 'pro' | 'premium' | 'enterprise';
+
 export type UserRole = 'super_admin' | 'clinic_admin' | 'doctor' | 'staff' | 'patient';
 
 export interface DoctorPreferences {
@@ -24,6 +32,7 @@ export interface ModuleConfiguration {
   billing: boolean;
   reports: boolean;
   support: boolean;
+  landingPageBuilder: boolean;
 }
 
 export interface User {
@@ -38,6 +47,62 @@ export interface User {
   phone?: string;
   enabledModules?: ModuleConfiguration;
   preferences?: DoctorPreferences;
+  // Optional fields populated from real Supabase auth (non-breaking additions)
+  firstName?: string;
+  lastName?: string;
+  avatarUrl?: string;
+  tenantId?: string;
+  isActive?: boolean;
+  planTier?: 'starter' | 'pro' | 'premium';
+}
+
+// ── DB row types (used only inside lib/api/ mappers, never in components) ──────
+
+/** Raw row from public.users — snake_case mirrors actual DB columns */
+export interface UserRow {
+  id: string;
+  tenant_id: string | null;
+  role: UserRole;
+  first_name: string | null;
+  last_name: string | null;
+  email: string;
+  phone: string | null;
+  avatar_url: string | null;
+  is_active: boolean;
+  module_config: Record<string, boolean> | null;
+  created_at: string;
+  updated_at: string;
+}
+
+/** Raw row from public.tenants — snake_case mirrors actual DB columns */
+export interface TenantRow {
+  id: string;
+  name: string;
+  domain: string | null;
+  plan_tier: 'starter' | 'pro' | 'premium';
+  status: 'active' | 'suspended' | 'trial' | 'cancelled';
+  settings_json: Record<string, unknown>;
+  logo_url: string | null;
+  address: string | null;
+  city: string | null;
+  phone: string | null;
+  email: string | null;
+  website: string | null;
+  ice: string | null;
+  region: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+/** Auth credentials for the login form */
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+/** Payload for the password reset request */
+export interface PasswordResetRequest {
+  email: string;
 }
 
 export type WaitingRoomFilter = 'all' | 'my_patients';
@@ -93,6 +158,9 @@ export interface Appointment {
   status: AppointmentStatus;
   notes?: string;
   patientName: string;
+  source?: 'manual' | 'public_booking' | 'phone';
+  noShowScore?: number;
+  whatsappConfirmedAt?: string | null;
 }
 
 export interface Task {
@@ -826,4 +894,86 @@ export interface TenantDetailed {
   mrr: number;
   region: string;
   enabledModules: ModuleConfiguration;
+  // Optional fields populated from real Supabase auth (non-breaking additions)
+  planTier?: 'starter' | 'pro' | 'premium';
+  domain?: string | null;
+  logoUrl?: string | null;
+  address?: string | null;
+  city?: string | null;
+  phone?: string | null;
+  website?: string | null;
+  ice?: string | null;
+  // Lifecycle & specialty fields (migration 017)
+  specialty?: ClinicSpecialty;
+  adminDomain?: string | null;
+  publicDomain?: string | null;
+  onboardingStatus?: 'pending' | 'provisioning' | 'active' | 'suspended';
+  trialEndsAt?: string | null;
+  billingEmail?: string | null;
+  slug?: string | null;
+}
+
+// ── Landing page types (Phase 0 scaffold — Phase 1 builds the editor) ──────────
+
+export interface LandingPage {
+  id: string;
+  tenantId: string;
+  slug: string;
+  isPublished: boolean;
+  headline: string | null;
+  description: string | null;
+  heroImageUrl: string | null;
+  accentColor: string;
+  contactEmail: string | null;
+  contactPhone: string | null;
+  addressDisplay: string | null;
+  city: string | null;
+  googleMapsUrl: string | null;
+  scheduleJson: Record<string, unknown>;
+  sectionsJson?: PageSection[];
+  tenantName?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type PageSectionType =
+  | 'hero' | 'about' | 'services' | 'doctors'
+  | 'booking' | 'testimonials' | 'faq' | 'contact' | 'hours';
+
+export interface PageSection {
+  id: string;
+  type: PageSectionType;
+  visible: boolean;
+  content: Record<string, unknown>;
+}
+
+export interface WhatsAppMessage {
+  id: string;
+  tenantId: string;
+  appointmentId?: string;
+  direction: 'outbound' | 'inbound';
+  templateName?: string;
+  phoneTo: string;
+  messageBody?: string;
+  status: 'queued' | 'sent' | 'delivered' | 'read' | 'failed';
+  externalMessageId?: string;
+  errorMessage?: string;
+  sentAt?: string;
+  createdAt: string;
+}
+
+export interface AvailableSlot {
+  slotStart: string;
+  slotEnd: string;
+  doctorId: string;
+  doctorName: string;
+}
+
+export interface BookingHold {
+  id: string;
+  tenantId: string;
+  slotStart: string;
+  slotEnd: string;
+  whatsappNumber: string;
+  expiresAt: string;
 }

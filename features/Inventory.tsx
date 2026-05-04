@@ -8,8 +8,8 @@ import {
   IconX,
   IconCheck,
 } from '../components/Icons';
-import { MOCK_INVENTORY } from '../constants';
-import { InventoryItem } from '../types';
+import { InventoryItem } from '../lib/api/inventory';
+import { useInventory } from '../hooks/useInventory';
 import { SlideOver } from '../components/SlideOver';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -30,8 +30,8 @@ const CONSUMPTION_DATA = [
 ];
 
 export const Inventory = () => {
+  const { items, loading, save } = useInventory();
   const [activeTab, setActiveTab] = useState<'stock' | 'orders'>('stock');
-  const [items, setItems] = useState<InventoryItem[]>(MOCK_INVENTORY);
   const [filter, setFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -72,23 +72,19 @@ export const Inventory = () => {
     return 'text-green-600 bg-green-50 border-green-200';
   };
 
-  const handleCreateItem = (e: React.FormEvent) => {
+  const handleCreateItem = async (e: React.FormEvent) => {
     e.preventDefault();
-    const item: InventoryItem = {
+    await save({
       id: `i-${Date.now()}`,
       name: newItem.name,
-      category: newItem.category as any,
+      category: newItem.category,
       quantity: parseInt(newItem.quantity) || 0,
       minThreshold: parseInt(newItem.minThreshold) || 5,
       unit: newItem.unit,
-      supplier: newItem.supplier,
-      lastRestock: new Date().toLocaleDateString('en-GB', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-      }),
-    };
-    setItems([item, ...items]);
+      supplier: newItem.supplier || null,
+      unitPrice: null,
+      isActive: true,
+    });
     setIsCreateOpen(false);
     setNewItem({
       name: '',
@@ -326,11 +322,11 @@ export const Inventory = () => {
                 <IconAlertTriangle className="w-4 h-4 text-orange-500" /> Alertes Stock
               </h3>
               <div className="space-y-3 flex-1 overflow-auto">
-                {items.filter((i) => i.quantity <= i.minThreshold).length === 0 ? (
+                {items.filter((i) => i.isLow).length === 0 ? (
                   <div className="text-center text-slate-400 text-sm py-4">Tout va bien.</div>
                 ) : (
                   items
-                    .filter((i) => i.quantity <= i.minThreshold)
+                    .filter((i) => i.isLow)
                     .map((item) => (
                       <div
                         key={item.id}
@@ -406,7 +402,17 @@ export const Inventory = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-100">
-                {filteredItems.map((item) => (
+                {loading ? (
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <tr key={i} className="animate-pulse">
+                      {Array.from({ length: 6 }).map((_, j) => (
+                        <td key={j} className="px-6 py-4">
+                          <div className="h-4 bg-slate-100 rounded w-3/4" />
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                ) : filteredItems.map((item) => (
                   <tr key={item.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap font-medium text-sm text-slate-900">
                       {item.name}
@@ -435,7 +441,7 @@ export const Inventory = () => {
                       {item.supplier}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-                      {item.lastRestock}
+                      {new Date(item.updatedAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button

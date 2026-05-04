@@ -6,6 +6,7 @@ import {
   IconDashboard,
   IconBriefcase,
   IconFileText,
+  IconGlobe,
   IconShield,
   IconMessage,
   IconSettings,
@@ -17,7 +18,7 @@ interface SASubItem {
   id: string;
   label: string;
   badge?: number;
-  badgeColor?: 'orange' | 'green';
+  badgeColor?: 'orange' | 'green' | 'blue';
 }
 
 interface SANavEntry {
@@ -34,9 +35,11 @@ const SA_NAV: SANavEntry[] = [
     label: 'Cabinets',
     icon: IconDashboard,
     sub: [
-      { id: '/admin/cabinets', label: "Vue d'ensemble" },
-      { id: '/admin/cabinets?filter=active', label: 'Actifs', badge: 14, badgeColor: 'green' },
-      { id: '/admin/cabinets?filter=suspended', label: 'Suspendus', badge: 2, badgeColor: 'orange' },
+      { id: '/admin/cabinets', label: 'Tous les cabinets' },
+      { id: '/admin/cabinets?filter=active',    label: 'Actifs',    badge: 14, badgeColor: 'green' },
+      { id: '/admin/cabinets?filter=trial',     label: 'En essai',  badge: 3,  badgeColor: 'blue' },
+      { id: '/admin/cabinets?filter=suspended', label: 'Suspendus', badge: 2,  badgeColor: 'orange' },
+      { id: '/admin/landing-pages',             label: 'Pages Web', badge: undefined },
     ],
   },
   {
@@ -44,14 +47,15 @@ const SA_NAV: SANavEntry[] = [
     label: 'CRM & Growth',
     icon: IconBriefcase,
     sub: [
-      { id: '/admin/crm', label: 'Leads' },
+      { id: '/admin/crm', label: 'Leads & Onboarding' },
       { id: '/admin/crm?view=pipeline', label: 'Pipeline' },
     ],
   },
   { id: '/admin/administration', label: 'Administration', icon: IconShield },
-  { id: '/admin/reports', label: 'Intelligence', icon: IconFileText },
-  { id: '/admin/support', label: 'Support', icon: IconMessage },
-  { id: '/admin/settings', label: 'Paramètres', icon: IconSettings },
+  { id: '/admin/reports',        label: 'Intelligence',   icon: IconFileText },
+  { id: '/admin/messaging',      label: 'Messagerie',     icon: IconMessage },
+  { id: '/admin/support',        label: 'Support',        icon: IconGlobe },
+  { id: '/admin/settings',       label: 'Paramètres',     icon: IconSettings },
 ];
 
 /* ─────────────────────────────────────────────
@@ -187,8 +191,8 @@ const NavGroup: React.FC<NavGroupProps> = ({
                         fontWeight: 700,
                         padding: '2px 8px',
                         borderRadius: '30px',
-                        backgroundColor: sub.badgeColor === 'green' ? '#ecfdf5' : '#fff7ed',
-                        color: sub.badgeColor === 'green' ? '#059669' : '#d97706',
+                        backgroundColor: sub.badgeColor === 'green' ? '#ecfdf5' : sub.badgeColor === 'blue' ? '#eff6ff' : '#fff7ed',
+                        color: sub.badgeColor === 'green' ? '#059669' : sub.badgeColor === 'blue' ? '#2563eb' : '#d97706',
                       }}
                     >
                       {sub.badge}

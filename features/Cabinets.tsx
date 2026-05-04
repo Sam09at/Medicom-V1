@@ -1,28 +1,65 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   IconSearch,
   IconPlus,
-  IconSettings,
-  IconDatabase,
-  IconActivity,
-  IconLock,
-  IconToggleRight,
-  IconToggleLeft,
-  IconX,
-  IconCheck,
-  IconDownload,
   IconUsers,
-  IconFileText,
+  IconCheck,
+  IconX,
+  IconSettings,
+  IconAlertTriangle,
+  IconZap,
+  IconTrendingUp,
+  IconDownload,
+  IconChevronRight,
+  IconChevronDown,
+  IconGlobe,
   IconShield,
   IconMail,
-  IconAlertTriangle,
-  IconTrendingUp,
-  IconZap,
+  IconPhone,
+  IconDatabase,
+  IconActivity,
+  IconFileText,
+  IconLock,
+  IconCopy,
+  IconExternalLink,
+  IconEdit,
+  IconMapPin,
+  IconToggleRight,
+  IconToggleLeft,
+  IconUserPlus,
+  IconCreditCard,
+  IconDollarSign,
+  IconCalendar,
+  IconRefresh,
 } from '../components/Icons';
-import { MOCK_TENANTS_DETAILED, MOCK_AUDIT_LOGS } from '../constants';
-import { TenantDetailed, ModuleConfiguration } from '../types';
-import { SlideOver } from '../components/SlideOver';
+import { TenantDetailed, ModuleConfiguration, ClinicSpecialty } from '../types';
+import { MOCK_TENANTS_DETAILED } from '../constants';
+import {
+  SPECIALTY_LABELS,
+  SPECIALTY_MODULE_DEFAULTS,
+  PLAN_CONFIG,
+  makeSlug,
+} from '../lib/constants/specialtyMatrix';
 import { getAllTenants, suspendTenant, activateTenant } from '../lib/api/saas/tenants';
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type FilterTab = 'all' | 'active' | 'trial' | 'suspended';
+
+type DetailTab = 'profil' | 'domaines' | 'plan' | 'page-web' | 'equipe' | 'usage' | 'billing';
+
+type WizardStep = 0 | 1 | 2 | 3;
+
+interface TeamMember {
+  id: string;
+  name: string;
+  email: string;
+  role: 'admin' | 'docteur' | 'assistant';
+  status: 'active' | 'invited' | 'inactive';
+  avatarColor: string;
+}
+
+// ─── Constants ────────────────────────────────────────────────────────────────
 
 const MODULE_LABELS: Record<keyof ModuleConfiguration, string> = {
   dashboard: 'Tableau de bord',
@@ -31,884 +68,1616 @@ const MODULE_LABELS: Record<keyof ModuleConfiguration, string> = {
   treatments: 'Schémas & Traitements',
   inventory: 'Gestion de Stock',
   labOrders: 'Suivi Laboratoires',
-  documents: 'Gestion Documentaire (GED)',
+  documents: 'Gestion Documentaire',
   records: 'Archives Médicales',
   billing: 'Facturation & Caisse',
   reports: 'Analyses & Statistiques',
-  support: 'Module Support Client',
+  support: 'Module Support',
+  landingPageBuilder: 'Page Web Publique',
 };
 
-// Churn risk is stable per row (not re-randomized per render)
-const CHURN_RISK_MAP: Record<string, 'Low' | 'High'> = {};
+const AVATAR_COLORS = [
+  'bg-blue-500', 'bg-purple-500', 'bg-emerald-500', 'bg-amber-500',
+  'bg-rose-500', 'bg-cyan-500', 'bg-indigo-500', 'bg-teal-500',
+];
 
-const getChurnRisk = (id: string): 'Low' | 'High' => {
-  if (!CHURN_RISK_MAP[id]) {
-    CHURN_RISK_MAP[id] = Math.random() > 0.8 ? 'High' : 'Low';
-  }
-  return CHURN_RISK_MAP[id];
+const getAvatarColor = (id: string) =>
+  AVATAR_COLORS[id.charCodeAt(id.length - 1) % AVATAR_COLORS.length];
+
+const getInitials = (name: string) =>
+  name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
+
+const MOCK_TEAM: Record<string, TeamMember[]> = {
+  'TEN-001': [
+    { id: 'u1', name: 'Dr. Amina Belhaj', email: 'amina@cabinet.ma', role: 'admin', status: 'active', avatarColor: 'bg-blue-500' },
+    { id: 'u2', name: 'Youssef Alami', email: 'youssef@cabinet.ma', role: 'assistant', status: 'active', avatarColor: 'bg-emerald-500' },
+  ],
+  'TEN-002': [
+    { id: 'u3', name: 'Dr. Tazi Khalil', email: 'tazi@sourire.ma', role: 'docteur', status: 'active', avatarColor: 'bg-purple-500' },
+    { id: 'u4', name: 'Sara Idrissi', email: 'sara@sourire.ma', role: 'assistant', status: 'invited', avatarColor: 'bg-rose-500' },
+  ],
+  'TEN-003': [
+    { id: 'u5', name: 'Mme. Bennani', email: 'admin@orthoplus.ma', role: 'admin', status: 'active', avatarColor: 'bg-amber-500' },
+  ],
 };
 
-export const Cabinets = () => {
-  const [tenants, setTenants] = useState<TenantDetailed[]>(MOCK_TENANTS_DETAILED);
-  const [selectedTenant, setSelectedTenant] = useState<TenantDetailed | null>(null);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [isProvisioning, setIsProvisioning] = useState(false);
-  const [filter, setFilter] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeDetailTab, setActiveDetailTab] = useState('overview');
-  const [loading, setLoading] = useState(true);
+const PLAN_BADGE: Record<string, string> = {
+  Starter: 'bg-slate-100 text-slate-700',
+  starter: 'bg-slate-100 text-slate-700',
+  Pro: 'bg-blue-100 text-blue-700',
+  pro: 'bg-blue-100 text-blue-700',
+  Premium: 'bg-purple-100 text-purple-700',
+  premium: 'bg-purple-100 text-purple-700',
+  Enterprise: 'bg-emerald-100 text-emerald-700',
+  enterprise: 'bg-emerald-100 text-emerald-700',
+};
 
-  const [newTenant, setNewTenant] = useState({
-    name: '',
-    email: '',
-    plan: 'Pro',
-    region: 'Casablanca',
-  });
+// ─── Sub-components ───────────────────────────────────────────────────────────
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const data = await getAllTenants();
-        if (data.length > 0) setTenants(data);
-      } catch (err) {
-        console.warn('[Cabinets] Using fallback mock data:', err);
-      } finally {
-        setLoading(false);
-      }
+function StatusDot({ status }: { status: TenantDetailed['status'] }) {
+  if (status === 'Active') return <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />;
+  if (status === 'Suspended') return <span className="inline-block w-2 h-2 rounded-full bg-red-500 flex-shrink-0" />;
+  return <span className="inline-block w-2 h-2 rounded-full bg-amber-400 flex-shrink-0" />;
+}
+
+function PlanBadge({ plan }: { plan: string }) {
+  return (
+    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-md ${PLAN_BADGE[plan] ?? 'bg-slate-100 text-slate-600'}`}>
+      {plan}
+    </span>
+  );
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3">
+      {children}
+    </p>
+  );
+}
+
+function CopyButton({ value }: { value: string }) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(value).catch(() => {});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+  return (
+    <button
+      onClick={handleCopy}
+      className="p-1 rounded hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+      title="Copier"
+    >
+      {copied ? <IconCheck className="w-3.5 h-3.5 text-emerald-500" /> : <IconCopy className="w-3.5 h-3.5" />}
+    </button>
+  );
+}
+
+// ─── Wizard ───────────────────────────────────────────────────────────────────
+
+interface WizardData {
+  name: string;
+  specialty: ClinicSpecialty;
+  doctorName: string;
+  email: string;
+  phone: string;
+  city: string;
+  address: string;
+  plan: string;
+  customDomain: string;
+  trial: string;
+}
+
+const DEFAULT_WIZARD: WizardData = {
+  name: '',
+  specialty: 'dentistry',
+  doctorName: '',
+  email: '',
+  phone: '',
+  city: '',
+  address: '',
+  plan: 'pro',
+  customDomain: '',
+  trial: '14',
+};
+
+function OnboardingWizard({
+  onClose,
+  onCreate,
+}: {
+  onClose: () => void;
+  onCreate: (tenant: TenantDetailed) => void;
+}) {
+  const [step, setStep] = useState<WizardStep>(0);
+  const [data, setData] = useState<WizardData>(DEFAULT_WIZARD);
+  const [showDnsInstructions, setShowDnsInstructions] = useState(false);
+
+  const slug = useMemo(() => makeSlug(data.name), [data.name]);
+  const publicUrl = data.customDomain ? `www.${data.customDomain}` : `${slug}.medicom.app`;
+  const adminUrl = data.customDomain ? `admin.${data.customDomain}` : `${slug}-admin.medicom.app`;
+
+  const update = (field: keyof WizardData) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+    setData(d => ({ ...d, [field]: e.target.value }));
+
+  const handleFinish = () => {
+    const planConfig = PLAN_CONFIG[data.plan];
+    const modules = SPECIALTY_MODULE_DEFAULTS[data.specialty];
+    const newTenant: TenantDetailed = {
+      id: `TEN-${Date.now()}`,
+      name: data.name,
+      contactName: data.doctorName,
+      email: data.email,
+      phone: data.phone,
+      city: data.city,
+      address: data.address,
+      plan: (planConfig?.label ?? 'Pro') as 'Starter' | 'Pro' | 'Premium',
+      planTier: data.plan as 'starter' | 'pro' | 'premium',
+      status: 'Pending',
+      usersCount: 1,
+      storageUsed: '0 MB',
+      joinedAt: new Date().toISOString(),
+      mrr: planConfig?.price ?? 0,
+      region: data.city,
+      enabledModules: modules,
+      specialty: data.specialty,
+      slug,
+      publicDomain: data.customDomain ? publicUrl : null,
+      adminDomain: data.customDomain ? adminUrl : null,
+      onboardingStatus: 'pending',
+      trialEndsAt: data.trial !== '0' ? new Date(Date.now() + parseInt(data.trial) * 86400000).toISOString() : null,
+      billingEmail: data.email,
     };
-    load();
-  }, []);
-
-  const filteredTenants = tenants.filter((t) => {
-    const matchesSearch =
-      t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.email.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesFilter = filter === 'All' || t.status === filter;
-    return matchesSearch && matchesFilter;
-  });
-
-  const toggleModule = (moduleKey: keyof ModuleConfiguration) => {
-    if (!selectedTenant) return;
-    setSelectedTenant({
-      ...selectedTenant,
-      enabledModules: {
-        ...selectedTenant.enabledModules,
-        [moduleKey]: !selectedTenant.enabledModules[moduleKey],
-      },
-    });
+    onCreate(newTenant);
+    onClose();
   };
 
-  const handleSuspendToggle = async (tenant: TenantDetailed) => {
-    try {
-      if (tenant.status === 'Active') {
-        await suspendTenant(tenant.id);
-        setTenants((prev) =>
-          prev.map((t) => (t.id === tenant.id ? { ...t, status: 'Suspended' as const } : t))
-        );
-        if (selectedTenant?.id === tenant.id) setSelectedTenant({ ...tenant, status: 'Suspended' });
-      } else {
-        await activateTenant(tenant.id);
-        setTenants((prev) =>
-          prev.map((t) => (t.id === tenant.id ? { ...t, status: 'Active' as const } : t))
-        );
-        if (selectedTenant?.id === tenant.id) setSelectedTenant({ ...tenant, status: 'Active' });
-      }
-    } catch (err) {
-      console.error('[Cabinets] Suspend/Activate failed:', err);
-    }
-  };
+  const DENTAL_SPECIALTIES: ClinicSpecialty[] = ['dentistry','orthodontics','pediatric_dentistry','oral_surgery','periodontology','endodontics'];
+  const MEDICAL_SPECIALTIES: ClinicSpecialty[] = ['general_medicine','cardiology','dermatology','psychology','pediatrics','gynecology','ophthalmology','orthopedics','ent'];
 
-  const handleBulkAction = async (action: 'suspend' | 'activate' | 'export') => {
-    if (selectedIds.size === 0) return;
-    if (action === 'export') {
-      const csv = ['ID,Name,Email,Status,MRR,Plan']
-        .concat(
-          Array.from(selectedIds).map((id) => {
-            const t = tenants.find((x) => x.id === id);
-            return t ? `${t.id},${t.name},${t.email},${t.status},${t.mrr},${t.plan}` : '';
-          })
-        )
-        .join('\n');
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `tenants_export_${new Date().toISOString()}.csv`;
-      a.click();
-      return;
-    }
-    try {
-      const ids = Array.from(selectedIds);
-      for (const id of ids) {
-        if (action === 'suspend') await suspendTenant(id);
-        if (action === 'activate') await activateTenant(id);
-      }
-      setTenants((prev) =>
-        prev.map((t) =>
-          selectedIds.has(t.id) ? { ...t, status: action === 'suspend' ? 'Suspended' : 'Active' } : t
-        )
-      );
-      setSelectedIds(new Set());
-    } catch (err) {
-      console.error('[Cabinets] Bulk action failed:', err);
-    }
-  };
-
-  const toggleSelection = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    const newSet = new Set(selectedIds);
-    if (newSet.has(id)) newSet.delete(id);
-    else newSet.add(id);
-    setSelectedIds(newSet);
-  };
-
-  const toggleAll = () => {
-    if (selectedIds.size === filteredTenants.length) {
-      setSelectedIds(new Set());
-    } else {
-      setSelectedIds(new Set(filteredTenants.map((t) => t.id)));
-    }
-  };
-
-  const handleCreateTenant = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert(`Provisioning started for ${newTenant.name}.`);
-    setIsProvisioning(false);
-  };
-
-  if (loading)
-    return (
-      <div className="p-8 text-center text-slate-500 text-[13px]">
-        Chargement des tenants...
-      </div>
-    );
-
-  // Detail tabs configuration
-  const TABS = [
-    { id: 'overview', label: 'Overview' },
-    { id: 'billing', label: 'Billing' },
-    { id: 'usage', label: 'Usage' },
-    { id: 'modules', label: 'Modules' },
-    { id: 'users', label: 'Users' },
-    { id: 'logs', label: 'Logs' },
-    { id: 'actions', label: 'Actions' },
-  ];
+  const canNext = step === 0
+    ? !!(data.name && data.doctorName && data.email)
+    : step === 1 || step === 2
+      ? true
+      : false;
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-300">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-[22px] font-semibold text-slate-900 tracking-tight">
-            Gestion des Tenants
-          </h1>
-          <p className="text-[13px] text-slate-500 mt-0.5">
-            {tenants.length} instances cliniques · {tenants.filter((t) => t.status === 'Active').length} actives
-          </p>
-        </div>
-        <button onClick={() => setIsProvisioning(true)} className="sa-btn">
-          <IconPlus className="w-4 h-4" /> Provisionner un cabinet
-        </button>
-      </div>
-
-      {/* KPI strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        {[
-          { label: 'Tenants Actifs', value: tenants.filter((t) => t.status === 'Active').length, icon: IconZap, badge: null },
-          { label: 'MRR Total', value: tenants.reduce((s, t) => s + t.mrr, 0).toLocaleString() + ' MAD', icon: IconTrendingUp, badge: '+8%' },
-          { label: 'Utilisateurs', value: tenants.reduce((s, t) => s + t.usersCount, 0), icon: IconUsers, badge: null },
-          { label: 'Risque Élevé', value: Object.values(CHURN_RISK_MAP).filter((v) => v === 'High').length, icon: IconAlertTriangle, danger: true },
-        ].map(({ label, value, icon: Icon, badge, danger }: any) => (
-          <div key={label} className="card p-5 flex flex-col justify-between group">
-            <div className="flex items-start justify-between mb-3">
-              <div
-                className={`w-9 h-9 rounded-[12px] border flex items-center justify-center transition-colors duration-300 ${danger
-                    ? 'bg-rose-50 border-rose-100/60 text-rose-500 group-hover:bg-rose-100/60'
-                    : 'bg-slate-50 border-slate-100 text-slate-500 group-hover:bg-slate-100'
-                  }`}
-              >
-                <Icon className="w-4 h-4" />
-              </div>
-              {badge && (
-                <span className="badge badge-green gap-1 font-semibold rounded-[30px] px-2 py-0.5 text-[10px]">
-                  {badge}
-                </span>
-              )}
-            </div>
-            <div>
-              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">
-                {label}
-              </div>
-              <div className={`text-[22px] font-semibold tracking-tight leading-none ${danger ? 'text-rose-600' : 'text-slate-900'}`}>
-                {value}
-              </div>
-            </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="bg-white rounded-[20px] shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
+        {/* Header */}
+        <div className="px-6 pt-6 pb-4 border-b border-slate-100">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-slate-900">Nouveau Cabinet</h2>
+            <button onClick={onClose} className="p-1 rounded-lg hover:bg-slate-100 text-slate-400">
+              <IconX className="w-5 h-5" />
+            </button>
           </div>
-        ))}
-      </div>
-
-      {/* Tenant Table */}
-      <div className="card overflow-hidden">
-        {/* Table toolbar */}
-        <div className="px-6 py-3.5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center bg-[#FAFAFA] gap-3">
+          {/* Step progress */}
           <div className="flex gap-1.5">
-            {['All', 'Active', 'Suspended'].map((s) => (
-              <button
-                key={s}
-                onClick={() => setFilter(s)}
-                className={`px-3 py-1.5 text-[11px] font-semibold rounded-[30px] border transition-all duration-200 ${filter === s
-                    ? 'bg-white text-slate-900 border-slate-200/60 shadow-sm'
-                    : 'text-slate-400 border-transparent hover:bg-slate-100 hover:text-slate-700'
-                  }`}
-              >
-                {s === 'All' ? 'Tous' : s}
-              </button>
+            {['Identification', 'Domaines', 'Plan & Accès', 'Confirmation'].map((label, i) => (
+              <div key={i} className="flex-1">
+                <div className={`h-1 rounded-full transition-colors ${i <= step ? 'bg-blue-500' : 'bg-slate-200'}`} />
+                <p className={`text-[10px] mt-1 text-center truncate ${i === step ? 'text-blue-600 font-semibold' : 'text-slate-400'}`}>
+                  {label}
+                </p>
+              </div>
             ))}
           </div>
+        </div>
 
-          {selectedIds.size > 0 ? (
-            <div className="flex items-center gap-2 bg-blue-50/80 px-3 py-1.5 rounded-[20px] border border-blue-100/60 animate-in fade-in">
-              <span className="text-[11px] font-semibold text-[#136cfb]">
-                {selectedIds.size} sélectionné(s)
-              </span>
-              <div className="h-4 w-px bg-blue-200 mx-1" />
-              <button onClick={() => handleBulkAction('activate')} className="text-[11px] font-semibold text-emerald-600 hover:text-emerald-700 px-2">
-                Activer
-              </button>
-              <button onClick={() => handleBulkAction('suspend')} className="text-[11px] font-semibold text-rose-600 hover:text-rose-700 px-2">
-                Suspendre
-              </button>
-              <button onClick={() => handleBulkAction('export')} className="text-[11px] font-semibold text-[#136cfb] hover:text-blue-700 px-2 flex items-center gap-1">
-                <IconDownload className="w-3 h-3" /> CSV
-              </button>
-            </div>
-          ) : (
-            <div className="relative w-full sm:w-60">
-              <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Rechercher un cabinet..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="input pl-8 py-1.5 text-[12px]"
-              />
+        {/* Body */}
+        <div className="px-6 py-5 max-h-[65vh] overflow-y-auto space-y-4">
+
+          {/* ── Step 0: Identification ── */}
+          {step === 0 && (
+            <>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Nom du cabinet *</label>
+                <input
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Cabinet Dentaire Amina"
+                  value={data.name}
+                  onChange={update('name')}
+                />
+                {slug && (
+                  <p className="text-xs text-slate-400 mt-1">
+                    URL: <span className="font-mono text-blue-600">{slug}.medicom.app</span>
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Spécialité *</label>
+                <select
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  value={data.specialty}
+                  onChange={e => setData(d => ({ ...d, specialty: e.target.value as ClinicSpecialty }))}
+                >
+                  <optgroup label="Dentaires">
+                    {DENTAL_SPECIALTIES.map(s => (
+                      <option key={s} value={s}>{SPECIALTY_LABELS[s]}</option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="Médicales">
+                    {MEDICAL_SPECIALTIES.map(s => (
+                      <option key={s} value={s}>{SPECIALTY_LABELS[s]}</option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="Autres">
+                    <option value="other">{SPECIALTY_LABELS.other}</option>
+                  </optgroup>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Médecin responsable *</label>
+                <input
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Dr. Mohamed Lebbar"
+                  value={data.doctorName}
+                  onChange={update('doctorName')}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Email *</label>
+                <input
+                  type="email"
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="dr.lebbar@cabinet.ma"
+                  value={data.email}
+                  onChange={update('email')}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">Téléphone</label>
+                  <input
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="+212 6xx xx xx xx"
+                    value={data.phone}
+                    onChange={update('phone')}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">Ville</label>
+                  <input
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Casablanca"
+                    value={data.city}
+                    onChange={update('city')}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* ── Step 1: Domaines ── */}
+          {step === 1 && (
+            <>
+              <div className="bg-slate-50 rounded-xl p-4 space-y-3">
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">URLs générées</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] text-slate-400">Page publique</p>
+                    <p className="font-mono text-sm text-blue-600">{slug || 'mon-cabinet'}.medicom.app</p>
+                  </div>
+                  <span className="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">Actif dès activation</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] text-slate-400">Interface admin</p>
+                    <p className="font-mono text-sm text-slate-700">{slug || 'mon-cabinet'}-admin.medicom.app</p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <button
+                  className="flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700"
+                  onClick={() => setShowDnsInstructions(!showDnsInstructions)}
+                >
+                  <IconChevronDown className={`w-4 h-4 transition-transform ${showDnsInstructions ? 'rotate-180' : ''}`} />
+                  Ajouter un domaine personnalisé
+                </button>
+                {showDnsInstructions && (
+                  <div className="mt-3 space-y-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1">Votre domaine public</label>
+                      <input
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                        placeholder="www.drlebbar.ma"
+                        value={data.customDomain}
+                        onChange={update('customDomain')}
+                      />
+                      {data.customDomain && (
+                        <p className="text-xs text-slate-400 mt-1">
+                          Admin: <span className="font-mono">admin.{data.customDomain}</span>
+                        </p>
+                      )}
+                    </div>
+                    <div className="bg-slate-900 rounded-xl p-3 text-xs font-mono space-y-1.5">
+                      <p className="text-slate-400"># Enregistrements DNS requis</p>
+                      <p><span className="text-emerald-400">A</span> <span className="text-slate-300">@</span> <span className="text-yellow-300">94.23.156.12</span></p>
+                      <p><span className="text-emerald-400">CNAME</span> <span className="text-slate-300">www</span> <span className="text-yellow-300">proxy.medicom.app</span></p>
+                      <p><span className="text-emerald-400">CNAME</span> <span className="text-slate-300">admin</span> <span className="text-yellow-300">proxy.medicom.app</span></p>
+                    </div>
+                    <p className="text-xs text-amber-600 flex items-center gap-1">
+                      <IconAlertTriangle className="w-3.5 h-3.5" />
+                      La vérification DNS peut prendre 24–48h
+                    </p>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          {/* ── Step 2: Plan & Accès ── */}
+          {step === 2 && (
+            <>
+              <div className="grid grid-cols-2 gap-2">
+                {Object.entries(PLAN_CONFIG).map(([key, plan]) => (
+                  <button
+                    key={key}
+                    onClick={() => setData(d => ({ ...d, plan: key }))}
+                    className={`relative rounded-xl border-2 p-3 text-left transition-all ${
+                      data.plan === key
+                        ? 'border-blue-500 bg-blue-50'
+                        : 'border-slate-200 hover:border-slate-300'
+                    }`}
+                  >
+                    {plan.popular && (
+                      <span className="absolute top-2 right-2 text-[9px] bg-blue-500 text-white px-1.5 py-0.5 rounded-full">
+                        Populaire
+                      </span>
+                    )}
+                    <p className={`text-xs font-bold ${plan.color}`}>{plan.label}</p>
+                    <p className="text-sm font-bold text-slate-900 mt-1">
+                      {plan.price > 0 ? `${plan.price} MAD/mois` : 'Sur devis'}
+                    </p>
+                    <p className="text-[10px] text-slate-500 mt-1">
+                      {plan.maxUsers} utilisateurs · {plan.storage}
+                    </p>
+                  </button>
+                ))}
+              </div>
+
+              {/* Specialty modules preview */}
+              <div className="bg-slate-50 rounded-xl p-3">
+                <p className="text-xs font-semibold text-slate-500 mb-2">
+                  Modules inclus · {SPECIALTY_LABELS[data.specialty]}
+                </p>
+                <div className="grid grid-cols-2 gap-1">
+                  {(Object.entries(SPECIALTY_MODULE_DEFAULTS[data.specialty]) as [keyof ModuleConfiguration, boolean][]).map(([mod, enabled]) => (
+                    <div key={mod} className={`flex items-center gap-1.5 text-[11px] ${enabled ? 'text-slate-700' : 'text-slate-300'}`}>
+                      {enabled
+                        ? <IconCheck className="w-3 h-3 text-emerald-500 flex-shrink-0" />
+                        : <IconX className="w-3 h-3 flex-shrink-0" />
+                      }
+                      {MODULE_LABELS[mod]}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Trial */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Période d'essai</label>
+                <select
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  value={data.trial}
+                  onChange={update('trial')}
+                >
+                  <option value="14">14 jours</option>
+                  <option value="30">30 jours</option>
+                  <option value="0">Aucun</option>
+                </select>
+              </div>
+            </>
+          )}
+
+          {/* ── Step 3: Confirmation ── */}
+          {step === 3 && (
+            <div className="space-y-4">
+              <div className="bg-slate-50 rounded-xl p-4 space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Cabinet</span>
+                  <span className="font-semibold text-slate-900">{data.name || '—'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Spécialité</span>
+                  <span className="font-semibold">{SPECIALTY_LABELS[data.specialty]}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Plan</span>
+                  <span className="font-semibold">{PLAN_CONFIG[data.plan]?.label}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">URL publique</span>
+                  <span className="font-mono text-blue-600 text-xs">{publicUrl}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Modules actifs</span>
+                  <span className="font-semibold">
+                    {Object.values(SPECIALTY_MODULE_DEFAULTS[data.specialty]).filter(Boolean).length} / 12
+                  </span>
+                </div>
+                {data.trial !== '0' && (
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Essai</span>
+                    <span className="font-semibold">{data.trial} jours</span>
+                  </div>
+                )}
+              </div>
+              <p className="text-xs text-slate-500 text-center">
+                Un email sera envoyé à{' '}
+                <span className="font-semibold text-slate-700">{data.email || '—'}</span>
+                {' '}avec les accès et le mot de passe temporaire.
+              </p>
             </div>
           )}
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-100">
-            <thead>
-              <tr className="bg-[#FAFAFA]">
-                <th scope="col" className="px-6 py-3.5 text-left w-10">
-                  <input
-                    type="checkbox"
-                    onChange={toggleAll}
-                    checked={selectedIds.size === filteredTenants.length && filteredTenants.length > 0}
-                    className="w-4 h-4 rounded border-slate-300 text-[#136cfb]"
-                  />
-                </th>
-                {['Tenant', 'Plan', 'Statut', 'Admin', 'Dernière activité', 'MRR', 'Churn Risk', ''].map((h) => (
-                  <th
-                    key={h}
-                    scope="col"
-                    className="px-6 py-3.5 text-left text-[11px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap"
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-slate-100">
-              {filteredTenants.map((tenant) => (
-                <tr
-                  key={tenant.id}
-                  onClick={() => { setSelectedTenant(tenant); setActiveDetailTab('overview'); }}
-                  className={`hover:bg-slate-50/60 transition-colors cursor-pointer ${selectedIds.has(tenant.id) ? 'bg-blue-50/30' : ''
-                    }`}
-                >
-                  <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.has(tenant.id)}
-                      onChange={(e) => toggleSelection(tenant.id, e as any)}
-                      className="w-4 h-4 rounded border-slate-200 text-[#136cfb]"
-                    />
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-8 w-8 flex-shrink-0 bg-blue-50 text-[#136cfb] rounded-[8px] flex items-center justify-center font-semibold text-[11px] border border-blue-100/60">
-                        {tenant.name.substring(0, 2).toUpperCase()}
-                      </div>
-                      <div>
-                        <div className="text-[13px] font-semibold text-slate-900 leading-snug">
-                          {tenant.name}
-                        </div>
-                        <div className="text-[11px] text-slate-400 font-mono">
-                          {tenant.id.slice(0, 12)}…
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`badge ${tenant.plan === 'Premium' ? 'badge-blue' : 'badge-gray'} rounded-[30px] px-2.5 py-0.5`}>
-                      {tenant.plan}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-[30px] border ${tenant.status === 'Active'
-                          ? 'bg-emerald-50/80 text-emerald-700 border-emerald-100/60'
-                          : 'bg-rose-50/80 text-rose-700 border-rose-100/60'
-                        }`}
-                    >
-                      <span className={`w-1.5 h-1.5 rounded-full ${tenant.status === 'Active' ? 'bg-emerald-500' : 'bg-rose-500'}`} />
-                      {tenant.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-[12px] font-medium text-slate-600">
-                    {tenant.contactName}
-                  </td>
-                  <td className="px-6 py-4 text-[12px] font-medium text-slate-400">
-                    Aujourd'hui, 14:30
-                  </td>
-                  <td className="px-6 py-4 text-[13px] font-semibold text-slate-900">
-                    {tenant.mrr.toLocaleString()} <span className="text-[11px] font-medium text-slate-400">MAD</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    {(() => {
-                      const risk = getChurnRisk(tenant.id);
-                      return (
-                        <span className={`badge rounded-[30px] px-2.5 py-0.5 ${risk === 'High' ? 'badge-orange' : 'badge-green'}`}>
-                          {risk}
-                        </span>
-                      );
-                    })()}
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setSelectedTenant(tenant); setActiveDetailTab('overview'); }}
-                      className="w-7 h-7 rounded-full flex items-center justify-center text-slate-300 hover:text-[#136cfb] hover:bg-blue-50 transition-all"
-                    >
-                      <IconSettings className="w-4 h-4" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {filteredTenants.length === 0 && (
-                <tr>
-                  <td colSpan={9} className="px-6 py-12 text-center text-[13px] text-slate-400">
-                    Aucun cabinet trouvé pour ce filtre.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+        {/* Footer */}
+        <div className="px-6 py-4 border-t border-slate-100 flex justify-between items-center">
+          <button
+            onClick={() => step > 0 ? setStep((step - 1) as WizardStep) : onClose()}
+            className="px-4 py-2 text-sm text-slate-600 hover:text-slate-900 transition-colors"
+          >
+            {step === 0 ? 'Annuler' : 'Retour'}
+          </button>
+          {step < 3 ? (
+            <button
+              onClick={() => setStep((step + 1) as WizardStep)}
+              disabled={step === 0 && !canNext}
+              className="sa-btn disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Suivant
+            </button>
+          ) : (
+            <button
+              onClick={handleFinish}
+              className="sa-btn"
+            >
+              Activer et envoyer l'invitation
+            </button>
+          )}
         </div>
       </div>
+    </div>
+  );
+}
 
-      {/* ── Detail SlideOver ── */}
-      <SlideOver
-        isOpen={!!selectedTenant}
-        onClose={() => setSelectedTenant(null)}
-        title={selectedTenant?.name || ''}
-        subtitle={`Tenant · ${selectedTenant?.id}`}
-        width="xl"
-      >
-        {selectedTenant && (
-          <div className="flex flex-col h-full">
+// ─── Detail Tabs ──────────────────────────────────────────────────────────────
 
-            {/* Status header strip */}
-            <div className="flex items-center gap-3 px-6 py-3 border-b border-slate-100 bg-[#FAFAFA]">
-              <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-[30px] border ${selectedTenant.status === 'Active'
-                  ? 'bg-emerald-50 text-emerald-700 border-emerald-100/60'
-                  : 'bg-rose-50 text-rose-700 border-rose-100/60'
-                }`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${selectedTenant.status === 'Active' ? 'bg-emerald-500' : 'bg-rose-500'}`} />
-                {selectedTenant.status}
-              </span>
-              <span className="badge badge-gray rounded-[30px] px-2.5 py-0.5">{selectedTenant.plan}</span>
-              <span className="text-[11px] text-slate-400 font-medium ml-auto">{selectedTenant.region}</span>
-            </div>
+// Tab: Profil
+function TabProfil({ tenant, onUpdate }: { tenant: TenantDetailed; onUpdate: (t: TenantDetailed) => void }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(tenant);
 
-            {/* Tabs */}
-            <div className="flex bg-white border-b border-slate-100 px-4 overflow-x-auto scrollbar-hide">
-              {TABS.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveDetailTab(tab.id)}
-                  className={`px-4 py-3 text-[12px] font-semibold transition-all whitespace-nowrap border-b-2 -mb-px ${activeDetailTab === tab.id
-                      ? 'border-slate-900 text-slate-900'
-                      : 'border-transparent text-slate-400 hover:text-slate-700'
-                    }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
+  const handleSave = () => {
+    onUpdate(draft);
+    setEditing(false);
+  };
 
-            {/* Tab content */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-5">
-
-              {/* ── OVERVIEW ── */}
-              {activeDetailTab === 'overview' && (
-                <div className="space-y-5 animate-in fade-in duration-200">
-
-                  {/* KPI row */}
-                  <div className="grid grid-cols-3 gap-4">
-                    {[
-                      { label: 'MRR', value: `${selectedTenant.mrr.toLocaleString()} MAD`, sub: 'Revenu mensuel' },
-                      { label: 'Utilisateurs', value: selectedTenant.usersCount, sub: 'Comptes actifs' },
-                      { label: 'Stockage', value: selectedTenant.storageUsed, sub: 'Données hébergées' },
-                    ].map(({ label, value, sub }) => (
-                      <div key={label} className="card p-4 flex flex-col justify-between">
-                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
-                          {label}
-                        </div>
-                        <div className="text-[20px] font-semibold text-slate-900 tracking-tight leading-none">
-                          {value}
-                        </div>
-                        <div className="text-[10px] text-slate-400 mt-1.5">{sub}</div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Info card */}
-                  <div className="card p-5">
-                    <h3 className="text-[12px] font-bold text-slate-400 uppercase tracking-widest mb-4">
-                      Informations du compte
-                    </h3>
-                    <dl className="grid grid-cols-2 gap-x-8 gap-y-4">
-                      {[
-                        { label: 'Contact', value: selectedTenant.contactName },
-                        { label: 'Email', value: selectedTenant.email, mono: false, link: true },
-                        { label: 'Région', value: selectedTenant.region },
-                        { label: 'Inscrit le', value: selectedTenant.joinedAt },
-                        { label: 'Tenant ID', value: selectedTenant.id, mono: true },
-                        { label: 'Plan', value: selectedTenant.plan },
-                      ].map(({ label, value, mono, link }) => (
-                        <div key={label}>
-                          <dt className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">
-                            {label}
-                          </dt>
-                          <dd className={`text-[13px] font-medium text-slate-900 mt-0.5 ${mono ? 'font-mono text-[11px] text-slate-500' : ''} ${link ? 'text-[#136cfb]' : ''}`}>
-                            {value}
-                          </dd>
-                        </div>
-                      ))}
-                    </dl>
-                  </div>
-
-                  {/* Usage mini preview */}
-                  <div className="card p-5">
-                    <h3 className="text-[12px] font-bold text-slate-400 uppercase tracking-widest mb-4">
-                      Activité récente
-                    </h3>
-                    <div className="space-y-3">
-                      {[
-                        { label: 'Rendez-vous créés', value: 142, max: 200 },
-                        { label: 'Patients enregistrés', value: 89, max: 150 },
-                        { label: 'Stockage utilisé', value: 60, max: 100, suffix: '%' },
-                      ].map(({ label, value, max, suffix }) => (
-                        <div key={label}>
-                          <div className="flex justify-between items-center mb-1">
-                            <span className="text-[12px] font-medium text-slate-700">{label}</span>
-                            <span className="text-[12px] font-semibold text-slate-900">
-                              {value}{suffix || `/${max}`}
-                            </span>
-                          </div>
-                          <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-[#136cfb] rounded-full transition-all duration-500"
-                              style={{ width: `${(value / max) * 100}%` }}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* ── BILLING ── */}
-              {activeDetailTab === 'billing' && (
-                <div className="space-y-4 animate-in fade-in duration-200">
-                  <div className="card p-5">
-                    <h3 className="text-[12px] font-bold text-slate-400 uppercase tracking-widest mb-4">
-                      Abonnement actuel
-                    </h3>
-                    <div className="flex items-center justify-between py-2">
-                      <div>
-                        <div className="text-[14px] font-semibold text-slate-900">{selectedTenant.plan} Plan</div>
-                        <div className="text-[12px] text-slate-400 mt-0.5">Facturation mensuelle · Prochaine échéance dans 12 jours</div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-[20px] font-semibold text-slate-900">{selectedTenant.mrr.toLocaleString()}</div>
-                        <div className="text-[11px] text-slate-400">MAD / mois</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="card overflow-hidden">
-                    <div className="px-5 py-3 bg-[#FAFAFA] border-b border-slate-100">
-                      <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Historique des paiements</span>
-                    </div>
-                    <div className="divide-y divide-slate-100">
-                      {[
-                        { date: '01 Fév 2026', amount: selectedTenant.mrr, status: 'Payé' },
-                        { date: '01 Jan 2026', amount: selectedTenant.mrr, status: 'Payé' },
-                        { date: '01 Déc 2025', amount: selectedTenant.mrr, status: 'Payé' },
-                      ].map((inv) => (
-                        <div key={inv.date} className="px-5 py-3.5 flex items-center justify-between">
-                          <div>
-                            <div className="text-[13px] font-medium text-slate-900">{inv.date}</div>
-                            <div className="text-[11px] text-slate-400">Facture mensuelle</div>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <span className="badge badge-green rounded-[30px] px-2.5">
-                              <IconCheck className="w-3 h-3 mr-1" />{inv.status}
-                            </span>
-                            <span className="text-[13px] font-semibold text-slate-700">
-                              {inv.amount.toLocaleString()} MAD
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* ── USAGE ── */}
-              {activeDetailTab === 'usage' && (
-                <div className="space-y-4 animate-in fade-in duration-200">
-                  <div className="card p-5">
-                    <h3 className="text-[12px] font-bold text-slate-400 uppercase tracking-widest mb-4">
-                      Consommation des ressources
-                    </h3>
-                    <div className="space-y-5">
-                      {[
-                        { label: 'Rendez-vous', used: 142, total: 200, color: 'bg-[#136cfb]' },
-                        { label: 'Patients enregistrés', used: 89, total: 150, color: 'bg-emerald-500' },
-                        { label: 'Stockage (GB)', used: 1.2, total: 5, color: 'bg-orange-400' },
-                        { label: 'Utilisateurs actifs', used: selectedTenant.usersCount, total: 10, color: 'bg-purple-500' },
-                        { label: 'Emails envoyés', used: 340, total: 1000, color: 'bg-slate-400' },
-                      ].map(({ label, used, total, color }) => (
-                        <div key={label}>
-                          <div className="flex justify-between items-center mb-1.5">
-                            <span className="text-[13px] font-medium text-slate-700">{label}</span>
-                            <span className="text-[12px] text-slate-400">
-                              <span className="font-semibold text-slate-900">{used}</span> / {total}
-                            </span>
-                          </div>
-                          <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                            <div
-                              className={`h-full ${color} rounded-full transition-all duration-500`}
-                              style={{ width: `${Math.min((Number(used) / Number(total)) * 100, 100)}%` }}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* ── MODULES ── */}
-              {activeDetailTab === 'modules' && (
-                <div className="space-y-4 animate-in fade-in duration-200">
-                  <div className="flex items-start gap-3 bg-blue-50 border border-blue-100/60 rounded-[12px] p-4">
-                    <IconLock className="w-4 h-4 text-[#136cfb] mt-0.5 shrink-0" />
-                    <div>
-                      <p className="text-[12px] font-semibold text-[#136cfb]">Contrôle granulaire des fonctionnalités</p>
-                      <p className="text-[12px] text-blue-700/70 mt-0.5">
-                        Les changements sont appliqués instantanément à l'interface du cabinet.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="card overflow-hidden divide-y divide-slate-100">
-                    {Object.keys(MODULE_LABELS).map((key) => {
-                      const moduleKey = key as keyof ModuleConfiguration;
-                      const isEnabled = selectedTenant.enabledModules[moduleKey];
-                      return (
-                        <div
-                          key={key}
-                          className="px-5 py-4 flex items-center justify-between hover:bg-slate-50/50 transition-colors"
-                        >
-                          <div>
-                            <div className="text-[13px] font-medium text-slate-900">
-                              {MODULE_LABELS[moduleKey]}
-                            </div>
-                            <div className="text-[10px] font-mono text-slate-400 mt-0.5">
-                              module.{key}
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => toggleModule(moduleKey)}
-                            className={`transition-all duration-200 ${isEnabled ? 'text-[#136cfb]' : 'text-slate-200 hover:text-slate-300'}`}
-                          >
-                            {isEnabled ? (
-                              <IconToggleRight className="w-9 h-9" />
-                            ) : (
-                              <IconToggleLeft className="w-9 h-9" />
-                            )}
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* ── USERS ── */}
-              {activeDetailTab === 'users' && (
-                <div className="space-y-4 animate-in fade-in duration-200">
-                  <div className="card overflow-hidden">
-                    <div className="px-5 py-3 bg-[#FAFAFA] border-b border-slate-100 flex items-center justify-between">
-                      <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                        {selectedTenant.usersCount} Utilisateur(s)
-                      </span>
-                    </div>
-                    <div className="divide-y divide-slate-100">
-                      {/* Admin user */}
-                      <div className="px-5 py-4 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
-                        <div className="flex items-center gap-3">
-                          <div className="h-9 w-9 bg-blue-50 text-[#136cfb] rounded-full flex items-center justify-center font-semibold text-[12px] border border-blue-100/60">
-                            {selectedTenant.contactName.substring(0, 2).toUpperCase()}
-                          </div>
-                          <div>
-                            <div className="text-[13px] font-semibold text-slate-900">
-                              {selectedTenant.contactName}
-                            </div>
-                            <div className="text-[11px] text-slate-400">{selectedTenant.email}</div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="badge badge-blue rounded-[30px] px-2.5">Admin</span>
-                          <span className="text-[11px] text-slate-400">il y a 2h</span>
-                        </div>
-                      </div>
-                      {/* Placeholder rows */}
-                      {Array.from({ length: Math.max(0, selectedTenant.usersCount - 1) }).map((_, i) => (
-                        <div key={i} className="px-5 py-4 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
-                          <div className="flex items-center gap-3">
-                            <div className="h-9 w-9 bg-slate-100 text-slate-500 rounded-full flex items-center justify-center font-semibold text-[12px]">
-                              U{i + 2}
-                            </div>
-                            <div>
-                              <div className="text-[13px] font-medium text-slate-700">Utilisateur {i + 2}</div>
-                              <div className="text-[11px] text-slate-400">user{i + 2}@cabinet.ma</div>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="badge badge-gray rounded-[30px] px-2.5">Praticien</span>
-                            <span className="text-[11px] text-slate-400">il y a {(i + 1) * 3}h</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* ── LOGS ── */}
-              {activeDetailTab === 'logs' && (
-                <div className="space-y-4 animate-in fade-in duration-200">
-                  <div className="card overflow-hidden">
-                    <div className="px-5 py-3 bg-[#FAFAFA] border-b border-slate-100">
-                      <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Journal d'audit</span>
-                    </div>
-                    <div className="divide-y divide-slate-100">
-                      {MOCK_AUDIT_LOGS.map((log) => (
-                        <div key={log.id} className="px-5 py-4 flex gap-3 hover:bg-slate-50/50 transition-colors">
-                          <div className="w-7 h-7 shrink-0 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 mt-0.5">
-                            <IconActivity className="w-3.5 h-3.5" />
-                          </div>
-                          <div>
-                            <div className="text-[13px] font-medium text-slate-900">{log.action}</div>
-                            <div className="text-[11px] text-slate-400 mt-0.5">
-                              {log.timestamp} · <span className="font-mono">{log.ipAddress}</span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* ── ACTIONS ── */}
-              {activeDetailTab === 'actions' && (
-                <div className="space-y-5 animate-in fade-in duration-200">
-                  {/* Quick actions */}
-                  <div className="card overflow-hidden divide-y divide-slate-100">
-                    <div className="px-5 py-3 bg-[#FAFAFA] border-b border-slate-100">
-                      <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Actions rapides</span>
-                    </div>
-                    {[
-                      {
-                        icon: IconUsers,
-                        title: 'Impersonate Tenant',
-                        desc: 'Se connecter en tant qu\'administrateur du cabinet',
-                        color: 'text-[#136cfb]',
-                        bg: 'bg-blue-50 border-blue-100/60',
-                      },
-                      {
-                        icon: IconSettings,
-                        title: 'Changer de plan',
-                        desc: 'Mettre à niveau ou downgrader l\'abonnement',
-                        color: 'text-purple-600',
-                        bg: 'bg-purple-50 border-purple-100/60',
-                      },
-                      {
-                        icon: IconMail,
-                        title: 'Envoyer un email',
-                        desc: 'Contacter directement l\'administrateur du cabinet',
-                        color: 'text-emerald-600',
-                        bg: 'bg-emerald-50 border-emerald-100/60',
-                      },
-                      {
-                        icon: IconDownload,
-                        title: 'Exporter les données',
-                        desc: 'Exporter les données conformes (RGPD/CNDP)',
-                        color: 'text-slate-600',
-                        bg: 'bg-slate-50 border-slate-100',
-                      },
-                    ].map(({ icon: Icon, title, desc, color, bg }) => (
-                      <button
-                        key={title}
-                        className="w-full px-5 py-4 flex items-center gap-4 hover:bg-slate-50/60 transition-colors text-left group"
-                      >
-                        <div className={`w-9 h-9 rounded-[10px] border flex items-center justify-center shrink-0 ${bg} ${color}`}>
-                          <Icon className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <div className="text-[13px] font-semibold text-slate-900 group-hover:text-slate-700">
-                            {title}
-                          </div>
-                          <div className="text-[11px] text-slate-400 mt-0.5">{desc}</div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Danger zone */}
-                  <div className="border border-rose-100 rounded-[12px] overflow-hidden">
-                    <div className="px-5 py-3 bg-rose-50/60 border-b border-rose-100">
-                      <span className="text-[11px] font-bold text-rose-400 uppercase tracking-widest">Zone dangereuse</span>
-                    </div>
-                    <div className="p-5 space-y-4 bg-white">
-                      <p className="text-[12px] text-slate-500">
-                        Ces actions ont un impact direct sur la disponibilité du service. Irréversibles pour la suppression.
-                      </p>
-                      <div className="flex gap-3">
-                        <button
-                          onClick={() => handleSuspendToggle(selectedTenant)}
-                          className="sa-btn-danger flex-1"
-                        >
-                          {selectedTenant.status === 'Active' ? "Suspendre l'accès" : "Réactiver l'accès"}
-                        </button>
-                        <button
-                          onClick={() => alert('Suppression confirmée — non implémentée en prod')}
-                          className="flex-1 inline-flex items-center justify-center gap-2 text-[13px] font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-[30px] px-4 py-2.5 transition-all duration-200"
-                        >
-                          <IconX className="w-4 h-4" /> Supprimer
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </SlideOver>
-
-      {/* Provisioning Modal */}
-      {isProvisioning && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm"
-            onClick={() => setIsProvisioning(false)}
-          />
-          <div className="bg-white rounded-[20px] w-full max-w-md relative z-10 border border-slate-200/60 overflow-hidden">
-            <div className="px-6 pt-6 pb-4 border-b border-slate-100">
-              <h2 className="text-[16px] font-semibold text-slate-900 tracking-tight">
-                Provisionner un cabinet
-              </h2>
-              <p className="text-[12px] text-slate-400 mt-0.5">
-                Une instance Medicom sera créée et configurée automatiquement.
-              </p>
-            </div>
-            <form onSubmit={handleCreateTenant} className="p-6 space-y-4">
-              <div>
-                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">
-                  Nom du cabinet
-                </label>
-                <input
-                  type="text"
-                  placeholder="Cabinet Dr. Alami"
-                  className="input"
-                  value={newTenant.name}
-                  onChange={(e) => setNewTenant({ ...newTenant, name: e.target.value })}
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">
-                  Email administrateur
-                </label>
-                <input
-                  type="email"
-                  placeholder="admin@cabinet.ma"
-                  className="input"
-                  value={newTenant.email}
-                  onChange={(e) => setNewTenant({ ...newTenant, email: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">
-                    Plan
-                  </label>
-                  <select
-                    className="input appearance-none"
-                    value={newTenant.plan}
-                    onChange={(e) => setNewTenant({ ...newTenant, plan: e.target.value })}
-                  >
-                    <option>Starter</option>
-                    <option>Pro</option>
-                    <option>Premium</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">
-                    Région
-                  </label>
-                  <select
-                    className="input appearance-none"
-                    value={newTenant.region}
-                    onChange={(e) => setNewTenant({ ...newTenant, region: e.target.value })}
-                  >
-                    <option>Casablanca</option>
-                    <option>Rabat</option>
-                    <option>Marrakech</option>
-                    <option>Fès</option>
-                  </select>
-                </div>
-              </div>
-              <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
-                <button type="button" onClick={() => setIsProvisioning(false)} className="sa-btn-ghost">
-                  Annuler
-                </button>
-                <button type="submit" className="sa-btn">
-                  <IconCheck className="w-4 h-4" /> Provisionner
-                </button>
-              </div>
-            </form>
-          </div>
+  const field = (label: string, icon: React.ReactNode, value: string | null | undefined, field: keyof TenantDetailed) => (
+    <div>
+      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-1">{label}</label>
+      {editing ? (
+        <input
+          className="w-full border border-slate-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={(draft[field] as string | undefined) ?? ''}
+          onChange={e => setDraft(d => ({ ...d, [field]: e.target.value }))}
+        />
+      ) : (
+        <div className="flex items-center gap-2 text-sm text-slate-700">
+          {icon}
+          <span>{value || <span className="text-slate-400 italic">Non renseigné</span>}</span>
         </div>
       )}
     </div>
   );
-};
+
+  const specialty = tenant.specialty ?? 'dentistry';
+
+  return (
+    <div className="space-y-6">
+      {/* Header card */}
+      <div className="bg-white rounded-[20px] border border-slate-100 p-5">
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className={`w-12 h-12 rounded-2xl ${getAvatarColor(tenant.id)} flex items-center justify-center text-white font-bold text-lg flex-shrink-0`}>
+              {getInitials(tenant.name)}
+            </div>
+            <div>
+              {editing ? (
+                <input
+                  className="border border-slate-200 rounded-xl px-3 py-1 text-base font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={draft.name}
+                  onChange={e => setDraft(d => ({ ...d, name: e.target.value }))}
+                />
+              ) : (
+                <h3 className="text-base font-bold text-slate-900">{tenant.name}</h3>
+              )}
+              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium mt-1 inline-block">
+                {SPECIALTY_LABELS[specialty]}
+              </span>
+            </div>
+          </div>
+          <button
+            onClick={() => editing ? handleSave() : setEditing(true)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors ${
+              editing
+                ? 'bg-emerald-500 text-white hover:bg-emerald-600'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+          >
+            {editing ? <><IconCheck className="w-3.5 h-3.5" /> Sauvegarder</> : <><IconEdit className="w-3.5 h-3.5" /> Modifier</>}
+          </button>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          {field('Email', <IconMail className="w-4 h-4 text-slate-400" />, tenant.email, 'email')}
+          {field('Téléphone', <IconPhone className="w-4 h-4 text-slate-400" />, tenant.phone, 'phone')}
+          {field('Ville', <IconMapPin className="w-4 h-4 text-slate-400" />, tenant.city, 'city')}
+          {field('Adresse', <IconMapPin className="w-4 h-4 text-slate-400" />, tenant.address, 'address')}
+          {field('Médecin', <IconShield className="w-4 h-4 text-slate-400" />, tenant.contactName, 'contactName')}
+          {field('Email facturation', <IconMail className="w-4 h-4 text-slate-400" />, tenant.billingEmail, 'billingEmail')}
+        </div>
+
+        {editing && (
+          <div className="flex justify-end mt-4">
+            <button onClick={() => { setDraft(tenant); setEditing(false); }} className="text-sm text-slate-500 hover:text-slate-700 mr-3">
+              Annuler
+            </button>
+            <button onClick={handleSave} className="sa-btn">Sauvegarder</button>
+          </div>
+        )}
+      </div>
+
+      {/* Meta info */}
+      <div className="grid grid-cols-3 gap-3">
+        {[
+          { label: 'Rejoint le', value: new Date(tenant.joinedAt).toLocaleDateString('fr-FR') },
+          { label: 'Région', value: tenant.region || tenant.city || '—' },
+          { label: 'MRR', value: `${tenant.mrr.toLocaleString()} MAD` },
+        ].map(({ label, value }) => (
+          <div key={label} className="bg-white rounded-[20px] border border-slate-100 p-4 text-center">
+            <p className="text-[11px] text-slate-400 font-semibold uppercase tracking-widest">{label}</p>
+            <p className="text-sm font-bold text-slate-900 mt-1">{value}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Tab: Domaines
+function TabDomaines({ tenant, onUpdate }: { tenant: TenantDetailed; onUpdate: (t: TenantDetailed) => void }) {
+  const slug = tenant.slug ?? makeSlug(tenant.name);
+  const publicUrl = tenant.publicDomain ?? `${slug}.medicom.app`;
+  const adminUrl = tenant.adminDomain ?? `${slug}-admin.medicom.app`;
+  const [customInput, setCustomInput] = useState('');
+  const [showDns, setShowDns] = useState(false);
+
+  const handleApplyDomain = () => {
+    if (!customInput) return;
+    onUpdate({
+      ...tenant,
+      publicDomain: `www.${customInput}`,
+      adminDomain: `admin.${customInput}`,
+    });
+    setCustomInput('');
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-3">
+        {/* Public URL */}
+        <div className="bg-white rounded-[20px] border border-slate-100 p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 rounded-xl bg-emerald-100 flex items-center justify-center">
+              <IconGlobe className="w-4 h-4 text-emerald-600" />
+            </div>
+            <p className="text-xs font-bold text-slate-700">Page publique</p>
+          </div>
+          <p className="font-mono text-xs text-blue-600 break-all mb-3">{publicUrl}</p>
+          <div className="flex items-center gap-2">
+            <CopyButton value={`https://${publicUrl}`} />
+            <a
+              href={`https://${publicUrl}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-1 rounded hover:bg-slate-100 text-slate-400 hover:text-slate-600"
+            >
+              <IconExternalLink className="w-3.5 h-3.5" />
+            </a>
+            <span className="ml-auto text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full font-medium">
+              En ligne
+            </span>
+          </div>
+        </div>
+
+        {/* Admin URL */}
+        <div className="bg-white rounded-[20px] border border-slate-100 p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center">
+              <IconShield className="w-4 h-4 text-blue-600" />
+            </div>
+            <p className="text-xs font-bold text-slate-700">Interface admin</p>
+          </div>
+          <p className="font-mono text-xs text-slate-600 break-all mb-3">{adminUrl}</p>
+          <div className="flex items-center gap-2">
+            <CopyButton value={`https://${adminUrl}`} />
+            <span className="ml-auto text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full font-medium">
+              Sécurisé
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Custom domain */}
+      <div className="bg-white rounded-[20px] border border-slate-100 p-4">
+        <SectionLabel>Domaine personnalisé</SectionLabel>
+        <div className="flex gap-2 mb-3">
+          <input
+            className="flex-1 border border-slate-200 rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="drlebbar.ma"
+            value={customInput}
+            onChange={e => setCustomInput(e.target.value)}
+          />
+          <button onClick={handleApplyDomain} className="sa-btn" disabled={!customInput}>
+            Appliquer
+          </button>
+        </div>
+
+        <button
+          onClick={() => setShowDns(!showDns)}
+          className="flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700"
+        >
+          <IconChevronDown className={`w-4 h-4 transition-transform ${showDns ? 'rotate-180' : ''}`} />
+          Instructions DNS
+        </button>
+
+        {showDns && (
+          <div className="mt-3 space-y-2">
+            <div className="bg-slate-900 rounded-xl p-3 text-xs font-mono space-y-1.5">
+              <p className="text-slate-400"># Enregistrements DNS requis</p>
+              <p><span className="text-emerald-400">A</span><span className="text-slate-400 mx-2">@</span><span className="text-yellow-300">94.23.156.12</span></p>
+              <p><span className="text-emerald-400">CNAME</span><span className="text-slate-400 mx-2">www</span><span className="text-yellow-300">proxy.medicom.app</span></p>
+              <p><span className="text-emerald-400">CNAME</span><span className="text-slate-400 mx-2">admin</span><span className="text-yellow-300">proxy.medicom.app</span></p>
+            </div>
+            <p className="text-xs text-amber-600 flex items-center gap-1">
+              <IconAlertTriangle className="w-3.5 h-3.5" />
+              La propagation DNS peut prendre 24–48h après modification
+            </p>
+            <div className="flex items-center gap-2 mt-2">
+              <span className={`w-2 h-2 rounded-full ${tenant.publicDomain ? 'bg-emerald-500' : 'bg-amber-400'}`} />
+              <span className="text-xs text-slate-600">
+                {tenant.publicDomain ? 'Domaine personnalisé actif' : 'Aucun domaine personnalisé configuré'}
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Tab: Plan & Accès
+function TabPlan({ tenant, onUpdate }: { tenant: TenantDetailed; onUpdate: (t: TenantDetailed) => void }) {
+  const currentPlanKey = tenant.planTier ?? tenant.plan.toLowerCase();
+  const modules = tenant.enabledModules;
+
+  const handlePlanChange = (key: string) => {
+    const cfg = PLAN_CONFIG[key];
+    onUpdate({
+      ...tenant,
+      plan: (cfg?.label ?? 'Pro') as 'Starter' | 'Pro' | 'Premium',
+      planTier: key as 'starter' | 'pro' | 'premium',
+    });
+  };
+
+  const handleToggleModule = (mod: keyof ModuleConfiguration) => {
+    onUpdate({
+      ...tenant,
+      enabledModules: { ...modules, [mod]: !modules[mod] },
+    });
+  };
+
+  const specialty = tenant.specialty ?? 'dentistry';
+  const defaults = SPECIALTY_MODULE_DEFAULTS[specialty];
+
+  return (
+    <div className="space-y-4">
+      {/* Plan selector */}
+      <div className="bg-white rounded-[20px] border border-slate-100 p-4">
+        <SectionLabel>Plan tarifaire</SectionLabel>
+        <div className="grid grid-cols-2 gap-2">
+          {Object.entries(PLAN_CONFIG).map(([key, plan]) => (
+            <button
+              key={key}
+              onClick={() => handlePlanChange(key)}
+              className={`relative rounded-xl border-2 p-3 text-left transition-all ${
+                currentPlanKey === key
+                  ? 'border-blue-500 bg-blue-50'
+                  : 'border-slate-200 hover:border-slate-300'
+              }`}
+            >
+              {plan.popular && (
+                <span className="absolute top-2 right-2 text-[9px] bg-blue-500 text-white px-1.5 py-0.5 rounded-full">
+                  Populaire
+                </span>
+              )}
+              <p className={`text-xs font-bold ${plan.color}`}>{plan.label}</p>
+              <p className="text-sm font-bold text-slate-900 mt-0.5">
+                {plan.price > 0 ? `${plan.price} MAD` : 'Sur devis'}
+              </p>
+              <p className="text-[10px] text-slate-500">{plan.maxUsers} users · {plan.storage}</p>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Module toggles */}
+      <div className="bg-white rounded-[20px] border border-slate-100 p-4">
+        <SectionLabel>Modules inclus · {SPECIALTY_LABELS[specialty]}</SectionLabel>
+        <div className="space-y-2">
+          {(Object.keys(modules) as (keyof ModuleConfiguration)[]).map(mod => {
+            const enabled = modules[mod];
+            const defaultOn = defaults[mod];
+            const locked = mod === 'dashboard' || mod === 'calendar' || mod === 'patients';
+            return (
+              <div key={mod} className="flex items-center justify-between py-2 border-b border-slate-50 last:border-0">
+                <div className="flex items-center gap-2">
+                  {locked && <IconLock className="w-3 h-3 text-slate-300" />}
+                  <span className={`text-sm ${enabled ? 'text-slate-800' : 'text-slate-400'}`}>
+                    {MODULE_LABELS[mod]}
+                  </span>
+                  {!defaultOn && (
+                    <span className="text-[9px] bg-amber-100 text-amber-700 px-1 py-0.5 rounded font-medium">
+                      Non inclus spécialité
+                    </span>
+                  )}
+                </div>
+                {locked ? (
+                  <span className="text-[10px] text-slate-400">Toujours actif</span>
+                ) : (
+                  <button onClick={() => handleToggleModule(mod)} className="text-slate-400 hover:text-slate-600">
+                    {enabled
+                      ? <IconToggleRight className="w-6 h-6 text-blue-500" />
+                      : <IconToggleLeft className="w-6 h-6" />
+                    }
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Tab: Page Web
+function TabPageWeb({ tenant }: { tenant: TenantDetailed }) {
+  const slug = tenant.slug ?? makeSlug(tenant.name);
+  const [pageTitle, setPageTitle] = useState(tenant.name);
+  const [pageDesc, setPageDesc] = useState('');
+  const [accentColor, setAccentColor] = useState('#3B82F6');
+
+  return (
+    <div className="space-y-4">
+      {/* Landing page card */}
+      <div className="bg-white rounded-[20px] border border-slate-100 overflow-hidden">
+        {/* Thumbnail */}
+        <div
+          className="h-36 flex flex-col items-center justify-center"
+          style={{ background: `linear-gradient(135deg, ${accentColor}22, ${accentColor}55)` }}
+        >
+          <div
+            className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold text-lg mb-2"
+            style={{ background: accentColor }}
+          >
+            {getInitials(tenant.name)}
+          </div>
+          <p className="text-sm font-bold text-slate-800">{pageTitle || tenant.name}</p>
+          <p className="text-xs text-slate-500 mt-1 font-mono">{slug}.medicom.app</p>
+        </div>
+
+        <div className="p-4">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">
+              Publiée
+            </span>
+            <div className="flex gap-2">
+              <a
+                href={`/admin/landing-pages/${tenant.id}`}
+                className="sa-btn text-xs py-1.5"
+              >
+                <IconEdit className="w-3.5 h-3.5" />
+                Ouvrir le builder
+              </a>
+              <a
+                href={`/c/${slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
+              >
+                <IconExternalLink className="w-3.5 h-3.5" />
+                Voir la page
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick settings */}
+      <div className="bg-white rounded-[20px] border border-slate-100 p-4">
+        <SectionLabel>Paramètres rapides</SectionLabel>
+        <div className="space-y-3">
+          <div>
+            <label className="block text-xs font-semibold text-slate-600 mb-1">Titre de la page</label>
+            <input
+              className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={pageTitle}
+              onChange={e => setPageTitle(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-600 mb-1">Description</label>
+            <input
+              className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Votre cabinet de confiance à..."
+              value={pageDesc}
+              onChange={e => setPageDesc(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-600 mb-1">Couleur principale</label>
+            <div className="flex items-center gap-3">
+              <input
+                type="color"
+                className="w-10 h-10 rounded-xl border border-slate-200 cursor-pointer"
+                value={accentColor}
+                onChange={e => setAccentColor(e.target.value)}
+              />
+              <span className="font-mono text-sm text-slate-600">{accentColor}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Tab: Équipe
+function TabEquipe({ tenant }: { tenant: TenantDetailed }) {
+  const [members, setMembers] = useState<TeamMember[]>(MOCK_TEAM[tenant.id] ?? []);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newMember, setNewMember] = useState({ name: '', email: '', role: 'assistant' as TeamMember['role'] });
+
+  const ROLE_BADGE: Record<TeamMember['role'], string> = {
+    admin: 'bg-purple-100 text-purple-700',
+    docteur: 'bg-blue-100 text-blue-700',
+    assistant: 'bg-slate-100 text-slate-600',
+  };
+
+  const STATUS_LABEL: Record<TeamMember['status'], string> = {
+    active: 'Actif',
+    invited: 'Invité',
+    inactive: 'Inactif',
+  };
+
+  const handleAdd = () => {
+    if (!newMember.name || !newMember.email) return;
+    setMembers(m => [
+      ...m,
+      {
+        id: `u${Date.now()}`,
+        name: newMember.name,
+        email: newMember.email,
+        role: newMember.role,
+        status: 'invited',
+        avatarColor: AVATAR_COLORS[members.length % AVATAR_COLORS.length] ?? 'bg-slate-500',
+      },
+    ]);
+    setNewMember({ name: '', email: '', role: 'assistant' });
+    setShowAddForm(false);
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="bg-white rounded-[20px] border border-slate-100 overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+          <p className="text-xs font-bold text-slate-700">{members.length} membre{members.length !== 1 ? 's' : ''}</p>
+          <button
+            onClick={() => setShowAddForm(!showAddForm)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
+          >
+            <IconUserPlus className="w-3.5 h-3.5" />
+            Ajouter
+          </button>
+        </div>
+
+        {/* Add form */}
+        {showAddForm && (
+          <div className="px-4 py-3 bg-slate-50 border-b border-slate-100">
+            <div className="grid grid-cols-3 gap-2 mb-2">
+              <input
+                className="border border-slate-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Nom complet"
+                value={newMember.name}
+                onChange={e => setNewMember(n => ({ ...n, name: e.target.value }))}
+              />
+              <input
+                className="border border-slate-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="email@cabinet.ma"
+                value={newMember.email}
+                onChange={e => setNewMember(n => ({ ...n, email: e.target.value }))}
+              />
+              <select
+                className="border border-slate-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                value={newMember.role}
+                onChange={e => setNewMember(n => ({ ...n, role: e.target.value as TeamMember['role'] }))}
+              >
+                <option value="admin">Admin</option>
+                <option value="docteur">Docteur</option>
+                <option value="assistant">Assistant</option>
+              </select>
+            </div>
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setShowAddForm(false)} className="text-xs text-slate-500 hover:text-slate-700">Annuler</button>
+              <button onClick={handleAdd} className="sa-btn text-xs py-1.5">Inviter</button>
+            </div>
+          </div>
+        )}
+
+        <table className="w-full text-sm">
+          <tbody>
+            {members.map(m => (
+              <tr key={m.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50">
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-7 h-7 rounded-lg ${m.avatarColor} flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}>
+                      {getInitials(m.name)}
+                    </div>
+                    <span className="font-medium text-slate-900">{m.name}</span>
+                  </div>
+                </td>
+                <td className="px-4 py-3 text-slate-500 text-xs">{m.email}</td>
+                <td className="px-4 py-3">
+                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${ROLE_BADGE[m.role]}`}>
+                    {m.role}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-xs text-slate-400">{STATUS_LABEL[m.status]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// Tab: Usage
+function TabUsage({ tenant }: { tenant: TenantDetailed }) {
+  const planKey = tenant.planTier ?? tenant.plan.toLowerCase();
+  const planCfg = PLAN_CONFIG[planKey];
+  const maxUsers = planCfg?.maxUsers ?? 5;
+  const maxPatients = planCfg?.maxPatients ?? null;
+
+  const usedPatients = 187;
+  const usedAppointments = 64;
+  const storageGB = parseFloat(tenant.storageUsed?.replace(/[^0-9.]/g, '') ?? '1.2');
+  const maxStorageGB = parseInt((planCfg?.storage ?? '10 GB').replace(/[^0-9]/g, '')) || 10;
+
+  const kpis = [
+    {
+      label: 'Patients',
+      value: usedPatients,
+      max: maxPatients,
+      displayValue: usedPatients.toLocaleString(),
+      icon: <IconUsers className="w-4 h-4 text-blue-500" />,
+      iconBg: 'bg-blue-50',
+      color: 'bg-blue-500',
+    },
+    {
+      label: 'RDV ce mois',
+      value: usedAppointments,
+      max: null,
+      displayValue: usedAppointments.toLocaleString(),
+      icon: <IconCalendar className="w-4 h-4 text-purple-500" />,
+      iconBg: 'bg-purple-50',
+      color: 'bg-purple-500',
+    },
+    {
+      label: 'Stockage utilisé',
+      value: storageGB,
+      max: maxStorageGB,
+      displayValue: tenant.storageUsed ?? `${storageGB} GB`,
+      icon: <IconDatabase className="w-4 h-4 text-emerald-500" />,
+      iconBg: 'bg-emerald-50',
+      color: 'bg-emerald-500',
+    },
+    {
+      label: 'Utilisateurs actifs',
+      value: tenant.usersCount,
+      max: maxUsers,
+      displayValue: String(tenant.usersCount),
+      icon: <IconShield className="w-4 h-4 text-amber-500" />,
+      iconBg: 'bg-amber-50',
+      color: 'bg-amber-500',
+    },
+  ];
+
+  const ACTIVITY = [
+    { text: 'Connexion Dr. admin', time: 'il y a 2h', dot: 'bg-blue-400' },
+    { text: 'Nouveau patient enregistré', time: 'hier', dot: 'bg-emerald-400' },
+    { text: 'Facture #1042 générée', time: 'il y a 3j', dot: 'bg-purple-400' },
+    { text: 'Mise à jour plan → Pro', time: 'il y a 5j', dot: 'bg-amber-400' },
+  ];
+
+  return (
+    <div className="space-y-4">
+      {/* KPI grid */}
+      <div className="grid grid-cols-2 gap-3">
+        {kpis.map(kpi => {
+          const pct = kpi.max ? Math.min(100, Math.round(kpi.value / kpi.max * 100)) : null;
+          const isNearLimit = pct !== null && pct >= 80;
+          return (
+            <div key={kpi.label} className="bg-white rounded-[12px] border border-slate-100 p-5">
+              <div className="flex items-center justify-between mb-3">
+                <div className={`w-9 h-9 rounded-[10px] ${kpi.iconBg} flex items-center justify-center`}>
+                  {kpi.icon}
+                </div>
+                {isNearLimit && (
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-600">
+                    Limite proche
+                  </span>
+                )}
+              </div>
+              <p className="text-[26px] font-semibold text-slate-900 tracking-tight leading-none mb-1">
+                {kpi.displayValue}
+              </p>
+              <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
+                {kpi.label}
+              </p>
+              {pct !== null && kpi.max !== null && (
+                <div className="mt-3">
+                  <div className="bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${isNearLimit ? 'bg-amber-500' : kpi.color}`}
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                  <p className="text-[10px] text-slate-400 mt-1">{kpi.value} / {kpi.max} • {pct}%</p>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Activity feed */}
+      <div className="bg-white rounded-[12px] border border-slate-100 p-5">
+        <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-4">
+          Activité récente
+        </p>
+        <div className="space-y-0">
+          {ACTIVITY.map((item, i) => (
+            <div key={i} className="flex items-center gap-3 py-2.5 border-b border-slate-50 last:border-0">
+              <span className={`w-2 h-2 rounded-full ${item.dot} flex-shrink-0`} />
+              <span className="text-[13px] text-slate-700 flex-1">{item.text}</span>
+              <span className="text-[11px] text-slate-400">{item.time}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* System health */}
+      <div className="bg-white rounded-[12px] border border-slate-100 p-5">
+        <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-4">
+          Santé du système
+        </p>
+        <div className="grid grid-cols-3 gap-3">
+          {[
+            { label: 'Uptime', value: '99.98%', color: 'text-emerald-600', bg: 'bg-emerald-50' },
+            { label: 'Latence API', value: '94 ms', color: 'text-blue-600', bg: 'bg-blue-50' },
+            { label: 'Erreurs 7j', value: '2', color: 'text-slate-700', bg: 'bg-slate-50' },
+          ].map(stat => (
+            <div key={stat.label} className={`${stat.bg} rounded-[10px] p-3 text-center`}>
+              <p className={`text-[18px] font-bold ${stat.color}`}>{stat.value}</p>
+              <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mt-0.5">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Tab: Billing
+function TabBilling({ tenant }: { tenant: TenantDetailed }) {
+  const planKey = tenant.planTier ?? tenant.plan.toLowerCase();
+  const planCfg = PLAN_CONFIG[planKey];
+  const mrr = tenant.mrr;
+  const annualValue = mrr * 12;
+
+  const nextBillingDate = new Date();
+  nextBillingDate.setMonth(nextBillingDate.getMonth() + 1);
+  nextBillingDate.setDate(1);
+  const nextBillingStr = nextBillingDate.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+
+  const MOCK_INVOICES = Array.from({ length: 6 }, (_, i) => {
+    const d = new Date();
+    d.setMonth(d.getMonth() - i);
+    return {
+      id: `INV-${String(d.getFullYear()).slice(2)}${String(d.getMonth() + 1).padStart(2, '0')}-${String(100 + i).padStart(3, '0')}`,
+      date: d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }),
+      period: d.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }),
+      amount: mrr,
+      status: i === 0 ? 'pending' : 'paid',
+    };
+  });
+
+  const STATUS_STYLE: Record<string, string> = {
+    paid: 'bg-emerald-50 text-emerald-700',
+    pending: 'bg-amber-50 text-amber-700',
+    failed: 'bg-red-50 text-red-700',
+  };
+  const STATUS_LABEL: Record<string, string> = {
+    paid: 'Payée',
+    pending: 'En attente',
+    failed: 'Échouée',
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* KPI strip */}
+      <div className="grid grid-cols-3 gap-3">
+        {[
+          {
+            label: 'MRR',
+            value: `${mrr.toLocaleString()} MAD`,
+            sub: `${annualValue.toLocaleString()} MAD / an`,
+            icon: <IconDollarSign className="w-4 h-4 text-emerald-500" />,
+            iconBg: 'bg-emerald-50',
+            trend: '+12%',
+            trendUp: true,
+          },
+          {
+            label: 'Plan actif',
+            value: planCfg?.label ?? tenant.plan,
+            sub: `${planCfg?.maxUsers ?? '5'} utilisateurs max`,
+            icon: <IconZap className="w-4 h-4 text-blue-500" />,
+            iconBg: 'bg-blue-50',
+            trend: null,
+            trendUp: true,
+          },
+          {
+            label: 'Prochaine facture',
+            value: nextBillingStr,
+            sub: `${mrr.toLocaleString()} MAD prévu`,
+            icon: <IconCalendar className="w-4 h-4 text-purple-500" />,
+            iconBg: 'bg-purple-50',
+            trend: null,
+            trendUp: true,
+          },
+        ].map(card => (
+          <div key={card.label} className="bg-white rounded-[12px] border border-slate-100 p-5">
+            <div className="flex items-center justify-between mb-3">
+              <div className={`w-9 h-9 rounded-[10px] ${card.iconBg} flex items-center justify-center`}>
+                {card.icon}
+              </div>
+              {card.trend && (
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
+                  {card.trend}
+                </span>
+              )}
+            </div>
+            <p className="text-[20px] font-semibold text-slate-900 tracking-tight leading-none mb-1">
+              {card.value}
+            </p>
+            <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-1">
+              {card.label}
+            </p>
+            <p className="text-[11px] text-slate-400">{card.sub}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Invoice history */}
+      <div className="bg-white rounded-[12px] border border-slate-100 overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+          <p className="text-[15px] font-semibold text-slate-900 tracking-tight">Historique des factures</p>
+          <button className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-500 hover:text-slate-700 transition-colors">
+            <IconDownload className="w-3.5 h-3.5" />
+            Exporter
+          </button>
+        </div>
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-slate-100">
+              <th className="text-left px-5 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-widest">Facture</th>
+              <th className="text-left px-5 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-widest">Période</th>
+              <th className="text-left px-5 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-widest">Montant</th>
+              <th className="text-left px-5 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-widest">Statut</th>
+              <th className="px-5 py-3" />
+            </tr>
+          </thead>
+          <tbody>
+            {MOCK_INVOICES.map(inv => (
+              <tr key={inv.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
+                <td className="px-5 py-3">
+                  <span className="text-[13px] font-mono text-slate-700">{inv.id}</span>
+                </td>
+                <td className="px-5 py-3 text-[13px] text-slate-600 capitalize">{inv.period}</td>
+                <td className="px-5 py-3 text-[13px] font-semibold text-slate-900">{inv.amount.toLocaleString()} MAD</td>
+                <td className="px-5 py-3">
+                  <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${STATUS_STYLE[inv.status]}`}>
+                    {STATUS_LABEL[inv.status]}
+                  </span>
+                </td>
+                <td className="px-5 py-3 text-right">
+                  <button className="text-[11px] font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1 ml-auto">
+                    <IconDownload className="w-3 h-3" />
+                    PDF
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Payment method + billing settings */}
+      <div className="grid grid-cols-2 gap-3">
+        {/* Payment method */}
+        <div className="bg-white rounded-[12px] border border-slate-100 p-5">
+          <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-4">
+            Moyen de paiement
+          </p>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-[10px] bg-slate-900 flex items-center justify-center flex-shrink-0">
+              <IconCreditCard className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <p className="text-[13px] font-semibold text-slate-900">Visa •••• 4242</p>
+              <p className="text-[11px] text-slate-400">Expire 09/26</p>
+            </div>
+          </div>
+          <button className="w-full text-[12px] font-semibold text-blue-600 hover:text-blue-700 text-left flex items-center gap-1.5 transition-colors">
+            <IconRefresh className="w-3.5 h-3.5" />
+            Mettre à jour
+          </button>
+        </div>
+
+        {/* Billing settings */}
+        <div className="bg-white rounded-[12px] border border-slate-100 p-5">
+          <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-4">
+            Paramètres de facturation
+          </p>
+          <div className="space-y-3">
+            <div>
+              <p className="text-[11px] font-semibold text-slate-500 mb-1">Email de facturation</p>
+              <p className="text-[13px] text-slate-900 font-medium">{tenant.billingEmail ?? tenant.email}</p>
+            </div>
+            <div>
+              <p className="text-[11px] font-semibold text-slate-500 mb-1">Cycle</p>
+              <p className="text-[13px] text-slate-900 font-medium">Mensuel</p>
+            </div>
+            <div>
+              <p className="text-[11px] font-semibold text-slate-500 mb-1">Membre depuis</p>
+              <p className="text-[13px] text-slate-900 font-medium">
+                {new Date(tenant.joinedAt).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Danger zone */}
+      <div className="bg-white rounded-[12px] border border-slate-100 p-5">
+        <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-4">
+          Zone critique
+        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-[13px] font-semibold text-slate-900">Annuler l'abonnement</p>
+            <p className="text-[11px] text-slate-400 mt-0.5">Le cabinet perdra l'accès à la fin de la période</p>
+          </div>
+          <button className="flex items-center gap-1.5 px-4 py-2 rounded-[10px] text-[12px] font-semibold bg-red-50 text-red-600 hover:bg-red-100 transition-colors">
+            <IconAlertTriangle className="w-3.5 h-3.5" />
+            Annuler
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+
+export function Cabinets() {
+  const [tenants, setTenants] = useState<TenantDetailed[]>(MOCK_TENANTS_DETAILED);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [filterTab, setFilterTab] = useState<FilterTab>('all');
+  const [search, setSearch] = useState('');
+  const [detailTab, setDetailTab] = useState<DetailTab>('profil');
+  const [showWizard, setShowWizard] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  // Try loading real tenants
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    getAllTenants()
+      .then(data => {
+        if (!cancelled && data.length > 0) setTenants(data);
+      })
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
+
+  const filtered = useMemo(() => {
+    return tenants.filter(t => {
+      const q = search.toLowerCase();
+      const matchSearch = !q ||
+        t.name.toLowerCase().includes(q) ||
+        t.email.toLowerCase().includes(q) ||
+        t.contactName.toLowerCase().includes(q);
+      const matchTab = filterTab === 'all' ||
+        (filterTab === 'active' && t.status === 'Active') ||
+        (filterTab === 'suspended' && t.status === 'Suspended') ||
+        (filterTab === 'trial' && t.trialEndsAt && new Date(t.trialEndsAt) > new Date());
+      return matchSearch && matchTab;
+    });
+  }, [tenants, search, filterTab]);
+
+  const selected = tenants.find(t => t.id === selectedId) ?? null;
+
+  const updateTenant = (updated: TenantDetailed) => {
+    setTenants(ts => ts.map(t => t.id === updated.id ? updated : t));
+  };
+
+  const handleToggleStatus = () => {
+    if (!selected) return;
+    const nextStatus = selected.status === 'Active' ? 'Suspended' : 'Active';
+    updateTenant({ ...selected, status: nextStatus });
+    if (nextStatus === 'Suspended') suspendTenant(selected.id).catch(() => {});
+    else activateTenant(selected.id).catch(() => {});
+  };
+
+  const FILTER_TABS: { key: FilterTab; label: string }[] = [
+    { key: 'all', label: 'Tous' },
+    { key: 'active', label: 'Actif' },
+    { key: 'trial', label: 'Essai' },
+    { key: 'suspended', label: 'Suspendu' },
+  ];
+
+  const DETAIL_TABS: { key: DetailTab; label: string; icon: React.ReactNode }[] = [
+    { key: 'profil', label: 'Profil', icon: <IconSettings className="w-4 h-4" /> },
+    { key: 'domaines', label: 'Domaines', icon: <IconGlobe className="w-4 h-4" /> },
+    { key: 'plan', label: 'Plan & Accès', icon: <IconZap className="w-4 h-4" /> },
+    { key: 'page-web', label: 'Page Web', icon: <IconFileText className="w-4 h-4" /> },
+    { key: 'equipe', label: 'Équipe', icon: <IconUsers className="w-4 h-4" /> },
+    { key: 'usage', label: 'Usage', icon: <IconTrendingUp className="w-4 h-4" /> },
+    { key: 'billing', label: 'Facturation', icon: <IconCreditCard className="w-4 h-4" /> },
+  ];
+
+  return (
+    <div className="flex h-full bg-[#FAFAFA] overflow-hidden">
+      {/* ── Left Panel ── */}
+      <div className="w-[340px] flex-shrink-0 flex flex-col border-r border-slate-200 bg-white">
+        {/* Header */}
+        <div className="px-4 pt-4 pb-3 border-b border-slate-100">
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <h2 className="text-base font-bold text-slate-900">Cabinets</h2>
+              <p className="text-xs text-slate-400">{tenants.length} cabinet{tenants.length !== 1 ? 's' : ''}</p>
+            </div>
+            <button onClick={() => setShowWizard(true)} className="sa-btn flex items-center gap-1.5">
+              <IconPlus className="w-4 h-4" />
+              Nouveau
+            </button>
+          </div>
+
+          {/* Search */}
+          <div className="relative">
+            <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input
+              className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-[20px] text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors"
+              placeholder="Rechercher..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+          </div>
+
+          {/* Filter tabs */}
+          <div className="flex gap-1 mt-3">
+            {FILTER_TABS.map(tab => (
+              <button
+                key={tab.key}
+                onClick={() => setFilterTab(tab.key)}
+                className={`flex-1 text-xs font-semibold py-1.5 rounded-xl transition-colors ${
+                  filterTab === tab.key
+                    ? 'bg-blue-500 text-white'
+                    : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* List */}
+        <div className="flex-1 overflow-y-auto py-2">
+          {loading && (
+            <div className="flex items-center justify-center py-8">
+              <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+          )}
+          {!loading && filtered.length === 0 && (
+            <div className="text-center py-12">
+              <IconSearch className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+              <p className="text-sm text-slate-400">Aucun cabinet trouvé</p>
+            </div>
+          )}
+          {filtered.map(t => {
+            const specialty = t.specialty ?? 'dentistry';
+            const isSelected = t.id === selectedId;
+            return (
+              <button
+                key={t.id}
+                onClick={() => { setSelectedId(t.id); setDetailTab('profil'); }}
+                className={`w-full text-left px-4 py-3 border-b border-slate-50 transition-colors ${
+                  isSelected ? 'bg-blue-50 border-l-2 border-l-blue-500' : 'hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-9 h-9 rounded-xl ${getAvatarColor(t.id)} flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}>
+                    {getInitials(t.name)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-slate-900 truncate">{t.name}</span>
+                      <StatusDot status={t.status} />
+                    </div>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-[10px] text-slate-500 truncate">{SPECIALTY_LABELS[specialty]}</span>
+                    </div>
+                    <div className="flex items-center gap-2 mt-1">
+                      <PlanBadge plan={t.planTier ?? t.plan} />
+                      <span className="text-[10px] text-slate-400">{t.mrr.toLocaleString()} MAD</span>
+                    </div>
+                  </div>
+                  {isSelected && <IconChevronRight className="w-4 h-4 text-blue-400 flex-shrink-0" />}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── Right Panel ── */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {selected ? (
+          <>
+            {/* Detail header */}
+            <div className="bg-white border-b border-slate-200 px-6 py-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-2xl ${getAvatarColor(selected.id)} flex items-center justify-center text-white font-bold`}>
+                    {getInitials(selected.name)}
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-slate-900">{selected.name}</h3>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <StatusDot status={selected.status} />
+                      <span className="text-xs text-slate-500">{selected.status}</span>
+                      <PlanBadge plan={selected.planTier ?? selected.plan} />
+                      {selected.specialty && (
+                        <span className="text-xs text-slate-500">{SPECIALTY_LABELS[selected.specialty]}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleToggleStatus}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors ${
+                      selected.status === 'Active'
+                        ? 'bg-red-50 text-red-600 hover:bg-red-100'
+                        : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'
+                    }`}
+                  >
+                    {selected.status === 'Active'
+                      ? <><IconAlertTriangle className="w-3.5 h-3.5" /> Suspendre</>
+                      : <><IconCheck className="w-3.5 h-3.5" /> Activer</>
+                    }
+                  </button>
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
+                    <IconDownload className="w-3.5 h-3.5" />
+                    Export
+                  </button>
+                </div>
+              </div>
+
+              {/* Tabs */}
+              <div className="flex gap-1 overflow-x-auto scrollbar-hide">
+                {DETAIL_TABS.map(tab => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setDetailTab(tab.key)}
+                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-colors flex-shrink-0 ${
+                      detailTab === tab.key
+                        ? 'bg-blue-500 text-white'
+                        : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    {tab.icon}
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Tab content */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {detailTab === 'profil' && (
+                <TabProfil tenant={selected} onUpdate={updateTenant} />
+              )}
+              {detailTab === 'domaines' && (
+                <TabDomaines tenant={selected} onUpdate={updateTenant} />
+              )}
+              {detailTab === 'plan' && (
+                <TabPlan tenant={selected} onUpdate={updateTenant} />
+              )}
+              {detailTab === 'page-web' && (
+                <TabPageWeb tenant={selected} />
+              )}
+              {detailTab === 'equipe' && (
+                <TabEquipe tenant={selected} />
+              )}
+              {detailTab === 'usage' && (
+                <TabUsage tenant={selected} />
+              )}
+              {detailTab === 'billing' && (
+                <TabBilling tenant={selected} />
+              )}
+            </div>
+          </>
+        ) : (
+          /* Empty state */
+          <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
+            <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
+              <IconShield className="w-8 h-8 text-slate-300" />
+            </div>
+            <h3 className="text-base font-bold text-slate-700 mb-2">Sélectionnez un cabinet</h3>
+            <p className="text-sm text-slate-400 max-w-xs mb-6">
+              Choisissez un cabinet dans la liste pour gérer son profil, ses domaines, son plan et son équipe.
+            </p>
+            <button onClick={() => setShowWizard(true)} className="sa-btn flex items-center gap-2">
+              <IconPlus className="w-4 h-4" />
+              Nouveau Cabinet
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Wizard modal */}
+      {showWizard && (
+        <OnboardingWizard
+          onClose={() => setShowWizard(false)}
+          onCreate={tenant => {
+            setTenants(ts => [tenant, ...ts]);
+            setSelectedId(tenant.id);
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+export default Cabinets;

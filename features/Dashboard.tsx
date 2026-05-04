@@ -29,6 +29,8 @@ import {
 } from '../components/Icons';
 import { useMedicomStore } from '../store';
 import { useWaitingRoom } from '../hooks/useWaitingRoom';
+import { useDashboardKPIs } from '../hooks/useDashboardKPIs';
+import { useAppointments } from '../hooks/useAppointments';
 
 interface DashboardProps {
   stats: CabinetStats;
@@ -58,15 +60,6 @@ const rdvData = [
   { label: 'Reportés', value: 11, color: '#f59e0b' },
 ];
 const RDV_TOTAL = rdvData.reduce((s, d) => s + d.value, 0);
-
-const MOCK_SCHEDULE = [
-  { time: '09:00', name: 'Karim Benali', type: 'Détartrage', status: 'confirmed' },
-  { time: '09:45', name: 'Sara El Fassi', type: 'Consultation', status: 'waiting' },
-  { time: '10:30', name: 'Mehdi Tazi', type: 'Extraction', status: 'confirmed' },
-  { time: '11:15', name: 'Nadia Ouhabi', type: 'Blanchiment', status: 'confirmed' },
-  { time: '14:00', name: 'Amine Chraibi', type: 'Pose couronne', status: 'pending' },
-  { time: '15:00', name: 'Fatima Zahra', type: 'Orthodontie', status: 'confirmed' },
-];
 
 const STATUS_STYLE: Record<string, { label: string; color: string; pill: string }> = {
   confirmed: {
@@ -434,10 +427,18 @@ const WaitingRoomWidget = ({ isDoctor, waitingPatients, waitingRoom, navigate }:
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 
-export const Dashboard: React.FC<DashboardProps> = ({ stats }) => {
+export const Dashboard: React.FC<DashboardProps> = ({ stats: fallbackStats }) => {
   const navigate = useNavigate();
   const { currentUser } = useMedicomStore();
   const { waitingPatients } = useWaitingRoom();
+  const { stats } = useDashboardKPIs(fallbackStats);
+
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const todayEnd = new Date();
+  todayEnd.setHours(23, 59, 59, 999);
+  const { appointments: todayAppts } = useAppointments({ startDate: todayStart, endDate: todayEnd });
+
   const [tasks, setTasks] = useState<Task[]>(MOCK_TASKS);
   const [newTaskText, setNewTaskText] = useState('');
 
@@ -625,8 +626,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats }) => {
                     Programme du jour
                   </h3>
                   <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
-                    {MOCK_SCHEDULE.filter((a) => a.status === 'confirmed').length} confirmés ·{' '}
-                    {MOCK_SCHEDULE.length} au total
+                    {todayAppts.filter((a) => (a.status as string) === 'confirmed').length} confirmés ·{' '}
+                    {todayAppts.length} au total
                   </p>
                 </div>
                 <button
@@ -641,29 +642,39 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats }) => {
                 <div
                   className="h-full rounded-full bg-[#136cfb] transition-all duration-700"
                   style={{
-                    width: `${(MOCK_SCHEDULE.filter((a) => a.status === 'confirmed').length / MOCK_SCHEDULE.length) * 100}%`,
+                    width: todayAppts.length > 0
+                      ? `${(todayAppts.filter((a) => (a.status as string) === 'confirmed').length / todayAppts.length) * 100}%`
+                      : '0%',
                   }}
                 />
               </div>
               {/* Schedule list — linear style */}
               <div>
-                {MOCK_SCHEDULE.map((appt, i) => {
-                  const s = STATUS_STYLE[appt.status] ?? STATUS_STYLE.pending;
-                  const initials = appt.name
+                {todayAppts.length === 0 ? (
+                  <div className="py-10 text-center text-[13px] font-semibold text-slate-400">
+                    Aucun rendez-vous aujourd'hui.
+                  </div>
+                ) : todayAppts.map((appt, i) => {
+                  const statusKey = (appt.status as string) === 'waiting_room' ? 'waiting' : (appt.status as string);
+                  const s = STATUS_STYLE[statusKey] ?? STATUS_STYLE.pending;
+                  const initials = (appt.patientName ?? '')
                     .split(' ')
                     .map((n: string) => n[0])
                     .slice(0, 2)
                     .join('')
                     .toUpperCase();
-                  const isLast = i === MOCK_SCHEDULE.length - 1;
+                  const isLast = i === todayAppts.length - 1;
+                  const timeStr = appt.start instanceof Date
+                    ? appt.start.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+                    : String(appt.start);
                   return (
                     <div
-                      key={i}
+                      key={appt.id}
                       className={`flex items-center gap-5 py-3.5 px-1 transition-colors cursor-pointer group hover:bg-slate-50/60 rounded-[4px] ${!isLast ? 'border-b border-slate-100/80' : ''}`}
                     >
                       {/* Time */}
                       <span className="w-11 shrink-0 text-[12px] font-bold text-slate-400 tabular-nums tracking-tight">
-                        {appt.time}
+                        {timeStr}
                       </span>
 
                       {/* Thin accent bar */}
@@ -683,7 +694,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats }) => {
                       {/* Name + type */}
                       <div className="flex-1 min-w-0">
                         <div className="text-[13.5px] font-semibold text-slate-800 leading-tight group-hover:text-slate-900 transition-colors">
-                          {appt.name}
+                          {appt.patientName}
                         </div>
                         <div className="text-[11.5px] font-medium text-slate-400 mt-0.5">
                           {appt.type}

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getPatient } from '../lib/api/patients';
 import { useMedicomStore } from '../store';
 import type { Patient } from '../types';
-import { MOCK_APPOINTMENTS } from '../constants';
+import { useAppointments } from '../hooks/useAppointments';
 import {
   IconCalendar,
   IconPhone,
@@ -64,9 +64,10 @@ export const PatientDetail: React.FC = () => {
       });
   }, [id, tenantId]);
 
-  const appointments = MOCK_APPOINTMENTS.filter((a) => a.patientId === id).sort(
-    (a, b) => new Date(b.start).getTime() - new Date(a.start).getTime()
-  );
+  const { appointments: rawAppts } = useAppointments({ patientId: id });
+  const appointments = rawAppts
+    .slice()
+    .sort((a, b) => new Date(b.start).getTime() - new Date(a.start).getTime());
 
   if (isLoading)
     return (

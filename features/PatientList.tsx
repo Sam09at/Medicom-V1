@@ -23,19 +23,13 @@ import {
 } from '../components/Icons';
 import { SlideOver } from '../components/SlideOver';
 import { cn } from '../lib/utils';
-import { MOCK_APPOINTMENTS, MOCK_DOCUMENTS } from '../constants';
 import { useNavigate } from 'react-router-dom';
 import { usePatients } from '../hooks/usePatients';
+import { useAppointments } from '../hooks/useAppointments';
 
 interface PatientListProps {
   patients: Patient[];
 }
-
-const MOCK_PATIENT_INVOICES = [
-  { id: 'F-101', date: '2024-01-24', amount: 450, status: 'Paid', items: 'Consultation' },
-  { id: 'F-102', date: '2023-12-15', amount: 1200, status: 'Pending', items: 'Soins Carie' },
-  { id: 'F-103', date: '2023-11-20', amount: 300, status: 'Paid', items: 'Contrôle' },
-];
 
 export const PatientList: React.FC = () => {
   const navigate = useNavigate();
@@ -76,6 +70,8 @@ export const PatientList: React.FC = () => {
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [isImportOpen, setIsImportOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { appointments: patientAppts } = useAppointments({ patientId: selectedPatient?.id });
 
   const filteredPatients = patients.filter(
     (p) =>
@@ -132,16 +128,6 @@ export const PatientList: React.FC = () => {
       setSelectedPatient(updated);
       setIsEditing(false);
     }
-  };
-
-  const getPatientAppointments = (patientId: string) => {
-    return MOCK_APPOINTMENTS.filter((a) => a.patientId === patientId).sort(
-      (a, b) => new Date(b.start).getTime() - new Date(a.start).getTime()
-    );
-  };
-
-  const getPatientDocuments = (patientName: string) => {
-    return MOCK_DOCUMENTS.filter((d) => d.patientName.includes(patientName.split(' ')[1] || ''));
   };
 
   // --- Render ---
@@ -561,9 +547,9 @@ export const PatientList: React.FC = () => {
                       + Nouveau RDV
                     </button>
                   </div>
-                  {getPatientAppointments(selectedPatient.id).length > 0 ? (
+                  {patientAppts.length > 0 ? (
                     <div className="space-y-3">
-                      {getPatientAppointments(selectedPatient.id).map((apt) => (
+                      {patientAppts.slice().sort((a, b) => new Date(b.start).getTime() - new Date(a.start).getTime()).map((apt) => (
                         <div
                           key={apt.id}
                           className="bg-white p-4 rounded-[20px] border border-slate-200  flex justify-between items-center group"

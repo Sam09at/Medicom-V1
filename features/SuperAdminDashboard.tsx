@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
+  AreaChart, Area,
+  BarChart, Bar, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer,
 } from 'recharts';
 import {
@@ -73,11 +70,26 @@ const MOCK_FEED: ActivityFeedItem[] = [
 ];
 
 const TOP_CABINETS = [
-  { name: 'Cabinet Casablanca Centre', mrr: 3200, growth: 12, plan: 'Premium', status: 'healthy' },
-  { name: 'Clinique Dentaire Rabat', mrr: 2800, growth: 8, plan: 'Pro', status: 'healthy' },
-  { name: 'Cabinet Dr. Amrani Fès', mrr: 2400, growth: -3, plan: 'Pro', status: 'risk' },
-  { name: 'Cabinet El Jadida', mrr: 1900, growth: 22, plan: 'Starter', status: 'healthy' },
-  { name: 'Clinique Marrakech Guéliz', mrr: 1750, growth: 5, plan: 'Pro', status: 'healthy' },
+  { name: 'Cabinet Casablanca Centre', mrr: 3200, growth: 12, plan: 'Premium', status: 'healthy', papcpm: 42 },
+  { name: 'Clinique Dentaire Rabat', mrr: 2800, growth: 8, plan: 'Pro', status: 'healthy', papcpm: 28 },
+  { name: 'Cabinet Dr. Amrani Fès', mrr: 2400, growth: -3, plan: 'Pro', status: 'risk', papcpm: 12 },
+  { name: 'Cabinet El Jadida', mrr: 1900, growth: 22, plan: 'Starter', status: 'healthy', papcpm: 5 },
+  { name: 'Clinique Marrakech Guéliz', mrr: 1750, growth: 5, plan: 'Pro', status: 'healthy', papcpm: 19 },
+];
+
+const PAPCPM_HISTORY = [
+  { month: 'Jan', papcpm: 0,  bookings: 0 },
+  { month: 'Fév', papcpm: 1,  bookings: 3 },
+  { month: 'Mar', papcpm: 3,  bookings: 14 },
+  { month: 'Avr', papcpm: 7,  bookings: 31 },
+  { month: 'Mai', papcpm: 12, bookings: 58 },
+  { month: 'Juin', papcpm: 18, bookings: 87 },
+  { month: 'Juil', papcpm: 22, bookings: 106 },
+  { month: 'Août', papcpm: 19, bookings: 91 },
+  { month: 'Sep', papcpm: 25, bookings: 122 },
+  { month: 'Oct', papcpm: 31, bookings: 151 },
+  { month: 'Nov', papcpm: 28, bookings: 138 },
+  { month: 'Déc', papcpm: 35, bookings: 172 },
 ];
 
 /* ─── Custom Tooltip ─── */
@@ -254,10 +266,11 @@ export const SuperAdminDashboard: React.FC = () => {
       </div>
 
       {/* ── KPI Strip ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
         <KPICard label="Tenants actifs" value={activeTenants} trend={5} sub="Total abonnés actifs" icon={IconUsers} />
         <KPICard label="MRR global" value={`${(mrrData?.currentMRR || currentMRR).toLocaleString('fr-FR')} MAD`} trend={mrrData?.growth || 10} sub="Revenu mensuel récurrent" icon={IconDollarSign} />
         <KPICard label="Nouveaux (7j)" value={newSignups} trend={12} sub="Inscriptions récentes" icon={IconTrendingUp} />
+        <KPICard label="RDV en ligne" value={PAPCPM_HISTORY[PAPCPM_HISTORY.length - 1].bookings} trend={25} sub="Via widget public ce mois" icon={IconActivity} />
         <KPICard label="Risque churn" value={riskTenants.length || 4} trend={-2} sub="Cabinets à risque" icon={IconAlertTriangle} />
         <KPICard label="Tickets urgents" value={urgentTickets} trend={0} sub="Nécessitent une réponse" icon={IconMessageSquare} />
       </div>
@@ -372,6 +385,10 @@ export const SuperAdminDashboard: React.FC = () => {
                     {cab.growth >= 0 ? '↑' : '↓'} {Math.abs(cab.growth)}%
                   </p>
                 </div>
+                <div className="text-right shrink-0 hidden lg:block">
+                  <p className="text-[13px] font-semibold text-blue-600">{cab.papcpm}</p>
+                  <p className="text-[10px] text-slate-400">PAPCPM</p>
+                </div>
                 <span className={`w-2 h-2 rounded-full shrink-0 ${cab.status === 'healthy' ? 'bg-emerald-400' : 'bg-amber-400'}`} title={cab.status === 'risk' ? 'Risque churn' : 'Sain'} />
               </div>
             ))}
@@ -437,6 +454,124 @@ export const SuperAdminDashboard: React.FC = () => {
                 dot={false} activeDot={{ r: 4, fill: '#136cfb', strokeWidth: 2, stroke: '#fff' }} />
             </AreaChart>
           </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* ── PAPCPM — North Star Metric ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        {/* PAPCPM trend chart */}
+        <div className="lg:col-span-2 bg-white border border-slate-100 rounded-[12px] p-5">
+          <div className="flex items-start justify-between mb-5">
+            <div>
+              <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight">
+                Réservations en ligne — tendance
+              </h3>
+              <p className="text-[12px] text-slate-400 mt-0.5">
+                RDV publics cumulés par mois (source: widget de réservation)
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-[22px] font-semibold text-slate-900">
+                {PAPCPM_HISTORY[PAPCPM_HISTORY.length - 1].bookings}
+              </p>
+              <p className="text-[11px] text-slate-400">ce mois</p>
+            </div>
+          </div>
+          <div className="h-48">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={PAPCPM_HISTORY} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="papcpmGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="10%" stopColor="#136cfb" stopOpacity={0.15} />
+                    <stop offset="90%" stopColor="#136cfb" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#94A3B8', fontSize: 10 }} dy={6} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94A3B8', fontSize: 10 }} width={28} />
+                <Tooltip
+                  contentStyle={{ borderRadius: '10px', border: '1px solid #E2E8F0', boxShadow: '0 4px 20px rgba(0,0,0,0.06)', fontSize: '12px' }}
+                  formatter={(v: any, name?: string) => [v, name === 'bookings' ? 'Réservations' : 'PAPCPM']}
+                  cursor={{ stroke: '#136cfb', strokeWidth: 1, opacity: 0.3 }}
+                />
+                <Area type="monotone" dataKey="bookings" stroke="#136cfb" strokeWidth={2.5} fill="url(#papcpmGrad)"
+                  dot={false} activeDot={{ r: 5, fill: '#136cfb', strokeWidth: 2, stroke: '#fff' }} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* KPI footer */}
+          <div className="flex items-center gap-6 mt-4 pt-4 border-t border-slate-50">
+            <div>
+              <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">PAPCPM moyen</p>
+              <p className="text-[18px] font-semibold text-slate-900">
+                {PAPCPM_HISTORY[PAPCPM_HISTORY.length - 1].papcpm}
+                <span className="text-[11px] font-normal text-slate-400 ml-1">rdv/cabinet</span>
+              </p>
+            </div>
+            <div>
+              <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Cible Phase 2</p>
+              <p className="text-[18px] font-semibold text-violet-600">15 <span className="text-[11px] font-normal text-slate-400">rdv/cabinet</span></p>
+            </div>
+            <div>
+              <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Total YTD</p>
+              <p className="text-[18px] font-semibold text-slate-900">
+                {PAPCPM_HISTORY.reduce((s, d) => s + d.bookings, 0).toLocaleString('fr-FR')}
+                <span className="text-[11px] font-normal text-slate-400 ml-1">RDV</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* PAPCPM by clinic — bar chart */}
+        <div className="bg-white border border-slate-100 rounded-[12px] p-5 flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="text-[14px] font-semibold text-slate-900">Top cabinets</h3>
+              <p className="text-[11px] text-slate-400 mt-0.5">PAPCPM ce mois</p>
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">En ligne</span>
+          </div>
+          <div className="flex-1">
+            <ResponsiveContainer width="100%" height={160}>
+              <BarChart
+                data={[...TOP_CABINETS].sort((a, b) => b.papcpm - a.papcpm)}
+                layout="vertical"
+                margin={{ top: 0, right: 8, left: 0, bottom: 0 }}
+                barCategoryGap="25%"
+              >
+                <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: '#94A3B8', fontSize: 10 }} />
+                <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748B', fontSize: 10 }} width={130} />
+                <Tooltip
+                  contentStyle={{ borderRadius: '10px', border: '1px solid #E2E8F0', boxShadow: 'none', fontSize: '12px' }}
+                  formatter={(v: any) => [`${v} rdv/mois`, 'PAPCPM']}
+                  cursor={{ fill: '#F8FAFC' }}
+                />
+                <Bar dataKey="papcpm" radius={[0, 4, 4, 0]} maxBarSize={14}>
+                  {[...TOP_CABINETS].sort((a, b) => b.papcpm - a.papcpm).map((_, i) => (
+                    <Cell key={i} fill={i === 0 ? '#136cfb' : i === 1 ? '#60a5fa' : '#bfdbfe'} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Phase target */}
+          <div className="mt-4 pt-4 border-t border-slate-50">
+            <div className="flex items-center justify-between mb-1.5">
+              <p className="text-[11px] font-semibold text-slate-500">Progression Phase 1</p>
+              <p className="text-[11px] font-bold text-blue-600">
+                {PAPCPM_HISTORY[PAPCPM_HISTORY.length - 1].papcpm}/5 <span className="font-normal text-slate-400">cible</span>
+              </p>
+            </div>
+            <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-blue-500 rounded-full"
+                style={{ width: `${Math.min(100, (PAPCPM_HISTORY[PAPCPM_HISTORY.length - 1].papcpm / 5) * 100)}%` }}
+              />
+            </div>
+            <p className="text-[10px] text-slate-400 mt-1.5">Objectif: 5 cabinets avec ≥ 5 PAPCPM pour fin Phase 1</p>
+          </div>
         </div>
       </div>
 

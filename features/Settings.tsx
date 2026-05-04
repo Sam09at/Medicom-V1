@@ -18,13 +18,15 @@ import {
   IconClock,
   IconSettings,
   IconBell,
+  IconCreditCard,
 } from '../components/Icons';
-import { MOCK_SERVICES } from '../constants';
+import { MOCK_SERVICES, PLAN_PRICING } from '../constants';
 import { MedicalService } from '../types';
 import { supabase, getCurrentTenantId } from '../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { applyLanguageDirection } from '../lib/i18n';
 import { useMedicomStore } from '../store';
+import { WhatsAppLog } from './WhatsAppLog';
 
 /* ── Mock data ── */
 const MOCK_STAFF = [
@@ -57,6 +59,316 @@ const Toggle = ({ on, onChange }: { on: boolean; onChange: () => void }) => (
   </button>
 );
 
+// ─── SEO Tab ──────────────────────────────────────────────────────────────────
+
+const SEO_SCORES = [
+  { label: 'Titre SEO', score: 82, tip: 'Ajoutez votre ville au titre pour le SEO local.' },
+  { label: 'Méta description', score: 65, tip: 'La description est trop courte. Visez 150–160 caractères.' },
+  { label: 'Mots-clés locaux', score: 90, tip: 'Bonne utilisation des mots-clés géographiques.' },
+  { label: 'Contenu des sections', score: 73, tip: 'Enrichissez la section "À propos" avec plus de détails.' },
+  { label: 'Balises structurées', score: 55, tip: 'Ajoutez le schema.org MedicalClinic pour un meilleur référencement.' },
+];
+
+const SEO_SUGGESTIONS = [
+  { icon: '🔍', title: 'Optimisez votre titre SEO', body: 'Incluez le nom de votre spécialité et votre ville. Ex : "Cabinet Dentaire à Casablanca — Dr. Benali"', action: 'Modifier le titre' },
+  { icon: '📍', title: 'Renseignez votre adresse complète', body: 'Les recherches "dentiste près de moi" dépendent de votre adresse Google Maps.', action: 'Ajouter l\'adresse' },
+  { icon: '⭐', title: 'Collectez des avis Google', body: 'Les cabinets avec ≥ 10 avis apparaissent 3× plus dans les résultats locaux.', action: 'Voir la stratégie' },
+  { icon: '🖼️', title: 'Ajoutez des photos de qualité', body: 'Les cabinets avec des photos reçoivent 42 % de demandes de directions en plus.', action: 'Ajouter des photos' },
+  { icon: '🕐', title: 'Vérifiez vos horaires d\'ouverture', body: 'Des horaires à jour évitent les avis négatifs pour "cabinet fermé".', action: 'Mettre à jour' },
+];
+
+function ScoreBar({ score }: { score: number }) {
+  const color = score >= 80 ? 'bg-emerald-500' : score >= 60 ? 'bg-amber-400' : 'bg-rose-400';
+  return (
+    <div className="flex items-center gap-2.5">
+      <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+        <div className={`h-full rounded-full transition-all ${color}`} style={{ width: `${score}%` }} />
+      </div>
+      <span className="text-[11px] font-semibold text-slate-500 w-7 text-right">{score}</span>
+    </div>
+  );
+}
+
+function SeoTab() {
+  const [generating, setGenerating] = React.useState(false);
+  const [generated, setGenerated] = React.useState(false);
+
+  const avgScore = Math.round(SEO_SCORES.reduce((s, i) => s + i.score, 0) / SEO_SCORES.length);
+  const scoreColor = avgScore >= 80 ? 'text-emerald-600' : avgScore >= 60 ? 'text-amber-500' : 'text-rose-500';
+
+  const handleGenerate = () => {
+    setGenerating(true);
+    setTimeout(() => { setGenerating(false); setGenerated(true); }, 2200);
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header + score */}
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-[15px] font-semibold text-slate-900">SEO & Référencement local</p>
+          <p className="text-[12px] text-slate-400 mt-0.5">Optimisez votre visibilité sur Google pour les patients de votre zone.</p>
+        </div>
+        <div className="text-right">
+          <p className={`text-[32px] font-semibold leading-none ${scoreColor}`}>{avgScore}</p>
+          <p className="text-[11px] text-slate-400 mt-1">Score SEO</p>
+        </div>
+      </div>
+
+      {/* Audit breakdown */}
+      <div className="border border-slate-100 rounded-[12px] overflow-hidden">
+        <div className="px-4 py-3 bg-slate-50 border-b border-slate-100">
+          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Audit de la page</p>
+        </div>
+        <div className="divide-y divide-slate-50">
+          {SEO_SCORES.map(item => (
+            <div key={item.label} className="px-4 py-3 space-y-1.5">
+              <div className="flex items-center justify-between">
+                <p className="text-[12px] font-semibold text-slate-700">{item.label}</p>
+              </div>
+              <ScoreBar score={item.score} />
+              <p className="text-[11px] text-slate-400">{item.tip}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* AI suggestions */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Suggestions IA</p>
+          <button
+            onClick={handleGenerate}
+            disabled={generating}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 text-white text-[11px] font-semibold rounded-[8px] hover:bg-slate-700 transition-colors disabled:opacity-50"
+          >
+            {generating ? (
+              <><div className="w-3 h-3 border border-white/40 border-t-white rounded-full animate-spin" />Analyse…</>
+            ) : (
+              <><svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>{generated ? 'Réanalyser' : 'Analyser avec l\'IA'}</>
+            )}
+          </button>
+        </div>
+        <div className="space-y-2">
+          {SEO_SUGGESTIONS.map((s, i) => (
+            <div key={i} className="flex items-start gap-3 p-3.5 border border-slate-100 rounded-[12px] hover:border-slate-200 transition-colors">
+              <span className="text-[18px] leading-none mt-0.5">{s.icon}</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-[12px] font-semibold text-slate-800">{s.title}</p>
+                <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">{s.body}</p>
+              </div>
+              <button className="shrink-0 px-2.5 py-1 text-[11px] font-semibold text-slate-600 border border-slate-200 rounded-[8px] hover:bg-slate-50 transition-colors whitespace-nowrap">
+                {s.action}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Google Business quick link */}
+      <div className="flex items-center gap-3 p-4 bg-blue-50 border border-blue-100 rounded-[12px]">
+        <div className="w-9 h-9 bg-blue-600 rounded-[10px] flex items-center justify-center shrink-0">
+          <svg className="w-4.5 h-4.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+          </svg>
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-[12px] font-semibold text-blue-900">Profil Google Business</p>
+          <p className="text-[11px] text-blue-600 mt-0.5">Revendiquez et optimisez votre fiche pour apparaître dans Google Maps.</p>
+        </div>
+        <button className="shrink-0 px-3 py-1.5 bg-blue-600 text-white text-[11px] font-semibold rounded-[8px] hover:bg-blue-700 transition-colors">
+          Accéder
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Subscription Tab ────────────────────────────────────────────────────────
+
+const PLAN_FEATURES: Record<string, { label: string; included: boolean }[]> = {
+  essentiel: [
+    { label: 'Tableau de bord', included: true },
+    { label: 'Calendrier de RDV', included: true },
+    { label: 'Gestion patients', included: true },
+    { label: 'Facturation de base', included: true },
+    { label: 'Support intégré', included: true },
+    { label: 'Traitements & protocoles', included: false },
+    { label: 'Inventaire', included: false },
+    { label: 'Documents & fichiers', included: false },
+    { label: 'Rapports avancés', included: false },
+    { label: 'Ordres de laboratoire', included: false },
+  ],
+  pro: [
+    { label: 'Tableau de bord', included: true },
+    { label: 'Calendrier de RDV', included: true },
+    { label: 'Gestion patients', included: true },
+    { label: 'Facturation de base', included: true },
+    { label: 'Support intégré', included: true },
+    { label: 'Traitements & protocoles', included: true },
+    { label: 'Inventaire', included: true },
+    { label: 'Documents & fichiers', included: true },
+    { label: 'Rapports avancés', included: true },
+    { label: 'Ordres de laboratoire', included: false },
+  ],
+  premium: [
+    { label: 'Tableau de bord', included: true },
+    { label: 'Calendrier de RDV', included: true },
+    { label: 'Gestion patients', included: true },
+    { label: 'Facturation de base', included: true },
+    { label: 'Support intégré', included: true },
+    { label: 'Traitements & protocoles', included: true },
+    { label: 'Inventaire', included: true },
+    { label: 'Documents & fichiers', included: true },
+    { label: 'Rapports avancés', included: true },
+    { label: 'Ordres de laboratoire', included: true },
+  ],
+};
+
+const PLAN_ORDER = ['essentiel', 'pro', 'premium'] as const;
+
+const PLAN_BADGE: Record<string, { bg: string; text: string; ring: string; btn: string }> = {
+  essentiel: { bg: 'bg-slate-50', text: 'text-slate-700', ring: 'ring-slate-200', btn: 'bg-slate-900 hover:bg-slate-700 text-white' },
+  pro:       { bg: 'bg-violet-50', text: 'text-violet-700', ring: 'ring-violet-300', btn: 'bg-violet-600 hover:bg-violet-700 text-white' },
+  premium:   { bg: 'bg-blue-50', text: 'text-blue-700', ring: 'ring-blue-400', btn: 'bg-[#136cfb] hover:bg-blue-700 text-white' },
+};
+
+function SubscriptionTab({ currentPlan }: { currentPlan: string }) {
+  const [annual, setAnnual] = React.useState(false);
+  const [upgrading, setUpgrading] = React.useState<string | null>(null);
+  const { showToast } = useMedicomStore();
+
+  const activePlan = currentPlan.toLowerCase();
+
+  const handleUpgrade = (planKey: string) => {
+    if (planKey === activePlan) return;
+    setUpgrading(planKey);
+    setTimeout(() => {
+      setUpgrading(null);
+      showToast({ type: 'info', message: 'Contactez notre équipe pour mettre à jour votre abonnement.' });
+    }, 1200);
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-[15px] font-semibold text-slate-900">Mon abonnement</p>
+          <p className="text-[12px] text-slate-400 mt-0.5">Gérez votre plan et accédez à plus de fonctionnalités.</p>
+        </div>
+        {/* Annual toggle */}
+        <div className="flex items-center gap-2.5 bg-slate-50 border border-slate-100 rounded-[10px] p-1">
+          <button
+            onClick={() => setAnnual(false)}
+            className={`px-3 py-1 rounded-[8px] text-[11px] font-semibold transition-all ${!annual ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400'}`}
+          >
+            Mensuel
+          </button>
+          <button
+            onClick={() => setAnnual(true)}
+            className={`px-3 py-1 rounded-[8px] text-[11px] font-semibold transition-all flex items-center gap-1.5 ${annual ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400'}`}
+          >
+            Annuel
+            <span className="text-[9px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">−16%</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Plan cards */}
+      <div className="grid grid-cols-3 gap-4">
+        {PLAN_ORDER.map(planKey => {
+          const plan = PLAN_PRICING[planKey];
+          const style = PLAN_BADGE[planKey];
+          const isCurrent = activePlan === planKey || (activePlan === 'starter' && planKey === 'essentiel');
+          const isDowngrade = PLAN_ORDER.indexOf(planKey) < PLAN_ORDER.indexOf(activePlan as typeof PLAN_ORDER[number]);
+          const monthlyPrice = annual ? Math.round(plan.mad * 0.84) : plan.mad;
+          const features = PLAN_FEATURES[planKey];
+
+          return (
+            <div
+              key={planKey}
+              className={`relative rounded-[12px] border-2 p-5 flex flex-col gap-4 transition-all ${isCurrent ? `ring-2 ${style.ring} border-transparent bg-white` : 'border-slate-100 bg-white hover:border-slate-200'}`}
+            >
+              {isCurrent && (
+                <div className={`absolute -top-2.5 left-4 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${style.bg} ${style.text} border border-current border-opacity-20`}>
+                  Plan actuel
+                </div>
+              )}
+              {planKey === 'pro' && !isCurrent && (
+                <div className="absolute -top-2.5 left-4 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-violet-600 text-white">
+                  Populaire
+                </div>
+              )}
+
+              {/* Plan name + price */}
+              <div>
+                <p className={`text-[12px] font-bold uppercase tracking-widest mb-2 ${style.text}`}>{plan.label}</p>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-[28px] font-semibold text-slate-900 leading-none">{monthlyPrice.toLocaleString('fr-FR')}</span>
+                  <span className="text-[13px] text-slate-400">MAD/mois</span>
+                </div>
+                {annual && <p className="text-[11px] text-emerald-600 font-semibold mt-1">Facturé {(monthlyPrice * 12).toLocaleString('fr-FR')} MAD/an</p>}
+              </div>
+
+              {/* CTA button */}
+              <button
+                onClick={() => handleUpgrade(planKey)}
+                disabled={isCurrent || isDowngrade}
+                className={`w-full py-2 rounded-[10px] text-[12px] font-semibold transition-colors ${isCurrent
+                  ? 'bg-slate-100 text-slate-400 cursor-default'
+                  : isDowngrade
+                    ? 'bg-slate-50 text-slate-300 cursor-not-allowed'
+                    : `${style.btn} flex items-center justify-center gap-2`
+                }`}
+              >
+                {upgrading === planKey
+                  ? <><div className="w-3.5 h-3.5 border border-white/40 border-t-white rounded-full animate-spin" />Traitement…</>
+                  : isCurrent ? 'Plan actuel'
+                  : isDowngrade ? 'Plan inférieur'
+                  : `Passer à ${plan.label}`}
+              </button>
+
+              {/* Feature list */}
+              <div className="space-y-1.5 border-t border-slate-50 pt-4">
+                {features.map(f => (
+                  <div key={f.label} className={`flex items-center gap-2 ${f.included ? '' : 'opacity-40'}`}>
+                    <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${f.included ? 'bg-emerald-100' : 'bg-slate-100'}`}>
+                      {f.included
+                        ? <svg className="w-2.5 h-2.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        : <svg className="w-2.5 h-2.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                      }
+                    </div>
+                    <p className="text-[11px] text-slate-600">{f.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Billing info strip */}
+      <div className="flex items-center justify-between p-4 bg-slate-50 rounded-[12px] border border-slate-100">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-white rounded-[8px] border border-slate-200 flex items-center justify-center">
+            <svg className="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+            </svg>
+          </div>
+          <div>
+            <p className="text-[12px] font-semibold text-slate-800">Renouvellement automatique</p>
+            <p className="text-[11px] text-slate-400">Prochain paiement le 1 juin 2026 · Virement bancaire</p>
+          </div>
+        </div>
+        <button className="text-[11px] font-semibold text-slate-500 hover:text-slate-800 transition-colors underline underline-offset-2">
+          Contacter la facturation
+        </button>
+      </div>
+    </div>
+  );
+}
+
 /* ── NAV ── */
 const NAV_ITEMS = [
   { id: 'general', label: 'Général', icon: IconHome },
@@ -64,6 +376,8 @@ const NAV_ITEMS = [
   { id: 'services', label: 'Services & Tarifs', icon: IconDollarSign },
   { id: 'schedule', label: 'Horaires', icon: IconClock },
   { id: 'notifications', label: 'Notifications & SMS', icon: IconBell },
+  { id: 'seo', label: 'SEO & Référencement', icon: IconGlobe },
+  { id: 'subscription', label: 'Mon Abonnement', icon: IconCreditCard },
   { id: 'widget', label: 'Widget Réservation', icon: IconGlobe },
   { id: 'security', label: 'Sécurité', icon: IconShield },
   { id: 'language', label: 'Langue & Région', icon: IconGlobe },
@@ -339,6 +653,7 @@ export const Settings: React.FC = () => {
             <textarea rows={4} className="input !h-auto resize-none" value={messageTemplate} onChange={e => setMessageTemplate(e.target.value)} />
             <p className="text-[11px] text-slate-400 mt-1.5">Variables : {'{patient}'}, {'{cabinet}'}, {'{date}'}, {'{heure}'}</p>
           </div>
+          <WhatsAppLog />
         </div>
       );
 
@@ -437,6 +752,10 @@ export const Settings: React.FC = () => {
           </div>
         </div>
       );
+
+      case 'seo': return <SeoTab />;
+
+      case 'subscription': return <SubscriptionTab currentPlan={currentUser?.plan || 'Essentiel'} />;
 
       default: return null;
     }

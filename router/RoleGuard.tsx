@@ -10,22 +10,30 @@ interface RoleGuardProps {
 
 /**
  * Route guard that checks user role before rendering children.
- * - No user → redirect to '/' (login picker / real login in prod)
- * - Wrong role → redirects to /unauthorized
+ * - Auth still loading → full-screen spinner (prevents flash of login page)
+ * - No user → redirect to /login
+ * - Wrong role → redirect to /unauthorized
  * - Correct role → renders children
  */
 export const RoleGuard: React.FC<RoleGuardProps> = ({ allowedRoles, children }) => {
   const currentUser = useMedicomStore((s) => s.currentUser);
+  const isAuthLoading = useMedicomStore((s) => s.isAuthLoading);
   const location = useLocation();
 
-  // No user logged in → go to root (login)
-  // Using Navigate instead of rendering MockLoginPicker inline prevents stale
-  // role checks when the store clears on logout and the previous route re-renders.
-  if (!currentUser) {
-    return <Navigate to="/" state={{ from: location }} replace />;
+  // While Supabase session is resolving, show a spinner rather than bouncing
+  // the user to /login (which would happen because currentUser is still null).
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="w-8 h-8 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
+      </div>
+    );
   }
 
-  // Wrong role → unauthorized page
+  if (!currentUser) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
   if (!allowedRoles.includes(currentUser.role)) {
     return <Navigate to="/unauthorized" state={{ from: location }} replace />;
   }
