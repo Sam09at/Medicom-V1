@@ -2,7 +2,7 @@ import React from 'react';
 import type { PageSection } from '../../types';
 import type {
   HeroContent, AboutContent, ServicesContent, DoctorsContent,
-  BookingContent, TestimonialsContent, FAQContent, ContactContent, HoursContent,
+  BookingContent, BookingWidgetContent, TestimonialsContent, FAQContent, ContactContent, HoursContent,
   ServicesItem, DoctorsItem, TestimonialsItem, FAQItem,
 } from './sectionConfig';
 
@@ -20,7 +20,7 @@ const Field = ({ label, children }: { label: string; children: React.ReactNode }
   </div>
 );
 
-const inputCls = 'w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-shadow';
+const inputCls = 'w-full px-3 py-2 text-sm border border-[#3a3a3a] rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent bg-[#252525] text-slate-200 placeholder:text-slate-600 transition-shadow';
 const textareaCls = `${inputCls} resize-none`;
 
 function Input({ value, onChange, placeholder, type = 'text' }: { value: string; onChange: (v: string) => void; placeholder?: string; type?: string }) {
@@ -32,12 +32,12 @@ function Textarea({ value, onChange, placeholder, rows = 3 }: { value: string; o
 }
 
 function SectionHeading({ label }: { label: string }) {
-  return <h3 className="text-[13px] font-bold text-slate-900 pb-3 border-b border-slate-100">{label}</h3>;
+  return <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pb-3 border-b border-[#2a2a2a]">{label}</h3>;
 }
 
 function AddBtn({ label, onClick }: { label: string; onClick: () => void }) {
   return (
-    <button onClick={onClick} className="w-full py-2 border-2 border-dashed border-slate-200 rounded-lg text-[12px] font-semibold text-slate-400 hover:border-blue-300 hover:text-blue-500 transition-colors">
+    <button onClick={onClick} className="w-full py-2 border-2 border-dashed border-[#3a3a3a] rounded-lg text-[12px] font-semibold text-slate-500 hover:border-blue-500 hover:text-blue-400 transition-colors">
       + {label}
     </button>
   );
@@ -45,11 +45,11 @@ function AddBtn({ label, onClick }: { label: string; onClick: () => void }) {
 
 function ItemCard({ children, onDelete }: { children: React.ReactNode; onDelete: () => void }) {
   return (
-    <div className="relative group bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2">
+    <div className="relative group bg-[#1e1e1e] border border-[#333] rounded-xl p-3 space-y-2">
       {children}
       <button
         onClick={onDelete}
-        className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white border border-slate-200 text-slate-300 hover:text-rose-500 hover:border-rose-200 flex items-center justify-center transition-colors opacity-0 group-hover:opacity-100"
+        className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[#2a2a2a] border border-[#3a3a3a] text-slate-500 hover:text-rose-400 hover:border-rose-500/30 flex items-center justify-center transition-colors opacity-0 group-hover:opacity-100"
       >
         <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
       </button>
@@ -171,6 +171,23 @@ function BookingEditor({ section, update }: { section: PageSection; update: (c: 
   );
 }
 
+// ─── Booking widget editor ────────────────────────────────────────────────────
+
+function BookingWidgetEditor({ section, update }: { section: PageSection; update: (c: Partial<BookingWidgetContent>) => void }) {
+  const c = section.content as unknown as BookingWidgetContent;
+  return (
+    <div className="space-y-4">
+      <SectionHeading label="Widget de réservation en ligne" />
+      <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl px-4 py-3">
+        <p className="text-xs font-semibold text-indigo-300 mb-1">📅 Formulaire de RDV intégré</p>
+        <p className="text-[11px] text-indigo-400/80 leading-relaxed">Ce bloc affiche un calendrier interactif et un formulaire de réservation directement dans la page, sans ouvrir de popup.</p>
+      </div>
+      <Field label="Titre"><Input value={c.heading} onChange={v => update({ heading: v })} placeholder="Prendre rendez-vous en ligne" /></Field>
+      <Field label="Sous-titre"><Textarea value={c.body} onChange={v => update({ body: v })} placeholder="Sélectionnez un créneau disponible..." rows={2} /></Field>
+    </div>
+  );
+}
+
 // ─── Testimonials editor ──────────────────────────────────────────────────────
 
 function TestimonialsEditor({ section, update }: { section: PageSection; update: (c: Partial<TestimonialsContent>) => void }) {
@@ -264,15 +281,15 @@ function HoursEditor({ section, update }: { section: PageSection; update: (c: Pa
       <div className="space-y-2">
         {schedule.map(row => (
           <div key={row.id} className="flex items-center gap-2">
-            <span className="text-[12px] font-semibold text-slate-600 w-24 shrink-0">{row.day}</span>
-            <label className="flex items-center gap-1 text-[11px] text-slate-400 shrink-0 cursor-pointer">
+            <span className="text-[12px] font-semibold text-slate-400 w-24 shrink-0">{row.day}</span>
+            <label className="flex items-center gap-1 text-[11px] text-slate-500 shrink-0 cursor-pointer">
               <input type="checkbox" checked={row.closed} onChange={e => updateRow(row.id, { closed: e.target.checked })} className="rounded" />
               Fermé
             </label>
             {!row.closed && (
               <input
                 type="text"
-                className="flex-1 px-2 py-1 text-[12px] border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="flex-1 px-2 py-1 text-[12px] border border-[#3a3a3a] rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 bg-[#252525] text-slate-200 placeholder:text-slate-600"
                 value={row.hours}
                 onChange={e => updateRow(row.id, { hours: e.target.value })}
                 placeholder="09:00 – 18:00"
@@ -291,13 +308,13 @@ export const SectionEditorPanel: React.FC<Props> = ({ section, onChange }) => {
   if (!section) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-center px-8">
-        <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center mb-4">
-          <svg className="w-6 h-6 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <div className="w-12 h-12 bg-[#222] rounded-xl flex items-center justify-center mb-4">
+          <svg className="w-6 h-6 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
           </svg>
         </div>
-        <p className="text-sm font-semibold text-slate-500">Sélectionnez une section</p>
-        <p className="text-xs text-slate-400 mt-1 max-w-[16rem]">Cliquez sur une section dans le canvas pour modifier son contenu ici.</p>
+        <p className="text-sm font-semibold text-slate-400">Sélectionnez une section</p>
+        <p className="text-xs text-slate-600 mt-1 max-w-[16rem]">Cliquez sur une section dans le canvas pour éditer son contenu.</p>
       </div>
     );
   }
@@ -315,7 +332,8 @@ export const SectionEditorPanel: React.FC<Props> = ({ section, onChange }) => {
         {section.type === 'about'        && <AboutEditor        {...editorProps} />}
         {section.type === 'services'     && <ServicesEditor     {...editorProps} />}
         {section.type === 'doctors'      && <DoctorsEditor      {...editorProps} />}
-        {section.type === 'booking'      && <BookingEditor      {...editorProps} />}
+        {section.type === 'booking'        && <BookingEditor       {...editorProps} />}
+        {section.type === 'booking_widget' && <BookingWidgetEditor {...editorProps} />}
         {section.type === 'testimonials' && <TestimonialsEditor {...editorProps} />}
         {section.type === 'faq'          && <FAQEditor          {...editorProps} />}
         {section.type === 'contact'      && <ContactEditor      {...editorProps} />}

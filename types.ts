@@ -938,7 +938,7 @@ export interface LandingPage {
 
 export type PageSectionType =
   | 'hero' | 'about' | 'services' | 'doctors'
-  | 'booking' | 'testimonials' | 'faq' | 'contact' | 'hours';
+  | 'booking' | 'booking_widget' | 'testimonials' | 'faq' | 'contact' | 'hours';
 
 export interface PageSection {
   id: string;

@@ -27,12 +27,13 @@ import {
 import { User } from '../types';
 import { supabase } from '../lib/supabase';
 import { getPlatformMRR } from '../lib/api/saas/analytics';
+import { useNoShowScoring } from '../hooks/useNoShowScoring';
 
 interface ReportsProps {
   user: User;
 }
 
-// ─── Mock data ─────────────────────────────────────────────────────────────────
+// ─── Fallback mock data ─────────────────────────────────────────────────────────
 
 const MOCK_REVENUE = [
   { month: 'Jan', revenue: 45000, projected: 48000 },
@@ -43,14 +44,14 @@ const MOCK_REVENUE = [
   { month: 'Jun', revenue: 71000, projected: 70000 },
 ];
 
-const appointmentStats = [
+const FALLBACK_APPT_STATS = [
   { name: 'Confirmés', value: 450, color: '#136cfb' },
   { name: 'Annulés', value: 35, color: '#e2405f' },
   { name: 'Absents', value: 15, color: '#94a3b8' },
   { name: 'Reportés', value: 40, color: '#f59e0b' },
 ];
 
-const noShowTrend = [
+const FALLBACK_NOSHOW_TREND = [
   { month: 'Jan', rate: 5.2 },
   { month: 'Fév', rate: 4.8 },
   { month: 'Mar', rate: 3.5 },
@@ -59,7 +60,7 @@ const noShowTrend = [
   { month: 'Jun', rate: 1.8 },
 ];
 
-const treatmentPerformance = [
+const FALLBACK_TREATMENT_PERF = [
   { name: 'Consultation', count: 120, avgDuration: 25, revenue: 36000 },
   { name: 'Détartrage', count: 85, avgDuration: 40, revenue: 42500 },
   { name: 'Plombage', count: 45, avgDuration: 50, revenue: 22500 },
@@ -117,8 +118,12 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
     currentMRR: 0,
     growth: 0,
   });
+  const [appointmentStats, setAppointmentStats] = useState(FALLBACK_APPT_STATS);
+  const [noShowTrend, setNoShowTrend] = useState(FALLBACK_NOSHOW_TREND);
+  const [treatmentPerformance, setTreatmentPerformance] = useState(FALLBACK_TREATMENT_PERF);
 
   const isSuperAdmin = user.role === 'super_admin';
+  const { highRisk: highRiskPatients, avgRate: avgNoShowRate } = useNoShowScoring(10);
 
   useEffect(() => {
     const loadRevenueData = async () => {
@@ -152,6 +157,109 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
         console.warn('[Reports] Fallback data:', err);
       }
     };
+
+    const loadOperationalData = async () => {
+      if (!supabase) return;
+      try {
+        const monthStart = new Date();
+        monthStart.setDate(1);
+        monthStart.setHours(0, 0, 0, 0);
+
+        // Appointment status breakdown for current month
+        const { data: apptData } = await supabase
+          .from('appointments')
+          .select('status')
+          .gte('start_time', monthStart.toISOString());
+
+        if (apptData && apptData.length > 0) {
+          const counts: Record<string, number> = {};
+          apptData.forEach((a: any) => { counts[a.status] = (counts[a.status] || 0) + 1; });
+
+          const confirmed = (counts['confirmed'] || 0) + (counts['completed'] || 0) +
+            (counts['waiting_room'] || 0) + (counts['in_progress'] || 0);
+          const cancelled = counts['cancelled'] || 0;
+          const absent = counts['absent'] || 0;
+          const rescheduled = counts['rescheduled'] || 0;
+
+          if (confirmed + cancelled + absent + rescheduled > 0) {
+            setAppointmentStats([
+              { name: 'Confirmés', value: confirmed, color: '#136cfb' },
+              { name: 'Annulés', value: cancelled, color: '#e2405f' },
+              { name: 'Absents', value: absent, color: '#94a3b8' },
+              { name: 'Reportés', value: rescheduled, color: '#f59e0b' },
+            ]);
+          }
+        }
+
+        // No-show trend: last 6 months
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+        sixMonthsAgo.setDate(1);
+        sixMonthsAgo.setHours(0, 0, 0, 0);
+
+        const { data: trendData } = await supabase
+          .from('appointments')
+          .select('status, start_time')
+          .gte('start_time', sixMonthsAgo.toISOString())
+          .in('status', ['confirmed', 'completed', 'absent', 'cancelled', 'rescheduled', 'waiting_room', 'in_progress']);
+
+        if (trendData && trendData.length > 0) {
+          const byMonth: Record<string, { total: number; absent: number }> = {};
+          trendData.forEach((a: any) => {
+            const key = new Date(a.start_time).toLocaleString('fr-FR', { month: 'short' });
+            if (!byMonth[key]) byMonth[key] = { total: 0, absent: 0 };
+            byMonth[key].total++;
+            if (a.status === 'absent') byMonth[key].absent++;
+          });
+          const trend = Object.entries(byMonth)
+            .slice(-6)
+            .map(([month, v]) => ({
+              month,
+              rate: v.total > 0 ? parseFloat(((v.absent / v.total) * 100).toFixed(1)) : 0,
+            }));
+          if (trend.length > 0) setNoShowTrend(trend);
+        }
+      } catch (err) {
+        console.warn('[Reports] Operational fallback:', err);
+      }
+    };
+
+    const loadClinicalData = async () => {
+      if (!supabase) return;
+      try {
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+        const { data } = await supabase
+          .from('appointments')
+          .select('appointment_type, duration_minutes')
+          .gte('start_time', sixMonthsAgo.toISOString())
+          .in('status', ['completed', 'in_progress']);
+
+        if (data && data.length > 0) {
+          const map: Record<string, { count: number; totalDuration: number }> = {};
+          data.forEach((a: any) => {
+            const name = a.appointment_type || 'Consultation';
+            if (!map[name]) map[name] = { count: 0, totalDuration: 0 };
+            map[name].count++;
+            map[name].totalDuration += a.duration_minutes || 30;
+          });
+          const perf = Object.entries(map)
+            .sort((a, b) => b[1].count - a[1].count)
+            .slice(0, 5)
+            .map(([name, v]) => ({
+              name,
+              count: v.count,
+              avgDuration: Math.round(v.totalDuration / v.count),
+              revenue: 0,
+            }));
+          if (perf.length > 0) setTreatmentPerformance(perf);
+        }
+      } catch (err) {
+        console.warn('[Reports] Clinical fallback:', err);
+      }
+    };
+
     const loadMrr = async () => {
       if (!isSuperAdmin) return;
       try {
@@ -161,12 +269,57 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
         /* fallback */
       }
     };
+
     loadRevenueData();
+    loadOperationalData();
+    loadClinicalData();
     loadMrr();
   }, [isSuperAdmin]);
 
-  const handleExport = (format: 'csv' | 'pdf') =>
-    alert(`Export ${reportType} en ${format.toUpperCase()} lancé…`);
+  const handleExport = (format: 'csv' | 'pdf') => {
+    if (format === 'pdf') {
+      alert('Export PDF disponible prochainement.');
+      return;
+    }
+    // CSV export — build rows based on active tab
+    let csvRows: string[][] = [];
+    let filename = 'rapport.csv';
+
+    if (reportType === 'financial') {
+      filename = 'rapport_revenus.csv';
+      csvRows = [
+        ['Mois', 'Revenus (MAD)', 'Objectif (MAD)'],
+        ...revenueData.map((r) => [r.month, String(r.revenue), String(r.projected)]),
+      ];
+    } else if (reportType === 'operational') {
+      filename = 'rapport_operations.csv';
+      csvRows = [
+        ['Statut', 'Nombre', 'Pourcentage'],
+        ...appointmentStats.map((s) => {
+          const total = appointmentStats.reduce((sum, x) => sum + x.value, 0);
+          return [s.name, String(s.value), `${Math.round((s.value / total) * 100)}%`];
+        }),
+        [],
+        ['Mois', 'Taux absence (%)'],
+        ...noShowTrend.map((n) => [n.month, String(n.rate)]),
+      ];
+    } else {
+      filename = 'rapport_clinique.csv';
+      csvRows = [
+        ['Traitement', 'Nombre actes', 'Durée moy. (min)', 'CA (MAD)'],
+        ...treatmentPerformance.map((t) => [t.name, String(t.count), String(t.avgDuration), String(t.revenue)]),
+      ];
+    }
+
+    const csv = csvRows.map((row) => row.map((cell) => `"${cell}"`).join(',')).join('\n');
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   // ── Clinic tabs ──────────────────────────────────────────────────────────────
   const TABS = [
@@ -348,6 +501,7 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
 
       {/* ── Operational ── */}
       {reportType === 'operational' && (
+        <div className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Donut */}
           <div className="card p-6">
@@ -457,6 +611,58 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
               </ResponsiveContainer>
             </div>
           </div>
+        </div>
+
+        {/* High-risk no-show patients */}
+        {highRiskPatients.length > 0 && (
+          <div className="card overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight">
+                  Patients à Risque Élevé d'Absence
+                </h3>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
+                  Score basé sur l'historique · taux moyen {(avgNoShowRate * 100).toFixed(0)}%
+                </p>
+              </div>
+              <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-red-50 text-red-600">
+                {highRiskPatients.length} patient{highRiskPatients.length > 1 ? 's' : ''}
+              </span>
+            </div>
+            <div className="divide-y divide-slate-50">
+              {highRiskPatients.map((p) => (
+                <div key={p.patientId} className="flex items-center gap-4 px-6 py-3">
+                  <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center shrink-0">
+                    <span className="text-[11px] font-bold text-red-600">
+                      {p.patientName.charAt(0)}
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] font-semibold text-slate-900 truncate">{p.patientName}</p>
+                    <p className="text-[11px] text-slate-400">
+                      {p.noShowCount} absence{p.noShowCount > 1 ? 's' : ''} / {p.totalAppointments} RDV
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <div className="text-right">
+                      <p className="text-[11px] font-bold text-red-600">{Math.round(p.noShowRate * 100)}%</p>
+                      <p className="text-[10px] text-slate-400">absence</p>
+                    </div>
+                    <div className="w-16">
+                      <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-red-400"
+                          style={{ width: `${p.score}%` }}
+                        />
+                      </div>
+                      <p className="text-[10px] text-slate-400 text-right mt-0.5">score {p.score}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         </div>
       )}
 

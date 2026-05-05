@@ -521,6 +521,265 @@ const CLINIQUE_PREMIUM: WebsiteTemplate = {
   ],
 };
 
+// ─── Template: Cardiologie ────────────────────────────────────────────────────
+
+const CARDIOLOGIE: WebsiteTemplate = {
+  id: 'cardiologie',
+  name: 'Cardiologie',
+  specialty: 'Cardiologie',
+  category: 'spécialiste',
+  description: 'Cabinet cardio moderne — confiance, précision, équipements de pointe.',
+  accentColor: '#dc2626',
+  thumbnailColor: 'linear-gradient(135deg, #dc2626 0%, #f87171 100%)',
+  sections: [
+    make('hero', {
+      headline: 'Cabinet de Cardiologie',
+      subheadline: 'Votre santé cardiaque entre les mains d\'experts. Consultations, bilan complet, holter ECG et échocardiographie.',
+      ctaText: 'Prendre rendez-vous',
+      backgroundImage: '',
+      overlayOpacity: 55,
+    }),
+    make('about', {
+      heading: 'Des soins cardiaques d\'excellence à Casablanca',
+      body: 'Notre cabinet de cardiologie assure le dépistage, le diagnostic et le traitement de toutes les pathologies cardiovasculaires. Équipé d\'un échocardiographe de dernière génération et d\'un système Holter numérique, nous offrons un bilan cardiaque complet en une seule visite.',
+      imageUrl: '',
+      imagePosition: 'right',
+    }),
+    make('services', {
+      heading: 'Nos Consultations & Examens',
+      items: [
+        { id: 's1', icon: '🫀', title: 'Consultation cardiologique', description: 'Bilan clinique complet, auscultation et évaluation du risque cardiovasculaire.' },
+        { id: 's2', icon: '📊', title: 'Électrocardiogramme (ECG)', description: 'Enregistrement de l\'activité électrique du cœur au repos.' },
+        { id: 's3', icon: '🔊', title: 'Échocardiographie', description: 'Échographie cardiaque Doppler couleur pour visualiser le cœur en temps réel.' },
+        { id: 's4', icon: '⏱️', title: 'Holter ECG 24h', description: 'Enregistrement continu sur 24 à 72h pour détecter arythmies et troubles du rythme.' },
+        { id: 's5', icon: '🏃', title: 'Épreuve d\'effort', description: 'Test à l\'effort sous surveillance médicale pour évaluer le cœur à l\'exercice.' },
+        { id: 's6', icon: '💊', title: 'Maladies cardiovasculaires', description: 'Suivi HTA, insuffisance cardiaque, fibrillation auriculaire, post-infarctus.' },
+      ],
+    }),
+    make('doctors', {
+      heading: 'Votre cardiologue',
+      items: [
+        { id: 'd1', name: 'Dr. Karim Berrada', title: 'Cardiologue — Cardiologue interventionnel', photoUrl: '', bio: 'Diplômé de la Faculté de Médecine de Casablanca. Spécialisé en échocardiographie et insuffisance cardiaque. Ancien interne des Hôpitaux de Paris.' },
+        { id: 'd2', name: 'Dr. Nour El Houda Saidi', title: 'Cardiologue — Rythmologue', photoUrl: '', bio: 'Experte en troubles du rythme cardiaque et pose de stimulateurs cardiaques.' },
+      ],
+    }),
+    make('booking_widget', {
+      heading: 'Prendre rendez-vous en ligne',
+      body: 'Consultations sur rendez-vous du lundi au vendredi. Urgences cardiologiques accueillies en priorité.',
+    }),
+    make('testimonials', {
+      heading: 'Témoignages',
+      items: [
+        { id: 't1', author: 'Ali B.', role: 'Suivi post-infarctus', text: 'Docteur très compétent et rassurant. Bilan complet réalisé en une seule visite, résultats expliqués clairement.', rating: 5 },
+        { id: 't2', author: 'Nadia C.', role: 'Bilan cardiaque annuel', text: 'Cabinet moderne, pas d\'attente. L\'holter et l\'écho ont été réalisés le même jour.', rating: 5 },
+        { id: 't3', author: 'Omar M.', role: 'HTA chronique', text: 'Suivi rigoureux depuis 3 ans. Mon HTA est maintenant bien contrôlée.', rating: 5 },
+      ],
+    }),
+    make('faq', {
+      heading: 'Questions fréquentes',
+      items: [
+        { id: 'f1', question: 'À partir de quel âge consulter un cardiologue ?', answer: 'À partir de 40 ans pour un bilan préventif, ou plus tôt en cas de douleurs thoraciques, essoufflement, palpitations ou antécédents familiaux.' },
+        { id: 'f2', question: 'Comment se préparer à l\'épreuve d\'effort ?', answer: 'Éviter de manger dans les 2h avant, porter des vêtements confortables. Apporter la liste de vos médicaments.' },
+        { id: 'f3', question: 'Le cabinet accepte-t-il les urgences ?', answer: 'Oui, des créneaux d\'urgence sont réservés chaque matin. En cas de douleur thoracique aiguë, appelez le 15 (SAMU).' },
+      ],
+    }),
+    make('hours', {
+      heading: 'Horaires',
+      schedule: [
+        { id: 'lun', day: 'Lundi', hours: '08:30 – 13:00 / 15:00 – 18:00', closed: false },
+        { id: 'mar', day: 'Mardi', hours: '08:30 – 13:00 / 15:00 – 18:00', closed: false },
+        { id: 'mer', day: 'Mercredi', hours: '08:30 – 13:00', closed: false },
+        { id: 'jeu', day: 'Jeudi', hours: '08:30 – 13:00 / 15:00 – 18:00', closed: false },
+        { id: 'ven', day: 'Vendredi', hours: '08:30 – 13:00 / 15:00 – 17:30', closed: false },
+        { id: 'sam', day: 'Samedi', hours: '09:00 – 12:30', closed: false },
+        { id: 'dim', day: 'Dimanche', hours: '', closed: true },
+      ],
+    }),
+    make('contact', {
+      heading: 'Nous trouver',
+      phone: '',
+      email: '',
+      address: '',
+      googleMapsUrl: '',
+    }),
+  ],
+};
+
+// ─── Template: Dermatologie ───────────────────────────────────────────────────
+
+const DERMATOLOGIE: WebsiteTemplate = {
+  id: 'dermatologie',
+  name: 'Dermatologie',
+  specialty: 'Dermatologie & Esthétique',
+  category: 'spécialiste',
+  description: 'Moderne et élégant pour cabinet de dermatologie médicale et esthétique.',
+  accentColor: '#ea580c',
+  thumbnailColor: 'linear-gradient(135deg, #ea580c 0%, #fb923c 100%)',
+  sections: [
+    make('hero', {
+      headline: 'Cabinet de Dermatologie',
+      subheadline: 'Soins dermatologiques médicaux et esthétiques — acné, psoriasis, dépigmentation et rajeunissement cutané à Rabat.',
+      ctaText: 'Prendre rendez-vous',
+      backgroundImage: '',
+      overlayOpacity: 50,
+    }),
+    make('about', {
+      heading: 'Votre peau mérite les meilleurs soins',
+      body: 'Cabinet de dermatologie-vénérologie spécialisé dans les pathologies cutanées et les traitements esthétiques non-invasifs. Nous combinons expertise médicale et technologies laser de pointe pour des résultats durables et naturels.',
+      imageUrl: '',
+      imagePosition: 'left',
+    }),
+    make('services', {
+      heading: 'Nos Spécialités',
+      items: [
+        { id: 's1', icon: '🔬', title: 'Dermatologie médicale', description: 'Acné, eczéma, psoriasis, dermatite atopique, rosacée.' },
+        { id: 's2', icon: '🌞', title: 'Dermatologie oncologique', description: 'Dépistage mélanome, naevi atypiques et suivi post-chirurgical.' },
+        { id: 's3', icon: '✨', title: 'Laser & peeling', description: 'Traitement des taches, cicatrices d\'acné et renouvellement cutané.' },
+        { id: 's4', icon: '💉', title: 'Injections esthétiques', description: 'Botox, acide hyaluronique, comblement des rides et sillons.' },
+        { id: 's5', icon: '💫', title: 'Dépigmentation', description: 'Traitement des hyperpigmentations, mélasma et taches de grossesse.' },
+        { id: 's6', icon: '🧴', title: 'Alopécie & cheveux', description: 'PRP capillaire, traitement chute de cheveux hommes et femmes.' },
+      ],
+    }),
+    make('doctors', {
+      heading: 'Votre dermatologue',
+      items: [
+        { id: 'd1', name: 'Dr. Salma Tahiri', title: 'Dermatologue-Vénérologue', photoUrl: '', bio: 'Spécialisée en dermatologie médicale et esthétique. Formée en laser cutané à Paris. 10 ans d\'expérience.' },
+      ],
+    }),
+    make('services', {
+      heading: 'Nos Technologies',
+      items: [
+        { id: 'tech1', icon: '🔦', title: 'Laser Nd:YAG', description: 'Traitement des taches vasculaires, lentigos et épilation laser.' },
+        { id: 'tech2', icon: '💡', title: 'LED Photothérapie', description: 'Anti-inflammatoire, anti-acné et stimulation du collagène.' },
+        { id: 'tech3', icon: '🧬', title: 'Dermato-pathologie', description: 'Analyse histologique in-house pour les lésions suspectes.' },
+      ],
+    }),
+    make('booking_widget', {
+      heading: 'Réservez votre consultation',
+      body: 'Première consultation dermatologique ou bilan esthétique — choisissez votre créneau en ligne.',
+    }),
+    make('testimonials', {
+      heading: 'Avis patients',
+      items: [
+        { id: 't1', author: 'Sara K.', role: 'Traitement acné', text: 'Résultat spectaculaire en 3 mois. Ma peau n\'a jamais été aussi nette. Docteure à l\'écoute et patiente.', rating: 5 },
+        { id: 't2', author: 'Meryem L.', role: 'Traitement mélasma', text: 'Mes taches de grossesse ont disparu à 80% en 4 séances de laser. Je recommande vivement.', rating: 5 },
+        { id: 't3', author: 'Younes A.', role: 'Injection hyaluronique', text: 'Résultat très naturel et professionnel. Cabinet propre et équipe bienveillante.', rating: 5 },
+      ],
+    }),
+    make('faq', {
+      heading: 'Questions fréquentes',
+      items: [
+        { id: 'f1', question: 'Les injections de botox sont-elles douloureuses ?', answer: 'Non, nous utilisons des aiguilles très fines et une crème anesthésiante. La séance dure 15 à 20 minutes.' },
+        { id: 'f2', question: 'Combien de séances de laser faut-il ?', answer: 'En général 3 à 6 séances espacées de 4 semaines selon le type de lésion et le phototype.' },
+        { id: 'f3', question: 'Prenez-vous en charge les pathologies chroniques ?', answer: 'Oui, nous assurons le suivi long terme du psoriasis, eczéma, rosacée et dermatoses chroniques.' },
+      ],
+    }),
+    make('hours', {
+      heading: 'Horaires',
+      schedule: [
+        { id: 'lun', day: 'Lundi', hours: '09:00 – 13:00 / 15:00 – 18:30', closed: false },
+        { id: 'mar', day: 'Mardi', hours: '09:00 – 13:00 / 15:00 – 18:30', closed: false },
+        { id: 'mer', day: 'Mercredi', hours: '09:00 – 13:00', closed: false },
+        { id: 'jeu', day: 'Jeudi', hours: '09:00 – 13:00 / 15:00 – 18:30', closed: false },
+        { id: 'ven', day: 'Vendredi', hours: '09:00 – 13:00 / 15:00 – 17:00', closed: false },
+        { id: 'sam', day: 'Samedi', hours: '09:30 – 13:00', closed: false },
+        { id: 'dim', day: 'Dimanche', hours: '', closed: true },
+      ],
+    }),
+    make('contact', {
+      heading: 'Nous contacter',
+      phone: '',
+      email: '',
+      address: '',
+      googleMapsUrl: '',
+    }),
+  ],
+};
+
+// ─── Template: Chirurgie Orthopédique ─────────────────────────────────────────
+
+const ORTHOPEDIQUE: WebsiteTemplate = {
+  id: 'chirurgie-orthopedique',
+  name: 'Chirurgie Orthopédique',
+  specialty: 'Orthopédie & Traumatologie',
+  category: 'chirurgie',
+  description: 'Professionnel et technique pour chirurgien orthopédiste ou traumatologue.',
+  accentColor: '#0f766e',
+  thumbnailColor: 'linear-gradient(135deg, #0f766e 0%, #14b8a6 100%)',
+  sections: [
+    make('hero', {
+      headline: 'Chirurgie Orthopédique & Traumatologie',
+      subheadline: 'Expertise chirurgicale en pathologies osseuses, articulaires et ligamentaires. Consultation, bilan et prise en charge chirurgicale à Marrakech.',
+      ctaText: 'Prendre rendez-vous',
+      backgroundImage: '',
+      overlayOpacity: 55,
+    }),
+    make('about', {
+      heading: 'Une expertise chirurgicale de référence',
+      body: 'Notre service d\'orthopédie-traumatologie prend en charge l\'ensemble des pathologies de l\'appareil locomoteur — des fractures aux prothèses totales de hanche et genou. Chirurgie ambulatoire, arthroscopie et prothèses de dernière génération.',
+      imageUrl: '',
+      imagePosition: 'right',
+    }),
+    make('services', {
+      heading: 'Nos Spécialités Chirurgicales',
+      items: [
+        { id: 's1', icon: '🦴', title: 'Prothèses articulaires', description: 'Prothèse totale de hanche (PTH) et prothèse totale de genou (PTG) de dernière génération.' },
+        { id: 's2', icon: '🔭', title: 'Chirurgie arthroscopique', description: 'Ménisques, ligament croisé antérieur (LCA), coiffe des rotateurs.' },
+        { id: 's3', icon: '🚑', title: 'Traumatologie', description: 'Fractures, luxations et urgences orthopédiques.' },
+        { id: 's4', icon: '🦶', title: 'Chirurgie du pied', description: 'Hallux valgus, orteils en griffe, pied plat et chirurgie du tendon d\'Achille.' },
+        { id: 's5', icon: '🧠', title: 'Rachis & colonne', description: 'Hernie discale, sténose canalaire et discopathies dégénératives.' },
+        { id: 's6', icon: '👶', title: 'Orthopédie pédiatrique', description: 'Scoliose, dysplasie de hanche et pathologies ostéo-articulaires de l\'enfant.' },
+      ],
+    }),
+    make('doctors', {
+      heading: 'Votre chirurgien',
+      items: [
+        { id: 'd1', name: 'Pr. Youssef El Mansouri', title: 'Chirurgien Orthopédiste — Traumatologue', photoUrl: '', bio: 'Professeur agrégé, spécialiste en chirurgie prothétique et arthroscopique. Plus de 2000 interventions. Ancien chef de service CHU Mohammed VI.' },
+        { id: 'd2', name: 'Dr. Zineb Lahlou', title: 'Orthopédiste pédiatrique', photoUrl: '', bio: 'Experte en orthopédie de l\'enfant et de l\'adolescent. Formée à l\'Hôpital Necker Paris.' },
+      ],
+    }),
+    make('booking_widget', {
+      heading: 'Prendre rendez-vous',
+      body: 'Consultations sur rendez-vous. Chirurgie programmée et urgences traumatologiques acceptées.',
+    }),
+    make('testimonials', {
+      heading: 'Retours d\'expérience',
+      items: [
+        { id: 't1', author: 'Driss M.', role: 'Prothèse de genou', text: 'Opération parfaite, reprise de marche en 48h. Équipe très professionnelle, je marche sans douleur depuis 1 an.', rating: 5 },
+        { id: 't2', author: 'Khadija B.', role: 'Chirurgie LCA', text: 'Retour au sport en 6 mois comme promis. Le Pr. El Mansouri est exceptionnel.', rating: 5 },
+        { id: 't3', author: 'Hassan A.', role: 'Prothèse de hanche', text: 'À 68 ans, je marche à nouveau sans douleur. Chirurgie rapide et suivi post-op impeccable.', rating: 5 },
+      ],
+    }),
+    make('faq', {
+      heading: 'Questions fréquentes',
+      items: [
+        { id: 'f1', question: 'Combien de temps dure une intervention de prothèse de genou ?', answer: 'Environ 1h30 à 2h sous anesthésie rachidienne. L\'hospitalisation est de 3 à 5 jours. La rééducation commence dès le lendemain.' },
+        { id: 'f2', question: 'La chirurgie arthroscopique laisse-t-elle des cicatrices ?', answer: 'Non, elle utilise de petites incisions de 5mm, avec une récupération rapide et une cicatrice quasi invisible.' },
+        { id: 'f3', question: 'Acceptez-vous les mutuelles AMO et CNOPS ?', answer: 'Oui, nous travaillons avec la majorité des organismes de protection sociale au Maroc (AMO, CNOPS, CNSS, mutuelles privées).' },
+      ],
+    }),
+    make('hours', {
+      heading: 'Consultations',
+      schedule: [
+        { id: 'lun', day: 'Lundi', hours: '09:00 – 13:00 / 15:00 – 17:00', closed: false },
+        { id: 'mar', day: 'Mardi', hours: '09:00 – 13:00', closed: false },
+        { id: 'mer', day: 'Mercredi', hours: '09:00 – 13:00 / 15:00 – 17:00', closed: false },
+        { id: 'jeu', day: 'Jeudi', hours: '09:00 – 13:00', closed: false },
+        { id: 'ven', day: 'Vendredi', hours: '09:00 – 12:00', closed: false },
+        { id: 'sam', day: 'Samedi', hours: '09:00 – 12:00 (urgences)', closed: false },
+        { id: 'dim', day: 'Dimanche', hours: '', closed: true },
+      ],
+    }),
+    make('contact', {
+      heading: 'Nous trouver',
+      phone: '',
+      email: '',
+      address: '',
+      googleMapsUrl: '',
+    }),
+  ],
+};
+
 // ─── All templates ─────────────────────────────────────────────────────────────
 
 export const WEBSITE_TEMPLATES: WebsiteTemplate[] = [
@@ -530,6 +789,9 @@ export const WEBSITE_TEMPLATES: WebsiteTemplate[] = [
   GYNECOLOGIE_MATERNITE,
   OPHTALMOLOGIE,
   CLINIQUE_PREMIUM,
+  CARDIOLOGIE,
+  DERMATOLOGIE,
+  ORTHOPEDIQUE,
 ];
 
 export const TEMPLATE_CATEGORIES: { id: TemplateCategory | 'all'; label: string }[] = [

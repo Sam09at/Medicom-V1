@@ -29,5 +29,5 @@
     "types": ["node", "vitest/globals"]
   },
   "include": ["**/*.ts", "**/*.tsx", "vite-env.d.ts"],
-  "exclude": ["node_modules", "node_modules_old", "dist", "src_backup"]
+  "exclude": ["node_modules", "node_modules_old", "dist", "src_backup", "supabase/functions"]
 }

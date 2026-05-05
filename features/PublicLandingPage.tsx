@@ -4,11 +4,15 @@ import { getLandingPageBySlug } from '../lib/api/landingPages';
 import type { LandingPage, PageSection } from '../types';
 import type {
   HeroContent, AboutContent, ServicesContent, DoctorsContent,
-  BookingContent, TestimonialsContent, FAQContent, ContactContent, HoursContent,
+  BookingContent, BookingWidgetContent, TestimonialsContent, FAQContent, ContactContent, HoursContent,
 } from './LandingPageBuilder/sectionConfig';
 
 const BookingModal = lazy(() =>
   import('./PublicBooking/BookingModal').then(m => ({ default: m.BookingModal }))
+);
+
+const InlineBookingWidget = lazy(() =>
+  import('./PublicBooking/InlineBookingWidget').then(m => ({ default: m.InlineBookingWidget }))
 );
 
 // ─── Sub-screens ──────────────────────────────────────────────────────────────
@@ -370,16 +374,24 @@ function HoursSection({ content, accent }: { content: HoursContent; accent: stri
 function SectionRenderer({ section, accent, page, onBookingClick }: { section: PageSection; accent: string; page: LandingPage; onBookingClick: () => void }) {
   const c = section.content as Record<string, unknown>;
   switch (section.type) {
-    case 'hero':         return <HeroSection content={c as unknown as HeroContent} accent={accent} clinicName={page.headline ?? page.slug} phone={page.contactPhone} />;
-    case 'about':        return <AboutSection content={c as unknown as AboutContent} />;
-    case 'services':     return <ServicesSection content={c as unknown as ServicesContent} accent={accent} />;
-    case 'doctors':      return <DoctorsSection content={c as unknown as DoctorsContent} accent={accent} />;
-    case 'booking':      return <BookingSection content={c as unknown as BookingContent} accent={accent} onBookingClick={onBookingClick} />;
-    case 'testimonials': return <TestimonialsSection content={c as unknown as TestimonialsContent} />;
-    case 'faq':          return <FAQSection content={c as unknown as FAQContent} accent={accent} />;
-    case 'contact':      return <ContactSection content={c as unknown as ContactContent} accent={accent} />;
-    case 'hours':        return <HoursSection content={c as unknown as HoursContent} accent={accent} />;
-    default:             return null;
+    case 'hero':           return <HeroSection content={c as unknown as HeroContent} accent={accent} clinicName={page.headline ?? page.slug} phone={page.contactPhone} />;
+    case 'about':          return <AboutSection content={c as unknown as AboutContent} />;
+    case 'services':       return <ServicesSection content={c as unknown as ServicesContent} accent={accent} />;
+    case 'doctors':        return <DoctorsSection content={c as unknown as DoctorsContent} accent={accent} />;
+    case 'booking':        return <BookingSection content={c as unknown as BookingContent} accent={accent} onBookingClick={onBookingClick} />;
+    case 'booking_widget': {
+      const wc = c as unknown as BookingWidgetContent;
+      return (
+        <Suspense fallback={null}>
+          <InlineBookingWidget page={page} heading={wc.heading} body={wc.body} />
+        </Suspense>
+      );
+    }
+    case 'testimonials':   return <TestimonialsSection content={c as unknown as TestimonialsContent} />;
+    case 'faq':            return <FAQSection content={c as unknown as FAQContent} accent={accent} />;
+    case 'contact':        return <ContactSection content={c as unknown as ContactContent} accent={accent} />;
+    case 'hours':          return <HoursSection content={c as unknown as HoursContent} accent={accent} />;
+    default:               return null;
   }
 }
 

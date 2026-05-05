@@ -14,8 +14,9 @@ import {
 } from '../components/Icons';
 import { Patient, Appointment, ToothData, ToothStatus, AppointmentStatus } from '../types';
 import { Odontogram } from '../components/Odontogram';
-import { MOCK_SERVICES, MOCK_INVENTORY } from '../constants';
+import { MOCK_INVENTORY } from '../constants';
 import { useConsultationLogic } from '../hooks/useConsultationLogic';
+import { useServices } from '../hooks/useServices';
 import { PrescriptionForm } from './PrescriptionForm';
 import { SegmentedTabs } from '../components/SegmentedTabs';
 import { ProcessStepper, ProcessStep } from '../components/ProcessStepper';
@@ -126,6 +127,8 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
     }
   }, [appointment.id, appointment.status, currentUser, currentTenant]);
 
+  const { services: availableServices } = useServices();
+
   // Local UI State (not persisted in hook yet or handled locally)
   const [selectedActId, setSelectedActId] = useState('');
   const [selectedTeethForAct, setSelectedTeethForAct] = useState('');
@@ -167,7 +170,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
   // So I will remove `activeToothTool` and the toolbar UI, and just use `handleToothUpdate`.
 
   const addProcedure = () => {
-    const act = MOCK_SERVICES.find((s) => s.id === selectedActId);
+    const act = availableServices.find((s) => s.id === selectedActId);
     if (act) {
       setSelectedProcedures([
         ...selectedProcedures,
@@ -500,7 +503,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
                       onChange={(e) => setSelectedActId(e.target.value)}
                     >
                       <option value="">Sélectionner un acte...</option>
-                      {MOCK_SERVICES.map((s) => (
+                      {availableServices.map((s) => (
                         <option key={s.id} value={s.id}>
                           {s.name} ({s.price} MAD)
                         </option>
@@ -548,7 +551,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ patient, appointment
                     </p>
                     <div className="flex flex-wrap gap-2.5">
                       {favoriteActs.map((actId: string) => {
-                        const act = MOCK_SERVICES.find((s: any) => s.id === actId);
+                        const act = availableServices.find((s) => s.id === actId);
                         if (!act) return null;
                         return (
                           <button

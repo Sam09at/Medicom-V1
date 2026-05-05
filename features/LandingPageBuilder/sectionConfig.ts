@@ -14,6 +14,7 @@ export interface ServicesContent { heading: string; items: ServicesItem[]; }
 export interface DoctorsItem { id: string; name: string; title: string; photoUrl: string; bio: string; }
 export interface DoctorsContent { heading: string; items: DoctorsItem[]; }
 export interface BookingContent { heading: string; body: string; buttonText: string; phone: string; }
+export interface BookingWidgetContent { heading: string; body: string; }
 export interface TestimonialsItem { id: string; author: string; role: string; text: string; rating: number; }
 export interface TestimonialsContent { heading: string; items: TestimonialsItem[]; }
 export interface FAQItem { id: string; question: string; answer: string; }
@@ -85,11 +86,19 @@ export const SECTION_META: SectionMeta[] = [
   },
   {
     type: 'booking',
-    label: 'Prise de RDV',
-    description: 'Section CTA pour inciter à réserver',
+    label: 'Prise de RDV (CTA)',
+    description: 'Bandeau CTA avec bouton et numéro de téléphone',
     iconPath: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z',
     accent: 'text-blue-600', bg: 'bg-blue-50',
     defaultContent: { heading: 'Prenez rendez-vous', body: 'Disponible du lundi au samedi. Réservez votre consultation en quelques clics.', buttonText: 'Appeler maintenant', phone: '' } satisfies BookingContent,
+  },
+  {
+    type: 'booking_widget',
+    label: 'Widget de réservation',
+    description: 'Formulaire de RDV en ligne intégré directement dans la page',
+    iconPath: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01',
+    accent: 'text-indigo-600', bg: 'bg-indigo-50',
+    defaultContent: { heading: 'Prendre rendez-vous en ligne', body: 'Sélectionnez un créneau disponible et confirmez votre consultation en quelques secondes.' } satisfies BookingWidgetContent,
   },
   {
     type: 'testimonials',

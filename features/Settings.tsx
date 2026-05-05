@@ -20,13 +20,14 @@ import {
   IconBell,
   IconCreditCard,
 } from '../components/Icons';
-import { MOCK_SERVICES, PLAN_PRICING } from '../constants';
+import { PLAN_PRICING } from '../constants';
 import { MedicalService } from '../types';
 import { supabase, getCurrentTenantId } from '../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { applyLanguageDirection } from '../lib/i18n';
 import { useMedicomStore } from '../store';
 import { WhatsAppLog } from './WhatsAppLog';
+import { useServices } from '../hooks/useServices';
 
 /* ── Mock data ── */
 const MOCK_STAFF = [
@@ -412,7 +413,7 @@ export const Settings: React.FC = () => {
   );
 
   /* Services */
-  const [services, setServices] = useState<MedicalService[]>(MOCK_SERVICES);
+  const { services, save: saveServiceApi, toggle: toggleServiceApi } = useServices(true);
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<MedicalService | null>(null);
   const [newService, setNewService] = useState({ name: '', code: '', price: 0, durationMinutes: 30 });
@@ -462,8 +463,6 @@ export const Settings: React.FC = () => {
             setMessageTemplate(n.messageTemplate ?? messageTemplate);
           }
         }
-        const { data: svcData } = await supabase.from('medical_services').select('*').eq('tenant_id', tid).eq('is_active', true).order('name');
-        if (svcData?.length) setServices(svcData.map((s: any) => ({ id: s.id, tenantId: s.tenant_id, name: s.name, code: s.code, category: s.category, durationMinutes: s.duration_minutes, price: Number(s.price), tvaRate: Number(s.tva_rate), isActive: s.is_active })));
         const { data: staffData } = await supabase.from('users').select('id, first_name, last_name, email, role, updated_at').eq('tenant_id', tid);
         if (staffData?.length) setUsers(staffData.map((u: any) => ({ id: u.id, name: `${u.first_name || ''} ${u.last_name || ''}`.trim(), role: u.role === 'clinic_admin' ? 'Propriétaire' : u.role === 'doctor' ? 'Médecin' : 'Assistante', email: u.email, status: 'Actif', lastActive: u.updated_at ? new Date(u.updated_at).toLocaleDateString('fr-FR') : 'N/A' })));
       } catch (err) { console.warn('[Settings] fallback:', err); }
@@ -490,17 +489,21 @@ export const Settings: React.FC = () => {
   const openServiceModal = (svc?: MedicalService) => { setEditingService(svc || null); setNewService(svc ? { name: svc.name, code: svc.code || '', price: svc.price, durationMinutes: svc.durationMinutes } : { name: '', code: '', price: 0, durationMinutes: 30 }); setIsServiceModalOpen(true); };
   const handleSaveService = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingService) {
-      setServices(services.map(s => s.id === editingService.id ? { ...editingService, ...newService, isActive: true } : s));
-      if (supabase && tenantId) await supabase.from('medical_services').update({ name: newService.name, code: newService.code, price: newService.price, duration_minutes: newService.durationMinutes }).eq('id', editingService.id);
-    } else {
-      const svc: MedicalService = { id: `s-${Date.now()}`, ...newService, isActive: true };
-      setServices([...services, svc]);
-      if (supabase && tenantId) await supabase.from('medical_services').insert({ tenant_id: tenantId, name: newService.name, code: newService.code, price: newService.price, duration_minutes: newService.durationMinutes, is_active: true });
-    }
-    setIsServiceModalOpen(false); setEditingService(null); setNewService({ name: '', code: '', price: 0, durationMinutes: 30 });
+    await saveServiceApi({
+      ...(editingService ? { id: editingService.id } : {}),
+      name: newService.name,
+      code: newService.code,
+      durationMinutes: newService.durationMinutes,
+      price: newService.price,
+      isActive: true,
+    });
+    setIsServiceModalOpen(false);
+    setEditingService(null);
+    setNewService({ name: '', code: '', price: 0, durationMinutes: 30 });
   };
-  const deleteService = async (id: string) => { if (confirm('Supprimer cet acte ?')) { setServices(services.filter(s => s.id !== id)); if (supabase) await supabase.from('medical_services').update({ is_active: false }).eq('id', id); } };
+  const deleteService = async (id: string) => {
+    if (confirm('Supprimer cet acte ?')) await toggleServiceApi(id, false);
+  };
   const handleInviteUser = (e: React.FormEvent) => { e.preventDefault(); setUsers([...users, { id: Date.now(), name: newUser.name, role: newUser.role, email: newUser.email, status: 'Actif', lastActive: 'Jamais' }]); setIsUserModalOpen(false); setNewUser({ name: '', email: '', role: 'Assistante' }); };
 
   /* ── Tab Content ── */

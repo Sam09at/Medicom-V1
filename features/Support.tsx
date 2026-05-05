@@ -576,8 +576,9 @@ const UserSupport = ({ user }: { user: User }) => {
 // ══════════════════════════════════════════════════════════════════
 
 const SuperAdminSupport = () => {
-  const [tickets, setTickets] = useState<Ticket[]>(MOCK_TICKETS);
-  const [selected, setSelected] = useState<Ticket | null>(MOCK_TICKETS[0] ?? null);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [selected, setSelected] = useState<Ticket | null>(null);
+  const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState<TicketStatus | 'all'>('all');
   const [filterPriority, setFilterPriority] = useState<TicketPriority | 'all'>('all');
   const [search, setSearch] = useState('');
@@ -591,8 +592,11 @@ const SuperAdminSupport = () => {
   const cannedRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setLoading(true);
     getTickets().then((data) => {
-      if (data.length > 0) { setTickets(data); setSelected(data[0]); }
+      setTickets(data);
+      setSelected(data[0] ?? null);
+      setLoading(false);
     });
   }, []);
 
@@ -744,7 +748,16 @@ const SuperAdminSupport = () => {
 
           {/* Ticket list — sorted by SLA breach then priority */}
           <div className="flex-1 overflow-y-auto">
-            {sorted.length === 0 ? (
+            {loading ? (
+              <div className="space-y-0">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="px-3 py-3 border-b border-slate-50 animate-pulse">
+                    <div className="h-3 bg-slate-100 rounded w-3/4 mb-2" />
+                    <div className="h-2.5 bg-slate-100 rounded w-1/2" />
+                  </div>
+                ))}
+              </div>
+            ) : sorted.length === 0 ? (
               <div className="text-center py-8 px-4"><p className="text-[12px] text-slate-400">Aucun ticket</p></div>
             ) : (
               sorted.map((ticket) => {
