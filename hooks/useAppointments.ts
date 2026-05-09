@@ -3,6 +3,48 @@ import { supabase } from '../lib/supabase';
 import { useMedicomStore } from '../store';
 import { Appointment, AppointmentStatus, AppointmentType } from '../types';
 
+// ── Enum mapping: UI (French) ↔ DB (English) ─────────────────────────────────
+
+const STATUS_TO_DB: Record<string, string> = {
+  'En attente': 'pending',
+  'Confirmé': 'confirmed',
+  "En salle d'attente": 'waiting_room',
+  'En consultation': 'in_progress',
+  'Terminé': 'completed',
+  'Annulé': 'cancelled',
+  'Reporté': 'rescheduled',
+  'Absent': 'absent',
+};
+
+const STATUS_FROM_DB: Record<string, AppointmentStatus> = {
+  pending: AppointmentStatus.PENDING,
+  confirmed: AppointmentStatus.CONFIRMED,
+  waiting_room: AppointmentStatus.ARRIVED,
+  in_progress: AppointmentStatus.IN_PROGRESS,
+  completed: AppointmentStatus.COMPLETED,
+  cancelled: AppointmentStatus.CANCELLED,
+  rescheduled: AppointmentStatus.RESCHEDULED,
+  absent: AppointmentStatus.NOSHOW,
+};
+
+const TYPE_TO_DB: Record<string, string> = {
+  'Consultation': 'consultation',
+  'Séance Traitement': 'treatment',
+  'Contrôle': 'checkup',
+  'Urgence': 'urgency',
+  'Pause / Absence': 'break',
+};
+
+const TYPE_FROM_DB: Record<string, AppointmentType> = {
+  consultation: AppointmentType.CONSULTATION,
+  treatment: AppointmentType.TREATMENT,
+  checkup: AppointmentType.CONTROL,
+  urgency: AppointmentType.URGENCY,
+  break: AppointmentType.BREAK,
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 interface UseAppointmentsOptions {
   startDate?: Date;
   endDate?: Date;
@@ -25,19 +67,10 @@ export function useAppointments(options?: UseAppointmentsOptions) {
         const { MOCK_APPOINTMENTS } = await import('../constants');
         let data = [...MOCK_APPOINTMENTS];
 
-        // Filter logic matching the Supabase query
-        if (options?.startDate) {
-          data = data.filter((a) => a.start >= options.startDate!);
-        }
-        if (options?.endDate) {
-          data = data.filter((a) => a.start <= options.endDate!);
-        }
-        if (options?.doctorId) {
-          data = data.filter((a) => a.doctorId === options.doctorId);
-        }
-        if (options?.patientId) {
-          data = data.filter((a) => a.patientId === options.patientId);
-        }
+        if (options?.startDate) data = data.filter((a) => a.start >= options.startDate!);
+        if (options?.endDate) data = data.filter((a) => a.start <= options.endDate!);
+        if (options?.doctorId) data = data.filter((a) => a.doctorId === options.doctorId);
+        if (options?.patientId) data = data.filter((a) => a.patientId === options.patientId);
 
         setAppointments(data);
       } catch (err) {
@@ -73,21 +106,12 @@ export function useAppointments(options?: UseAppointmentsOptions) {
         )
         .eq('tenant_id', currentTenant.id);
 
-      if (options?.startDate) {
-        query = query.gte('start_time', options.startDate.toISOString());
-      }
-      if (options?.endDate) {
-        query = query.lte('start_time', options.endDate.toISOString());
-      }
-      if (options?.doctorId) {
-        query = query.eq('doctor_id', options.doctorId);
-      }
-      if (options?.patientId) {
-        query = query.eq('patient_id', options.patientId);
-      }
+      if (options?.startDate) query = query.gte('start_time', options.startDate.toISOString());
+      if (options?.endDate) query = query.lte('start_time', options.endDate.toISOString());
+      if (options?.doctorId) query = query.eq('doctor_id', options.doctorId);
+      if (options?.patientId) query = query.eq('patient_id', options.patientId);
 
       const { data, error } = await query;
-
       if (error) throw error;
 
       const mapped: Appointment[] = data.map((row: any) => ({
@@ -100,8 +124,8 @@ export function useAppointments(options?: UseAppointmentsOptions) {
           Math.round(
             (new Date(row.end_time).getTime() - new Date(row.start_time).getTime()) / 60000
           ),
-        type: row.type as AppointmentType,
-        status: row.status as AppointmentStatus,
+        type: TYPE_FROM_DB[row.type] ?? (row.type as AppointmentType),
+        status: STATUS_FROM_DB[row.status] ?? (row.status as AppointmentStatus),
         notes: row.notes,
         patientName: row.patients
           ? `${row.patients.first_name} ${row.patients.last_name}`
@@ -125,7 +149,6 @@ export function useAppointments(options?: UseAppointmentsOptions) {
 
   useEffect(() => {
     const client = supabase;
-    // In real mode, require currentTenant. In mock mode (!client), allow it.
     if (client && !currentTenant) return;
 
     fetchAppointments();
@@ -133,7 +156,7 @@ export function useAppointments(options?: UseAppointmentsOptions) {
     if (!client) return;
 
     const channel = client
-      .channel('public:appointments')
+      .channel(`appointments:${currentTenant!.id}`)
       .on(
         'postgres_changes',
         {
@@ -142,15 +165,11 @@ export function useAppointments(options?: UseAppointmentsOptions) {
           table: 'appointments',
           filter: `tenant_id=eq.${currentTenant!.id}`,
         },
-        () => {
-          fetchAppointments();
-        }
+        () => fetchAppointments()
       )
       .subscribe();
 
-    return () => {
-      client.removeChannel(channel);
-    };
+    return () => { client.removeChannel(channel); };
   }, [currentTenant, fetchAppointments]);
 
   const createAppointment = async (appointment: Omit<Appointment, 'id' | 'patientName'>) => {
@@ -179,27 +198,26 @@ export function useAppointments(options?: UseAppointmentsOptions) {
     try {
       const startTime = new Date(appointment.start);
       const endTime = new Date(startTime.getTime() + appointment.duration * 60000);
+      const doctorId = appointment.doctorId || currentUser?.id || '';
 
       const { data, error } = await client
         .from('appointments')
         .insert({
           tenant_id: currentTenant.id,
           patient_id: appointment.patientId,
-          doctor_id: appointment.doctorId,
+          doctor_id: doctorId,
           start_time: startTime.toISOString(),
           end_time: endTime.toISOString(),
           duration: appointment.duration,
-          type: appointment.type,
-          status: appointment.status,
+          type: TYPE_TO_DB[appointment.type] ?? appointment.type,
+          status: STATUS_TO_DB[appointment.status] ?? appointment.status,
           notes: appointment.notes,
         })
         .select()
         .single();
 
       if (error) {
-        if (error.code === '23P01') {
-          throw new Error('Créneau déjà occupé');
-        }
+        if (error.code === '23P01') throw new Error('Créneau déjà occupé');
         throw error;
       }
 
@@ -221,9 +239,7 @@ export function useAppointments(options?: UseAppointmentsOptions) {
       const idx = MOCK_APPOINTMENTS.findIndex((a) => a.id === id);
       if (idx >= 0) {
         const updated = { ...MOCK_APPOINTMENTS[idx], ...updates };
-        // Recalc derived if needed
         if (updates.start) updated.start = new Date(updates.start);
-
         MOCK_APPOINTMENTS[idx] = updated;
         setAppointments((prev) => prev.map((a) => (a.id === id ? updated : a)));
         showToast({ type: 'success', message: 'Rendez-vous mis à jour (Mock)' });
@@ -232,16 +248,15 @@ export function useAppointments(options?: UseAppointmentsOptions) {
       return;
     }
 
-    if (!client) return;
     try {
-      const dbUpdates: any = {};
+      const dbUpdates: Record<string, unknown> = {};
 
       if (updates.start || updates.duration) {
         const current = appointments.find((a) => a.id === id);
         if (!current) throw new Error('Appointment not found locally');
 
         const start = updates.start ? new Date(updates.start) : current.start;
-        const duration = updates.duration || current.duration;
+        const duration = updates.duration ?? current.duration;
         const end = new Date(start.getTime() + duration * 60000);
 
         dbUpdates.start_time = start.toISOString();
@@ -249,9 +264,9 @@ export function useAppointments(options?: UseAppointmentsOptions) {
         dbUpdates.duration = duration;
       }
 
-      if (updates.type) dbUpdates.type = updates.type;
-      if (updates.status) dbUpdates.status = updates.status;
-      if (updates.notes) dbUpdates.notes = updates.notes;
+      if (updates.type) dbUpdates.type = TYPE_TO_DB[updates.type] ?? updates.type;
+      if (updates.status) dbUpdates.status = STATUS_TO_DB[updates.status] ?? updates.status;
+      if (updates.notes !== undefined) dbUpdates.notes = updates.notes;
       if (updates.patientId) dbUpdates.patient_id = updates.patientId;
       if (updates.doctorId) dbUpdates.doctor_id = updates.doctorId;
 
@@ -263,9 +278,7 @@ export function useAppointments(options?: UseAppointmentsOptions) {
         .single();
 
       if (error) {
-        if (error.code === '23P01') {
-          throw new Error('Conflit de rendez-vous');
-        }
+        if (error.code === '23P01') throw new Error('Conflit de rendez-vous');
         throw error;
       }
 
@@ -283,7 +296,6 @@ export function useAppointments(options?: UseAppointmentsOptions) {
     if (!client) return;
     try {
       const { error } = await client.from('appointments').delete().eq('id', id);
-
       if (error) throw error;
       showToast({ type: 'success', message: 'Rendez-vous supprimé' });
     } catch (err: any) {
@@ -300,17 +312,14 @@ export function useAppointments(options?: UseAppointmentsOptions) {
       const { MOCK_APPOINTMENTS } = await import('../constants');
       return MOCK_APPOINTMENTS.some((a) => {
         if (a.id === excludeId) return false;
-        if (a.doctorId !== doctorId) return false; // assuming conflict per doctor
-
+        if (a.doctorId !== doctorId) return false;
         const aStart = new Date(a.start);
         const aEnd = new Date(aStart.getTime() + a.duration * 60000);
-
-        // Check overlap: (StartA < EndB) and (EndA > StartB)
         return aStart < end && aEnd > start;
       });
     }
 
-    if (!currentTenant || !client) return true;
+    if (!currentTenant) return true;
 
     const { data, error } = await client.rpc('check_appointment_conflict', {
       p_tenant_id: currentTenant.id,

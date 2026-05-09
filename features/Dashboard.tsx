@@ -12,7 +12,7 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import { CabinetStats, Task } from '../types';
+import { CabinetStats } from '../types';
 import {
   IconClock,
   IconUsers,
@@ -29,37 +29,29 @@ import {
 } from '../components/Icons';
 import { useMedicomStore } from '../store';
 import { useWaitingRoom } from '../hooks/useWaitingRoom';
-import { useDashboardKPIs } from '../hooks/useDashboardKPIs';
+import { useDashboardKPIs, RevenuePoint, AppointmentStatusPoint } from '../hooks/useDashboardKPIs';
 import { useAppointments } from '../hooks/useAppointments';
+import { useTasks } from '../hooks/useTasks';
 
 interface DashboardProps {
   stats: CabinetStats;
 }
 
-// ─── Data ──────────────────────────────────────────────────────────────────────
+// ─── Placeholder data (shown before real data loads) ──────────────────────────
 
-const dataRevenue = [
-  { name: 'Jan', current: 9800, prev: 6200 },
-  { name: 'Fév', current: 14200, prev: 8500 },
-  { name: 'Mar', current: 19400, prev: 13200 },
-  { name: 'Avr', current: 16800, prev: 15900 },
-  { name: 'Mai', current: 18600, prev: 17300 },
-  { name: 'Jui', current: 21000, prev: 14800 },
-  { name: 'Jul', current: 17500, prev: 13000 },
-  { name: 'Aoû', current: 22800, prev: 16500 },
-  { name: 'Sep', current: 24500, prev: 19800 },
-  { name: 'Oct', current: 20200, prev: 17400 },
-  { name: 'Nov', current: 26800, prev: 21000 },
-  { name: 'Déc', current: 29400, prev: 23500 },
+const REVENUE_PLACEHOLDER: RevenuePoint[] = [
+  { name: 'Jan', current: 0, prev: 0 }, { name: 'Fév', current: 0, prev: 0 },
+  { name: 'Mar', current: 0, prev: 0 }, { name: 'Avr', current: 0, prev: 0 },
+  { name: 'Mai', current: 0, prev: 0 }, { name: 'Jui', current: 0, prev: 0 },
+  { name: 'Jul', current: 0, prev: 0 }, { name: 'Aoû', current: 0, prev: 0 },
+  { name: 'Sep', current: 0, prev: 0 }, { name: 'Oct', current: 0, prev: 0 },
+  { name: 'Nov', current: 0, prev: 0 }, { name: 'Déc', current: 0, prev: 0 },
 ];
 
-const rdvData = [
-  { label: 'Confirmés', value: 58, color: '#136cfb' },
-  { label: 'En attente', value: 18, color: '#94a3b8' },
-  { label: 'Non présentés', value: 13, color: '#e2405f' },
-  { label: 'Reportés', value: 11, color: '#f59e0b' },
+const RDV_PLACEHOLDER: AppointmentStatusPoint[] = [
+  { label: 'Confirmés', value: 1, color: '#136cfb' },
 ];
-const RDV_TOTAL = rdvData.reduce((s, d) => s + d.value, 0);
+
 
 const STATUS_STYLE: Record<string, { label: string; color: string; pill: string }> = {
   confirmed: {
@@ -78,24 +70,6 @@ const STATUS_STYLE: Record<string, { label: string; color: string; pill: string 
     pill: 'text-slate-400 bg-slate-50 border border-slate-200/60',
   },
 };
-
-const MOCK_TASKS: Task[] = [
-  { id: '1', text: 'Appeler Labo Prothèse', completed: false, priority: 'High', assignee: 'Sarah' },
-  {
-    id: '2',
-    text: 'Commander Anesthésique',
-    completed: true,
-    priority: 'Medium',
-    assignee: 'Amina',
-  },
-  {
-    id: '3',
-    text: 'Relancer facture M. Tazi',
-    completed: false,
-    priority: 'Low',
-    assignee: 'Sarah',
-  },
-];
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
@@ -145,7 +119,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-const RevenueChart = () => (
+const RevenueChart = ({ data }: { data: RevenuePoint[] }) => (
   <div className="card p-6 h-full">
     <div className="flex justify-between items-start mb-6">
       <div>
@@ -167,15 +141,11 @@ const RevenueChart = () => (
             <span className="text-[11px] font-semibold text-slate-500">Passée</span>
           </div>
         </div>
-        <select className="text-[12px] font-semibold border border-slate-200/60 rounded-[30px] px-3 py-1.5 bg-white text-slate-700 outline-none cursor-pointer">
-          <option>Cette année</option>
-          <option>Année dernière</option>
-        </select>
       </div>
     </div>
     <div className="h-[220px]">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={dataRevenue} margin={{ top: 8, right: 0, left: -20, bottom: 0 }}>
+        <AreaChart data={data} margin={{ top: 8, right: 0, left: -20, bottom: 0 }}>
           <defs>
             <linearGradient id="gcurrent" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#136cfb" stopOpacity={0.22} />
@@ -229,78 +199,75 @@ const RevenueChart = () => (
   </div>
 );
 
-const AppointmentStatusChart = () => (
-  <div className="card p-6 h-full">
-    <div className="flex justify-between items-start mb-6">
-      <div>
-        <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight">Statuts des RDV</h3>
-        <p className="text-[12px] font-semibold text-slate-400 uppercase tracking-widest mt-0.5">
-          Ce mois-ci
-        </p>
-      </div>
-      <select className="text-[12px] font-semibold border border-slate-200/60 rounded-[30px] px-3 py-1.5 bg-white text-slate-700 outline-none cursor-pointer">
-        <option>Ce mois</option>
-        <option>Semaine</option>
-        <option>Trimestre</option>
-      </select>
-    </div>
-    <div className="flex items-center gap-6">
-      <div className="relative shrink-0">
-        <PieChart width={160} height={160}>
-          <Pie
-            data={rdvData}
-            cx={75}
-            cy={75}
-            innerRadius={52}
-            outerRadius={72}
-            paddingAngle={3}
-            dataKey="value"
-            startAngle={90}
-            endAngle={-270}
-            strokeWidth={0}
-          >
-            {rdvData.map((entry, i) => (
-              <Cell key={i} fill={entry.color} />
-            ))}
-          </Pie>
-        </PieChart>
-        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <span className="text-[20px] font-semibold text-slate-900 leading-none tracking-tight">
-            {RDV_TOTAL}
-          </span>
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-            Total
-          </span>
+const AppointmentStatusChart = ({ data }: { data: AppointmentStatusPoint[] }) => {
+  const total = data.reduce((s, d) => s + d.value, 0);
+  return (
+    <div className="card p-6 h-full">
+      <div className="flex justify-between items-start mb-6">
+        <div>
+          <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight">Statuts des RDV</h3>
+          <p className="text-[12px] font-semibold text-slate-400 uppercase tracking-widest mt-0.5">
+            Ce mois-ci
+          </p>
         </div>
       </div>
-      <div className="flex-1 space-y-3.5">
-        {rdvData.map((d) => {
-          const pct = Math.round((d.value / RDV_TOTAL) * 100);
-          return (
-            <div key={d.label}>
-              <div className="flex items-center justify-between mb-1">
-                <div className="flex items-center gap-2">
-                  <span
-                    className="w-2 h-2 rounded-full shrink-0"
-                    style={{ backgroundColor: d.color }}
-                  />
-                  <span className="text-[12px] font-semibold text-slate-600">{d.label}</span>
+      <div className="flex items-center gap-6">
+        <div className="relative shrink-0">
+          <PieChart width={160} height={160}>
+            <Pie
+              data={data.length > 0 ? data : [{ label: '', value: 1, color: '#e2e8f0' }]}
+              cx={75}
+              cy={75}
+              innerRadius={52}
+              outerRadius={72}
+              paddingAngle={3}
+              dataKey="value"
+              startAngle={90}
+              endAngle={-270}
+              strokeWidth={0}
+            >
+              {(data.length > 0 ? data : [{ color: '#e2e8f0' }]).map((entry, i) => (
+                <Cell key={i} fill={entry.color} />
+              ))}
+            </Pie>
+          </PieChart>
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+            <span className="text-[20px] font-semibold text-slate-900 leading-none tracking-tight">
+              {total}
+            </span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+              Total
+            </span>
+          </div>
+        </div>
+        <div className="flex-1 space-y-3.5">
+          {data.map((d) => {
+            const pct = total > 0 ? Math.round((d.value / total) * 100) : 0;
+            return (
+              <div key={d.label}>
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: d.color }} />
+                    <span className="text-[12px] font-semibold text-slate-600">{d.label}</span>
+                  </div>
+                  <span className="text-[12px] font-semibold text-slate-900">{pct}%</span>
                 </div>
-                <span className="text-[12px] font-semibold text-slate-900">{pct}%</span>
+                <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: d.color }} />
+                </div>
               </div>
-              <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full rounded-full"
-                  style={{ width: `${pct}%`, backgroundColor: d.color }}
-                />
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+          {data.length === 0 && (
+            <p className="text-[12px] font-semibold text-slate-400 text-center py-4">
+              Aucune donnée ce mois
+            </p>
+          )}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const TasksWidget = ({
   tasks,
@@ -309,16 +276,23 @@ const TasksWidget = ({
   newTaskText,
   setNewTaskText,
   addTask,
-}: any) => (
+}: {
+  tasks: { id: string; text: string; completed: boolean; priority?: string }[];
+  toggleTask: (id: string) => void;
+  removeTask: (id: string) => void;
+  newTaskText: string;
+  setNewTaskText: (v: string) => void;
+  addTask: (e: React.FormEvent) => void;
+}) => (
   <div className="card p-6 flex flex-col h-full">
     <div className="flex items-center justify-between mb-5">
       <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight">Tâches</h3>
       <span className="badge badge-gray font-semibold">
-        {tasks.filter((t: Task) => !t.completed).length} à faire
+        {tasks.filter((t) => !t.completed).length} à faire
       </span>
     </div>
     <div className="space-y-1 flex-1 overflow-y-auto scrollbar-hide">
-      {tasks.map((task: Task) => (
+      {tasks.map((task) => (
         <div
           key={task.id}
           className="flex items-start group p-2.5 border border-transparent hover:border-slate-200/60 hover:bg-slate-50/50 rounded-[6px] transition-all"
@@ -431,7 +405,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats: fallbackStats }) =>
   const navigate = useNavigate();
   const { currentUser } = useMedicomStore();
   const { waitingPatients } = useWaitingRoom();
-  const { stats } = useDashboardKPIs(fallbackStats);
+  const { stats, revenueByMonth, appointmentStatusData } = useDashboardKPIs(fallbackStats);
 
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
@@ -439,27 +413,18 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats: fallbackStats }) =>
   todayEnd.setHours(23, 59, 59, 999);
   const { appointments: todayAppts } = useAppointments({ startDate: todayStart, endDate: todayEnd });
 
-  const [tasks, setTasks] = useState<Task[]>(MOCK_TASKS);
+  const { tasks, addTask: addTaskToDb, toggleTask, removeTask } = useTasks();
   const [newTaskText, setNewTaskText] = useState('');
 
   const isDoctor = currentUser?.role === 'doctor';
 
-  const toggleTask = (id: string) =>
-    setTasks(tasks.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t)));
-  const removeTask = (id: string) => setTasks(tasks.filter((t) => t.id !== id));
-  const addTask = (e: React.FormEvent) => {
+  const chartData = revenueByMonth.length > 0 ? revenueByMonth : REVENUE_PLACEHOLDER;
+  const statusData = appointmentStatusData.length > 0 ? appointmentStatusData : RDV_PLACEHOLDER;
+
+  const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTaskText.trim()) return;
-    setTasks([
-      ...tasks,
-      {
-        id: Date.now().toString(),
-        text: newTaskText,
-        completed: false,
-        priority: 'Medium',
-        assignee: 'Me',
-      },
-    ]);
+    addTaskToDb(newTaskText.trim());
     setNewTaskText('');
   };
 
@@ -562,7 +527,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats: fallbackStats }) =>
             />
             <StatCard
               label="Tâches"
-              value={`${tasks.filter((t) => t.completed).length}/${tasks.length}`}
+              value={`${tasks.filter((t: { completed: boolean }) => t.completed).length}/${tasks.length}`}
               trend="up"
               trendValue="Complétées"
               icon={IconCheckSquare}
@@ -725,10 +690,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats: fallbackStats }) =>
           {/* Row 2 — Revenue Chart + RDV Status + Tasks */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-1">
-              <RevenueChart />
+              <RevenueChart data={chartData} />
             </div>
             <div className="lg:col-span-1">
-              <AppointmentStatusChart />
+              <AppointmentStatusChart data={statusData} />
             </div>
             <div className="lg:col-span-1">
               <TasksWidget
@@ -737,7 +702,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats: fallbackStats }) =>
                 removeTask={removeTask}
                 newTaskText={newTaskText}
                 setNewTaskText={setNewTaskText}
-                addTask={addTask}
+                addTask={handleAddTask}
               />
             </div>
           </div>
@@ -750,10 +715,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats: fallbackStats }) =>
           {/* Row 1 — Revenue chart (primary) + Appointment status */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
-              <RevenueChart />
+              <RevenueChart data={chartData} />
             </div>
             <div className="lg:col-span-1">
-              <AppointmentStatusChart />
+              <AppointmentStatusChart data={statusData} />
             </div>
           </div>
 
@@ -839,7 +804,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats: fallbackStats }) =>
               removeTask={removeTask}
               newTaskText={newTaskText}
               setNewTaskText={setNewTaskText}
-              addTask={addTask}
+              addTask={handleAddTask}
             />
           </div>
         </>

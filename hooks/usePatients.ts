@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { getPatients, createPatient, updatePatient, softDeletePatient } from '../lib/api/patients';
 import { useMedicomStore } from '../store';
+import { supabase } from '../lib/supabase';
 import type { Patient } from '../types';
 
 // ── Types ──
@@ -112,9 +113,29 @@ export function usePatients(defaultPageSize = 25): UsePatientsReturn {
     }
   }, [tenantId, debouncedSearch, filters.insuranceType, filters.isActive, pagination]);
 
+  const fetchPatientsRef = useRef(fetchPatients);
+  useEffect(() => { fetchPatientsRef.current = fetchPatients; }, [fetchPatients]);
+
   useEffect(() => {
     fetchPatients();
   }, [fetchPatients]);
+
+  // ── Realtime subscription ──
+  useEffect(() => {
+    const client = supabase;
+    if (!client || !tenantId) return;
+
+    const channel = client
+      .channel(`patients:${tenantId}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'patients', filter: `tenant_id=eq.${tenantId}` },
+        () => { fetchPatientsRef.current(); }
+      )
+      .subscribe();
+
+    return () => { client.removeChannel(channel); };
+  }, [tenantId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Setters ──
 
