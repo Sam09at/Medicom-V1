@@ -246,18 +246,21 @@ export async function updateAppointment(
     // The hook did a read-before-write. Let's do a read-before-write here to be safe.
     const { data: current } = await supabase
       .from('appointments')
-      .select('start_time, duration')
+      .select('start_time, end_time')
       .eq('id', id)
       .single();
     if (!current) throw new Error('Appointment not found');
 
-    const start = updates.start ? new Date(updates.start) : new Date(current.start_time);
-    const duration = updates.duration ?? current.duration;
-    const end = new Date(start.getTime() + duration * 60000);
+    const prevStart = new Date(current.start_time);
+    const prevEnd   = new Date(current.end_time);
+    const prevDuration = (prevEnd.getTime() - prevStart.getTime()) / 60000;
+
+    const start    = updates.start    ? new Date(updates.start) : prevStart;
+    const duration = updates.duration ?? prevDuration;
+    const end      = new Date(start.getTime() + duration * 60000);
 
     dbUpdates.start_time = start.toISOString();
-    dbUpdates.end_time = end.toISOString();
-    dbUpdates.duration = duration;
+    dbUpdates.end_time   = end.toISOString();
   }
 
   if (updates.type) dbUpdates.type = TYPE_UI_TO_DB[updates.type] ?? updates.type;

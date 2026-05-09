@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import type { PageSection } from '../../types';
 import { createSection } from './sectionConfig';
+import { supabase } from '../../lib/supabase';
+import { useMedicomStore } from '../../store';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -17,6 +19,7 @@ interface Intake {
 interface Props {
   onClose: () => void;
   onGenerate: (sections: PageSection[]) => void;
+  landingPageId?: string;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -127,9 +130,11 @@ const inputCls = 'w-full px-3 py-2 text-[13px] border border-slate-200 rounded-[
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export const AIGenerator: React.FC<Props> = ({ onClose, onGenerate }) => {
+export const AIGenerator: React.FC<Props> = ({ onClose, onGenerate, landingPageId }) => {
+  const currentTenant = useMedicomStore((s) => s.currentTenant);
   const [step, setStep] = useState<'form' | 'generating' | 'done'>('form');
   const [generatingIdx, setGeneratingIdx] = useState(0);
+  const [aiError, setAiError] = useState<string | null>(null);
   const [intake, setIntake] = useState<Intake>({
     clinicName: '',
     specialty: 'Dentisterie générale',
@@ -145,22 +150,55 @@ export const AIGenerator: React.FC<Props> = ({ onClose, onGenerate }) => {
 
   const canSubmit = intake.clinicName.trim() && intake.city.trim() && intake.doctorName.trim();
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     setStep('generating');
     setGeneratingIdx(0);
+    setAiError(null);
 
+    // Animate progress steps while waiting for AI
     let idx = 0;
     const tick = setInterval(() => {
-      idx += 1;
-      if (idx < GENERATION_STEPS.length) {
-        setGeneratingIdx(idx);
+      idx = Math.min(idx + 1, GENERATION_STEPS.length - 1);
+      setGeneratingIdx(idx);
+    }, 1200);
+
+    try {
+      // Use Supabase edge function when available, else fall back to local template
+      if (supabase && landingPageId && currentTenant) {
+        const { data, error } = await supabase.functions.invoke('generate-landing-page', {
+          body: {
+            intake: {
+              clinicName:    intake.clinicName,
+              specialty:     intake.specialty,
+              city:          intake.city,
+              doctorName:    intake.doctorName,
+              doctorTitle:   intake.doctorTitle,
+              doctorYears:   0,
+              differentiator: intake.differentiator,
+              phone:         intake.phone,
+              mainServices:  [],
+            },
+            tenant_id:       currentTenant.id,
+            landing_page_id: landingPageId,
+          },
+        });
+        clearInterval(tick);
+        if (error) throw error;
+        // Edge function already wrote sections to DB — reload the page to pick them up
+        onGenerate([]);
       } else {
+        // Demo mode: generate locally
+        await new Promise<void>((res) => setTimeout(res, GENERATION_STEPS.length * 1200));
         clearInterval(tick);
         const sections = generateSections(intake);
         onGenerate(sections);
-        setStep('done');
       }
-    }, 800);
+      setStep('done');
+    } catch (err) {
+      clearInterval(tick);
+      setAiError(err instanceof Error ? err.message : String(err));
+      setStep('form');
+    }
   };
 
   return (
@@ -266,7 +304,11 @@ export const AIGenerator: React.FC<Props> = ({ onClose, onGenerate }) => {
         {/* Footer */}
         {step === 'form' && (
           <div className="flex items-center justify-between px-5 py-4 border-t border-slate-100 bg-slate-50">
-            <p className="text-[11px] text-slate-400">* Champs obligatoires</p>
+            {aiError ? (
+              <p className="text-[11px] text-red-500 max-w-[260px] truncate" title={aiError}>{aiError}</p>
+            ) : (
+              <p className="text-[11px] text-slate-400">* Champs obligatoires</p>
+            )}
             <div className="flex items-center gap-2">
               <button onClick={onClose} className="px-3.5 py-2 text-[12px] font-medium text-slate-600 hover:bg-slate-100 rounded-[10px] transition-colors">
                 Annuler

@@ -37,7 +37,7 @@ export const useTreatments = (patientId?: string) => {
     fetchPlans();
   }, [patientId]);
 
-  const addPlan = async (plan: Partial<TreatmentPlan>) => {
+  const addPlan = async (plan: Parameters<typeof createTreatmentPlan>[0]) => {
     try {
       const newPlan = await createTreatmentPlan(plan);
       setPlans([newPlan, ...plans]);
@@ -61,7 +61,7 @@ export const useTreatments = (patientId?: string) => {
     }
   };
 
-  const addSession = async (session: Partial<TreatmentSession>) => {
+  const addSession = async (session: Parameters<typeof addTreatmentSession>[0]) => {
     try {
       const newSession = await addTreatmentSession(session);
       // Refresh plans to get updated sessions if they are nested,

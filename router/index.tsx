@@ -9,8 +9,7 @@ import { LoadingSpinner } from '../components/LoadingSpinner';
 import { Dashboard } from '../features/Dashboard';
 import { CalendarView } from '../components/CalendarView';
 import { useMedicomStore } from '../store';
-import { MOCK_APPOINTMENTS, MOCK_PATIENTS } from '../constants';
-import { CabinetStats, AppointmentStatus, Appointment, Patient } from '../types';
+import { CabinetStats, Appointment, Patient } from '../types';
 import { supabase } from '../lib/supabase';
 
 // ── Lazy-loaded features (code-split for smaller initial bundle) ──
@@ -102,14 +101,7 @@ const INITIAL_STATS: CabinetStats = {
   waitingRoom: 1,
 };
 
-/** Wrapper to inject props that features still expect (will be removed as features migrate to hooks) */
-const DashboardPage = () => {
-  const stats = {
-    ...INITIAL_STATS,
-    waitingRoom: MOCK_APPOINTMENTS.filter((a) => a.status === AppointmentStatus.ARRIVED).length,
-  };
-  return <Dashboard stats={stats} />;
-};
+const DashboardPage = () => <Dashboard stats={INITIAL_STATS} />;
 
 const CalendarPage = () => {
   return <CalendarView />;
@@ -177,15 +169,6 @@ const ConsultationPage = () => {
         } catch {
           /* fall through to mock */
         }
-      }
-      // Mock fallback
-      const appt =
-        MOCK_APPOINTMENTS.find((a) => a.id === appointmentId) || MOCK_APPOINTMENTS[0] || null;
-      setAppointment(appt);
-      if (appt) {
-        const p =
-          MOCK_PATIENTS.find((pt) => pt.id === (appt as any).patientId) || MOCK_PATIENTS[0] || null;
-        setPatient(p);
       }
       setLoading(false);
     }

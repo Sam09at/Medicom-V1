@@ -24,7 +24,7 @@ export function useInventory() {
   useEffect(() => { refetch(); }, [refetch]);
 
   const save = async (
-    item: Omit<InventoryItem, 'tenantId' | 'isLow' | 'createdAt' | 'updatedAt'>
+    item: Omit<InventoryItem, 'id' | 'tenantId' | 'isLow' | 'createdAt' | 'updatedAt'> & { id?: string }
   ) => {
     if (!currentTenant) return;
     const result = await upsertInventoryItem(currentTenant.id, item);

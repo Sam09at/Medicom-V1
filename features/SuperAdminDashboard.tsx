@@ -60,15 +60,6 @@ const SIGNUP_HISTORY = [
   { month: 'Déc', count: 22 },
 ];
 
-const MOCK_FEED: ActivityFeedItem[] = [
-  { id: 'f1', type: 'tenant.created', description: 'Nouveau cabinet inscrit: Cabinet Rabat Centre', created_at: new Date(Date.now() - 8 * 60000).toISOString() },
-  { id: 'f2', type: 'invoice.paid', description: 'Paiement reçu: Cabinet Casablanca — 1 500 MAD', created_at: new Date(Date.now() - 25 * 60000).toISOString() },
-  { id: 'f3', type: 'appointment.created', description: 'Dr. Ahmed Benali: 12 nouveaux RDV confirmés', created_at: new Date(Date.now() - 48 * 60000).toISOString() },
-  { id: 'f4', type: 'tenant.created', description: 'Cabinet El Jadida — Onboarding démarré', created_at: new Date(Date.now() - 2 * 3600000).toISOString() },
-  { id: 'f5', type: 'invoice.paid', description: 'Paiement reçu: Cabinet Marrakech — 2 200 MAD', created_at: new Date(Date.now() - 4 * 3600000).toISOString() },
-  { id: 'f6', type: 'appointment.created', description: 'Cabinet Agadir — Nouveau module facturé', created_at: new Date(Date.now() - 6 * 3600000).toISOString() },
-];
-
 const TOP_CABINETS = [
   { name: 'Cabinet Casablanca Centre', mrr: 3200, growth: 12, plan: 'Premium', status: 'healthy', papcpm: 42 },
   { name: 'Clinique Dentaire Rabat', mrr: 2800, growth: 8, plan: 'Pro', status: 'healthy', papcpm: 28 },
@@ -187,7 +178,7 @@ export const SuperAdminDashboard: React.FC = () => {
   const [riskTenants, setRiskTenants] = useState<any[]>([]);
   const [urgentTickets, setUrgentTickets] = useState(3);
   const [loading, setLoading] = useState(false);
-  const [activityFeed, setActivityFeed] = useState<ActivityFeedItem[]>(MOCK_FEED);
+  const [activityFeed, setActivityFeed] = useState<ActivityFeedItem[]>([]);
   const [mrrGoal] = useState(100000);
   const [currentMRR] = useState(82000);
 
@@ -214,6 +205,23 @@ export const SuperAdminDashboard: React.FC = () => {
         const tickets = await getUrgentTicketsCount();
         if (tickets !== undefined) setUrgentTickets(tickets);
       } catch (_) { }
+      if (supabase) {
+        try {
+          const { data: logs } = await supabase
+            .from('audit_logs')
+            .select('id, action, created_at')
+            .order('created_at', { ascending: false })
+            .limit(10);
+          if (logs?.length) {
+            setActivityFeed(logs.map((e: any) => ({
+              id: e.id,
+              type: e.action,
+              description: `Activité: ${e.action}`,
+              created_at: e.created_at,
+            })));
+          }
+        } catch (_) { }
+      }
     };
     loadData();
 

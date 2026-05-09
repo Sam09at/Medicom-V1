@@ -2,10 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useMedicomStore } from '../store';
 import { SearchResult, ModuleConfiguration } from '../types';
-import { MOCK_PATIENTS } from '../constants';
 import { signOut } from '../lib/api/auth';
 import { CommandPalette } from '../components/CommandPalette';
 import { useWaitingRoom } from '../hooks/useWaitingRoom';
+import { usePatients } from '../hooks/usePatients';
 
 import {
   IconCalendar,
@@ -33,8 +33,8 @@ export const AppLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // We mock/use waiting room hook
   const { waitingPatients } = useWaitingRoom();
+  const { patients } = usePatients();
   const waitingCount = waitingPatients?.length || 0;
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -145,7 +145,7 @@ export const AppLayout: React.FC = () => {
     if (query.trim().length > 0) {
       const lowerQuery = query.toLowerCase();
       const results: SearchResult[] = [];
-      MOCK_PATIENTS.forEach((p) => {
+      patients.forEach((p) => {
         if (
           p.firstName.toLowerCase().includes(lowerQuery) ||
           p.lastName.toLowerCase().includes(lowerQuery)

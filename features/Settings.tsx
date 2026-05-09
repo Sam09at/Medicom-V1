@@ -30,12 +30,6 @@ import { WhatsAppLog } from './WhatsAppLog';
 import { useServices } from '../hooks/useServices';
 
 /* ── Mock data ── */
-const MOCK_STAFF = [
-  { id: 1, name: 'Dr. Amina El Amrani', role: 'Propriétaire', email: 'amina@cabinet.ma', status: 'Actif', lastActive: 'Il y a 5 min' },
-  { id: 2, name: 'Sarah Benani', role: 'Assistante', email: 'sarah@cabinet.ma', status: 'Actif', lastActive: 'Il y a 1h' },
-  { id: 3, name: 'Dr. Karim Tazi', role: 'Remplaçant', email: 'karim@gmail.com', status: 'Inactif', lastActive: 'Il y a 2 jours' },
-];
-
 /* ── Sub-components ── */
 const SectionHeader = ({ title, desc }: { title: string; desc: string }) => (
   <div className="mb-6">
@@ -419,7 +413,7 @@ export const Settings: React.FC = () => {
   const [newService, setNewService] = useState({ name: '', code: '', price: 0, durationMinutes: 30 });
 
   /* Team */
-  const [users, setUsers] = useState(MOCK_STAFF);
+  const [users, setUsers] = useState<{ id: number | string; name: string; role: string; email: string; status: string; lastActive: string }[]>([]);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [newUser, setNewUser] = useState({ name: '', email: '', role: 'Assistante' });
 

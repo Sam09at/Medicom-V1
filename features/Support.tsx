@@ -6,7 +6,7 @@ import {
   IconTrendingUp,
 } from '../components/Icons';
 import { Ticket, TicketMessage, TicketStatus, TicketPriority, TicketCategory, User } from '../types';
-import { getTickets, createTicket, addMessage, updateTicketStatus, MOCK_TICKETS } from '../lib/api/support';
+import { getTickets, createTicket, addMessage, updateTicketStatus } from '../lib/api/support';
 import { useMedicomStore } from '../store';
 
 // ══════════════════════════════════════════════════════════════════

@@ -33,7 +33,6 @@ import {
   IconRefresh,
 } from '../components/Icons';
 import { TenantDetailed, ModuleConfiguration, ClinicSpecialty } from '../types';
-import { MOCK_TENANTS_DETAILED } from '../constants';
 import {
   SPECIALTY_LABELS,
   SPECIALTY_MODULE_DEFAULTS,
@@ -1398,7 +1397,7 @@ function TabBilling({ tenant }: { tenant: TenantDetailed }) {
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export function Cabinets() {
-  const [tenants, setTenants] = useState<TenantDetailed[]>(MOCK_TENANTS_DETAILED);
+  const [tenants, setTenants] = useState<TenantDetailed[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [filterTab, setFilterTab] = useState<FilterTab>('all');
   const [search, setSearch] = useState('');
@@ -1412,7 +1411,7 @@ export function Cabinets() {
     setLoading(true);
     getAllTenants()
       .then(data => {
-        if (!cancelled && data.length > 0) setTenants(data);
+        if (!cancelled) setTenants(data);
       })
       .catch(() => {})
       .finally(() => { if (!cancelled) setLoading(false); });

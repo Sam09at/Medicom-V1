@@ -22,7 +22,6 @@ import {
   IconFileText,
 } from '../components/Icons';
 import { Prospect, OnboardingLead, Partner, Campaign } from '../types';
-import { MOCK_ONBOARDING, MOCK_PARTNERS } from '../constants';
 import { SlideOver } from '../components/SlideOver';
 import {
   getDailyActivityMetrics,
@@ -155,7 +154,8 @@ export const CRM = () => {
   const [dragOverCol, setDragOverCol] = useState<string | null>(null);
   const [selectedProspect, setSelectedProspect] = useState<Prospect | null>(null);
   const [activeScript, setActiveScript] = useState<'pitch' | 'price' | 'timing'>('pitch');
-  const [partners, setPartners] = useState<Partner[]>(MOCK_PARTNERS);
+  const [partners, setPartners] = useState<Partner[]>([]);
+  const [onboardingLeads, setOnboardingLeads] = useState<OnboardingLead[]>([]);
   const [campaigns, setCampaigns] = useState<Campaign[]>(MOCK_CAMPAIGNS);
   const [isAddLeadOpen, setIsAddLeadOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -751,7 +751,7 @@ export const CRM = () => {
   const OnboardingView = () => (
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-4">
-        <KpiCard label="En onboarding" value={`${MOCK_ONBOARDING.length}`} sub="Clients actifs" />
+        <KpiCard label="En onboarding" value={`${onboardingLeads.length}`} sub="Clients actifs" />
         <KpiCard label="Go-live ce mois" value="3" trend="↑ en avance" />
         <KpiCard label="Temps moyen" value="18j" sub="Du contrat au live" />
       </div>
@@ -770,7 +770,7 @@ export const CRM = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
-            {MOCK_ONBOARDING.map(lead => {
+            {onboardingLeads.map(lead => {
               const currentIdx = ONBOARDING_STEPS.indexOf(lead.status);
               const pct = Math.round(((currentIdx + 1) / ONBOARDING_STEPS.length) * 100);
               return (

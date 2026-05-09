@@ -81,12 +81,11 @@ export async function getInventoryItems(tenantId: string): Promise<InventoryItem
 
 export async function upsertInventoryItem(
   tenantId: string,
-  item: Omit<InventoryItem, 'tenantId' | 'isLow' | 'createdAt' | 'updatedAt'>
+  item: Omit<InventoryItem, 'id' | 'tenantId' | 'isLow' | 'createdAt' | 'updatedAt'> & { id?: string }
 ): Promise<InventoryItem | null> {
   if (!supabase) return null;
 
   const row: Partial<InventoryItemRow> & { tenant_id: string } = {
-    id: item.id,
     tenant_id: tenantId,
     name: item.name,
     category: item.category,
@@ -97,6 +96,7 @@ export async function upsertInventoryItem(
     unit_price: item.unitPrice,
     is_active: item.isActive,
   };
+  if (item.id) row.id = item.id;
 
   const { data, error } = await supabase
     .from('inventory_items')

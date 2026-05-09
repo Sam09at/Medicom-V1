@@ -27,46 +27,13 @@ import {
   IconPrinter,
 } from '../components/Icons';
 import { SlideOver } from '../components/SlideOver';
-import { MOCK_PATIENTS, MOCK_EXPENSES } from '../constants';
 import { useBilling } from '../hooks/useBilling';
+import { usePatients } from '../hooks/usePatients';
+import { useServices } from '../hooks/useServices';
+import { useMedicomStore } from '../store';
 import { Invoice, InvoiceItem, Payment, Expense, Quote } from '../types';
 
-// Removed INITIAL_INVOICES
 
-const MOCK_QUOTES: Quote[] = [
-  {
-    id: 'DEV-2024-001',
-    tenantId: 'mock',
-    patientId: 'p1',
-    patientName: 'Karim Benali',
-    issuedAt: '2024-01-20',
-    totalAmount: 15000,
-    status: 'Sent',
-    items: [{ label: 'Implants x2' }],
-    validUntil: '2024-02-20',
-    number: 'DEV-2024-001',
-  },
-  {
-    id: 'DEV-2024-002',
-    tenantId: 'mock',
-    patientId: 'p2',
-    patientName: 'Layla Amrani',
-    issuedAt: '2024-01-15',
-    totalAmount: 3500,
-    status: 'Accepted',
-    items: [{ label: 'Couronne Céramique' }],
-    validUntil: '2024-02-15',
-    number: 'DEV-2024-002',
-  },
-];
-
-const SERVICES = [
-  { id: 's1', label: 'Consultation Standard', price: 300 },
-  { id: 's2', label: 'Détartrage (Haut & Bas)', price: 500 },
-  { id: 's3', label: 'Composite 1 Face', price: 400 },
-  { id: 's4', label: 'Extraction Simple', price: 350 },
-  { id: 's5', label: 'Blanchiment Dentaire', price: 2500 },
-];
 
 const StatCard = ({
   title,
@@ -112,6 +79,9 @@ export const Billing = () => {
     refresh,
     loading,
   } = useBilling();
+  const { patients } = usePatients();
+  const { services: availableServices } = useServices();
+  const currentTenant = useMedicomStore((s) => s.currentTenant);
 
   // Local state for UI
   const [activeTab, setActiveTab] = useState<
@@ -128,12 +98,10 @@ export const Billing = () => {
   const invoices = realInvoices;
   const expenses = realExpenses;
 
-  const [quotes, setQuotes] = useState<Quote[]>(MOCK_QUOTES); // Quotes still mocked or need separate API
+  const [quotes, setQuotes] = useState<Quote[]>([]);
 
   const [selectedPatientId, setSelectedPatientId] = useState('');
-  const [invoiceItems, setInvoiceItems] = useState<{ id: string; label: string; price: number }[]>([
-    SERVICES[0],
-  ]);
+  const [invoiceItems, setInvoiceItems] = useState<{ id: string; label: string; price: number }[]>([]);
 
   // Payment Form
   const [paymentAmount, setPaymentAmount] = useState('');
@@ -148,11 +116,11 @@ export const Billing = () => {
   });
 
   const handleAddItem = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const service = SERVICES.find((s) => s.id === e.target.value);
+    const service = availableServices.find((s) => s.id === e.target.value);
     if (service) {
-      setInvoiceItems([...invoiceItems, { ...service, id: Math.random().toString() }]);
+      setInvoiceItems([...invoiceItems, { id: Math.random().toString(), label: service.name, price: service.price }]);
     }
-    e.target.value = ''; // Reset select
+    e.target.value = '';
   };
 
   const handleRemoveItem = (id: string) => {
@@ -194,7 +162,7 @@ export const Billing = () => {
   };
 
   const handleCreateDocument = async (type: 'Invoice' | 'Quote') => {
-    const patient = MOCK_PATIENTS.find((p) => p.id === selectedPatientId);
+    const patient = patients.find((p) => p.id === selectedPatientId);
     if (!patient) return alert('Sélectionnez un patient');
 
     const total = invoiceItems.reduce((sum, item) => sum + item.price, 0);
@@ -214,7 +182,7 @@ export const Billing = () => {
 
         await createInvoice(
           {
-            tenantId: 'current-tenant', // Context placeholer
+            tenantId: currentTenant?.id ?? '',
             patientId: patient.id,
             type: invoiceItems[0]?.label || 'Standard',
             subtotal: total.toFixed(2) as any,
@@ -232,7 +200,7 @@ export const Billing = () => {
         );
 
         setIsCreateOpen(false);
-        setInvoiceItems([SERVICES[0]]);
+        setInvoiceItems([]);
         setSelectedPatientId('');
         setActiveTab('invoices');
       } catch (err) {
@@ -263,7 +231,7 @@ export const Billing = () => {
     e.preventDefault();
     try {
       await addExpense({
-        tenantId: 'current-tenant', // Context placeholder
+        tenantId: currentTenant?.id ?? '',
         description: newExpense.description,
         category: newExpense.category as any,
         amount: parseFloat(newExpense.amount),
@@ -293,7 +261,7 @@ export const Billing = () => {
         // Create real invoice from quote
         await createInvoice(
           {
-            tenantId: 'current-tenant',
+            tenantId: currentTenant?.id ?? '',
             patientId: quote.patientId,
             type: 'Suite Devis ' + quote.number,
             subtotal: quote.totalAmount.toFixed(2) as any,
@@ -1217,7 +1185,7 @@ export const Billing = () => {
               className="block w-full rounded-[20px] border-slate-300  focus:border-blue-500 focus:ring-blue-500 p-2.5 border"
             >
               <option value="">Sélectionner un patient...</option>
-              {MOCK_PATIENTS.map((p) => (
+              {patients.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.firstName} {p.lastName}
                 </option>
@@ -1238,9 +1206,9 @@ export const Billing = () => {
                   <option value="" disabled>
                     + Ajouter Acte
                   </option>
-                  {SERVICES.map((s) => (
+                  {availableServices.map((s) => (
                     <option key={s.id} value={s.id}>
-                      {s.label}
+                      {s.name}
                     </option>
                   ))}
                 </select>

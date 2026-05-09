@@ -3,7 +3,7 @@ import { Invoice, InvoiceItem, Payment, Expense, Quote } from '../../types';
 
 // --- INVOICES ---
 
-export const getInvoices = async () => {
+export const getInvoices = async (tenantId: string) => {
   if (!supabase) return [];
 
   const { data, error } = await supabase
@@ -16,6 +16,7 @@ export const getInvoices = async () => {
             payments:payments(*)
         `
     )
+    .eq('tenant_id', tenantId)
     .order('created_at', { ascending: false });
 
   if (error) throw error;
@@ -166,12 +167,13 @@ export const recordPayment = async (payment: Partial<Payment>) => {
 
 // --- EXPENSES ---
 
-export const getExpenses = async () => {
+export const getExpenses = async (tenantId: string) => {
   if (!supabase) return [];
 
   const { data, error } = await supabase
     .from('expenses')
     .select('*')
+    .eq('tenant_id', tenantId)
     .order('date', { ascending: false });
 
   if (error) throw error;
@@ -212,31 +214,69 @@ export const createExpense = async (expense: Partial<Expense>) => {
 
 // --- ANALYTICS ---
 
-export const getBillingAnalytics = async (tenantId?: string) => {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 500));
+export const getBillingAnalytics = async (tenantId: string) => {
+  if (!supabase || !tenantId) {
+    return {
+      totalRevenue: 0, outstandingBalance: 0, revenueGrowth: 0,
+      expensesTotal: 0, recoveryRate: 0, targetRevenue: 0,
+      revenueByMonth: [], expenseByCategory: [],
+    };
+  }
 
-  // Return mock data for the billing intelligence dashboard
+  const now = new Date();
+  const months: { month: string; start: string; end: string }[] = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const end = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59);
+    months.push({
+      month: d.toLocaleDateString('fr-FR', { month: 'short' }),
+      start: d.toISOString(),
+      end: end.toISOString(),
+    });
+  }
+
+  const [paymentsRes, invoicesRes, expensesRes] = await Promise.all([
+    supabase.from('payments').select('amount, payment_date').eq('tenant_id', tenantId),
+    supabase.from('invoices').select('total_amount, paid_amount, status').eq('tenant_id', tenantId),
+    supabase.from('expenses').select('amount, category').eq('tenant_id', tenantId),
+  ]);
+
+  const payments: { amount: number; payment_date: string }[] = paymentsRes.data ?? [];
+  const invoices: { total_amount: number; paid_amount: number; status: string }[] = invoicesRes.data ?? [];
+  const expenses: { amount: number; category: string }[] = expensesRes.data ?? [];
+
+  const totalRevenue = payments.reduce((s, p) => s + (p.amount ?? 0), 0);
+  const outstandingBalance = invoices
+    .filter((inv) => inv.status !== 'Paid' && inv.status !== 'Cancelled')
+    .reduce((s, inv) => s + Math.max(0, (inv.total_amount ?? 0) - (inv.paid_amount ?? 0)), 0);
+  const expensesTotal = expenses.reduce((s, e) => s + (e.amount ?? 0), 0);
+  const totalBilled = invoices.reduce((s, inv) => s + (inv.total_amount ?? 0), 0);
+  const recoveryRate = totalBilled > 0 ? Math.round((totalRevenue / totalBilled) * 100) : 0;
+
+  const revenueByMonth = months.map(({ month, start, end }) => ({
+    month,
+    revenue: payments
+      .filter((p) => p.payment_date >= start && p.payment_date <= end)
+      .reduce((s, p) => s + (p.amount ?? 0), 0),
+    target: 0,
+  }));
+
+  const expenseByCategory = Object.entries(
+    expenses.reduce((acc: Record<string, number>, e) => {
+      acc[e.category] = (acc[e.category] ?? 0) + (e.amount ?? 0);
+      return acc;
+    }, {})
+  ).map(([category, amount]) => ({ category, amount }));
+
+  const prevMonthRevenue = revenueByMonth[revenueByMonth.length - 2]?.revenue ?? 0;
+  const curMonthRevenue = revenueByMonth[revenueByMonth.length - 1]?.revenue ?? 0;
+  const revenueGrowth = prevMonthRevenue > 0
+    ? Math.round(((curMonthRevenue - prevMonthRevenue) / prevMonthRevenue) * 100)
+    : 0;
+
   return {
-    totalRevenue: 45200,
-    outstandingBalance: 12400,
-    revenueGrowth: 15,
-    expensesTotal: 8500,
-    recoveryRate: 85,
-    targetRevenue: 50000,
-    revenueByMonth: [
-      { month: 'Aôut', revenue: 32000, target: 30000 },
-      { month: 'Sep', revenue: 36000, target: 32000 },
-      { month: 'Oct', revenue: 35000, target: 35000 },
-      { month: 'Nov', revenue: 38000, target: 38000 },
-      { month: 'Déc', revenue: 41000, target: 40000 },
-      { month: 'Jan', revenue: 45200, target: 50000 },
-    ],
-    expenseByCategory: [
-      { category: 'Loyer', amount: 4000 },
-      { category: 'Fournitures', amount: 2500 },
-      { category: 'Charges', amount: 1500 },
-      { category: 'Marketing', amount: 500 },
-    ],
+    totalRevenue, outstandingBalance, revenueGrowth,
+    expensesTotal, recoveryRate, targetRevenue: 0,
+    revenueByMonth, expenseByCategory,
   };
 };

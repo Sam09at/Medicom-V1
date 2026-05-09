@@ -75,7 +75,6 @@ export const Inventory = () => {
   const handleCreateItem = async (e: React.FormEvent) => {
     e.preventDefault();
     await save({
-      id: `i-${Date.now()}`,
       name: newItem.name,
       category: newItem.category,
       quantity: parseInt(newItem.quantity) || 0,

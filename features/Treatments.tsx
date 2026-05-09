@@ -7,11 +7,13 @@ import {
   IconCheck,
   IconCalendar,
 } from '../components/Icons';
-import { MOCK_PATIENTS, MOCK_SERVICES } from '../constants';
 import { TreatmentPlan, ToothStatus, ToothSurface } from '../types';
 import { SlideOver } from '../components/SlideOver';
 import { Odontogram } from '../components/Odontogram';
 import { useTreatments } from '../hooks/useTreatments';
+import { usePatients } from '../hooks/usePatients';
+import { useServices } from '../hooks/useServices';
+import { useMedicomStore } from '../store';
 
 interface PlanPhase {
   id: string;
@@ -49,6 +51,10 @@ export const Treatments = () => {
   const { plans, addPlan, saveOdontogram, addSession, completeSession } = useTreatments(
     selectedPatientId || undefined
   );
+  const { patients } = usePatients();
+  const { services: availableServices } = useServices();
+  const currentTenant = useMedicomStore((s) => s.currentTenant);
+  const currentUser   = useMedicomStore((s) => s.currentUser);
 
   const handleToothUpdate = (
     number: number,
@@ -70,7 +76,7 @@ export const Treatments = () => {
   };
 
   const addProcedureToPhase = (phaseId: string) => {
-    const service = MOCK_SERVICES.find((s) => s.id === selectedServiceId);
+    const service = availableServices.find((s) => s.id === selectedServiceId);
     if (!service) return;
 
     setPhases(
@@ -105,7 +111,7 @@ export const Treatments = () => {
     e.preventDefault();
     if (!selectedPatientId) return;
 
-    const patient = MOCK_PATIENTS.find((p) => p.id === selectedPatientId);
+    const patient = patients.find((p) => p.id === selectedPatientId);
     if (!patient) return;
 
     const totalCost = phases.reduce(
@@ -117,11 +123,11 @@ export const Treatments = () => {
       const plan = await addPlan({
         title: newPlanName,
         patientId: selectedPatientId,
-        doctorId: 'current-user-id', // Context placeholder
+        doctorId: currentUser?.id ?? '',
         status: 'Active',
         totalAmount: totalCost,
         odontogramSnapshot: odontogramState,
-        tenantId: 'current-tenant-id', // Context placeholder
+        tenantId: currentTenant?.id ?? '',
       });
 
       // Create sessions for each phase if needed, or we can just let user add them manually later.
@@ -131,8 +137,8 @@ export const Treatments = () => {
         for (const proc of phase.procedures) {
           await addSession({
             treatmentPlanId: plan.id,
-            tenantId: 'current-tenant-id',
-            doctorId: 'current-user-id',
+            tenantId: currentTenant?.id ?? '',
+            doctorId: currentUser?.id ?? '',
             serviceName: proc.name,
             price: proc.price,
             sessionOrder: i,
@@ -211,7 +217,7 @@ export const Treatments = () => {
               onChange={(e) => setSelectedPatientId(e.target.value)}
             >
               <option value="">Sélectionner un patient...</option>
-              {MOCK_PATIENTS.map((p) => (
+              {patients.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.firstName} {p.lastName}
                 </option>
@@ -370,7 +376,7 @@ export const Treatments = () => {
                     onChange={(e) => setSelectedPatientId(e.target.value)}
                   >
                     <option value="">Sélectionner...</option>
-                    {MOCK_PATIENTS.map((p) => (
+                    {patients.map((p) => (
                       <option key={p.id} value={p.id}>
                         {p.firstName} {p.lastName}
                       </option>
@@ -475,7 +481,7 @@ export const Treatments = () => {
                       onChange={(e) => setSelectedServiceId(e.target.value)}
                     >
                       <option value="">Ajouter un acte...</option>
-                      {MOCK_SERVICES.map((s) => (
+                      {availableServices.map((s) => (
                         <option key={s.id} value={s.id}>
                           {s.name} ({s.price} MAD)
                         </option>

@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { usePatients } from '../hooks/usePatients';
 import { useMedicomStore } from '../store';
 import { AppointmentType, AppointmentStatus, Appointment } from '../types';
+import { supabase } from '../lib/supabase';
 import type { Patient } from '../types';
 import { IconCalendar, IconClock, IconTrash } from '../components/Icons';
 
@@ -360,14 +361,18 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
         const start = new Date(`${watchedDate}T${watchedTime}`);
         if (isNaN(start.getTime())) return;
         const end = new Date(start.getTime() + watchedDuration * 60_000);
-        const { MOCK_APPOINTMENTS } = await import('../constants').catch(() => ({ MOCK_APPOINTMENTS: [] }));
-        const conflict = (MOCK_APPOINTMENTS as Appointment[]).some(a => {
-          if (a.id === initialData?.id) return false;
-          if ((a.status as string) === 'cancelled' || (a.status as string) === 'rescheduled') return false;
-          const aStart = new Date(a.start);
-          const aEnd   = new Date(aStart.getTime() + a.duration * 60_000);
-          return aStart < end && aEnd > start;
-        });
+        let conflict = false;
+        if (supabase) {
+          const { data: overlapping } = await supabase
+            .from('appointments')
+            .select('id')
+            .neq('status', 'cancelled')
+            .neq('status', 'rescheduled')
+            .lt('start_time', end.toISOString())
+            .gt('end_time', start.toISOString())
+            .neq('id', initialData?.id ?? '');
+          conflict = (overlapping?.length ?? 0) > 0;
+        }
         setConflictDetected(conflict);
       } finally {
         setCheckingConflict(false);

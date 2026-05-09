@@ -14,7 +14,6 @@ import {
 } from '../components/Icons';
 import { Patient, Appointment, ToothData, ToothStatus, AppointmentStatus } from '../types';
 import { Odontogram } from '../components/Odontogram';
-import { MOCK_INVENTORY } from '../constants';
 import { useConsultationLogic } from '../hooks/useConsultationLogic';
 import { useServices } from '../hooks/useServices';
 import { PrescriptionForm } from './PrescriptionForm';
