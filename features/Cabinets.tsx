@@ -39,7 +39,7 @@ import {
   PLAN_CONFIG,
   makeSlug,
 } from '../lib/constants/specialtyMatrix';
-import { getAllTenants, suspendTenant, activateTenant } from '../lib/api/saas/tenants';
+import { getAllTenants, suspendTenant, activateTenant, createClinicWithAdmin } from '../lib/api/saas/tenants';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -160,6 +160,7 @@ interface WizardData {
   specialty: ClinicSpecialty;
   doctorName: string;
   email: string;
+  password: string;
   phone: string;
   city: string;
   address: string;
@@ -173,6 +174,7 @@ const DEFAULT_WIZARD: WizardData = {
   specialty: 'dentistry',
   doctorName: '',
   email: '',
+  password: '',
   phone: '',
   city: '',
   address: '',
@@ -191,6 +193,8 @@ function OnboardingWizard({
   const [step, setStep] = useState<WizardStep>(0);
   const [data, setData] = useState<WizardData>(DEFAULT_WIZARD);
   const [showDnsInstructions, setShowDnsInstructions] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const slug = useMemo(() => makeSlug(data.name), [data.name]);
   const publicUrl = data.customDomain ? `www.${data.customDomain}` : `${slug}.medicom.app`;
@@ -199,43 +203,63 @@ function OnboardingWizard({
   const update = (field: keyof WizardData) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setData(d => ({ ...d, [field]: e.target.value }));
 
-  const handleFinish = () => {
-    const planConfig = PLAN_CONFIG[data.plan];
-    const modules = SPECIALTY_MODULE_DEFAULTS[data.specialty];
-    const newTenant: TenantDetailed = {
-      id: `TEN-${Date.now()}`,
-      name: data.name,
-      contactName: data.doctorName,
-      email: data.email,
-      phone: data.phone,
-      city: data.city,
-      address: data.address,
-      plan: (planConfig?.label ?? 'Pro') as 'Starter' | 'Pro' | 'Premium',
-      planTier: data.plan as 'starter' | 'pro' | 'premium',
-      status: 'Pending',
-      usersCount: 1,
-      storageUsed: '0 MB',
-      joinedAt: new Date().toISOString(),
-      mrr: planConfig?.price ?? 0,
-      region: data.city,
-      enabledModules: modules,
-      specialty: data.specialty,
-      slug,
-      publicDomain: data.customDomain ? publicUrl : null,
-      adminDomain: data.customDomain ? adminUrl : null,
-      onboardingStatus: 'pending',
-      trialEndsAt: data.trial !== '0' ? new Date(Date.now() + parseInt(data.trial) * 86400000).toISOString() : null,
-      billingEmail: data.email,
-    };
-    onCreate(newTenant);
-    onClose();
+  const handleFinish = async () => {
+    setSaving(true);
+    setSaveError(null);
+    try {
+      const result = await createClinicWithAdmin({
+        clinic_name: data.name,
+        plan: data.plan as 'starter' | 'pro' | 'premium',
+        admin_email: data.email,
+        admin_password: data.password,
+        admin_name: data.doctorName,
+        admin_role: 'clinic_admin',
+        phone: data.phone || undefined,
+        location: data.city || undefined,
+        region: data.city || undefined,
+      });
+
+      const planConfig = PLAN_CONFIG[data.plan];
+      const modules = SPECIALTY_MODULE_DEFAULTS[data.specialty];
+      const newTenant: TenantDetailed = {
+        id: result.tenant_id,
+        name: result.tenant_name,
+        contactName: data.doctorName,
+        email: data.email,
+        phone: data.phone,
+        city: data.city,
+        address: data.address,
+        plan: (planConfig?.label ?? 'Pro') as 'Starter' | 'Pro' | 'Premium',
+        planTier: data.plan as 'starter' | 'pro' | 'premium',
+        status: 'Active',
+        usersCount: 1,
+        storageUsed: '0 MB',
+        joinedAt: new Date().toISOString(),
+        mrr: planConfig?.price ?? 0,
+        region: data.city,
+        enabledModules: modules,
+        specialty: data.specialty,
+        slug,
+        publicDomain: data.customDomain ? publicUrl : null,
+        adminDomain: data.customDomain ? adminUrl : null,
+        onboardingStatus: 'pending',
+        trialEndsAt: data.trial !== '0' ? new Date(Date.now() + parseInt(data.trial) * 86400000).toISOString() : null,
+        billingEmail: data.email,
+      };
+      onCreate(newTenant);
+      onClose();
+    } catch (err: any) {
+      setSaveError(err.message ?? 'Erreur lors de la création');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const DENTAL_SPECIALTIES: ClinicSpecialty[] = ['dentistry','orthodontics','pediatric_dentistry','oral_surgery','periodontology','endodontics'];
   const MEDICAL_SPECIALTIES: ClinicSpecialty[] = ['general_medicine','cardiology','dermatology','psychology','pediatrics','gynecology','ophthalmology','orthopedics','ent'];
 
   const canNext = step === 0
-    ? !!(data.name && data.doctorName && data.email)
+    ? !!(data.name && data.doctorName && data.email && data.password.length >= 8)
     : step === 1 || step === 2
       ? true
       : false;
@@ -324,6 +348,19 @@ function OnboardingWizard({
                   value={data.email}
                   onChange={update('email')}
                 />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Mot de passe *</label>
+                <input
+                  type="password"
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="8 caractères minimum"
+                  value={data.password}
+                  onChange={update('password')}
+                />
+                {data.password.length > 0 && data.password.length < 8 && (
+                  <p className="text-[11px] text-red-500 mt-1">Au moins 8 caractères requis</p>
+                )}
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -515,10 +552,16 @@ function OnboardingWizard({
         </div>
 
         {/* Footer */}
+        {saveError && (
+          <div className="mx-6 mb-2 px-4 py-2.5 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+            {saveError}
+          </div>
+        )}
         <div className="px-6 py-4 border-t border-slate-100 flex justify-between items-center">
           <button
             onClick={() => step > 0 ? setStep((step - 1) as WizardStep) : onClose()}
-            className="px-4 py-2 text-sm text-slate-600 hover:text-slate-900 transition-colors"
+            disabled={saving}
+            className="px-4 py-2 text-sm text-slate-600 hover:text-slate-900 transition-colors disabled:opacity-40"
           >
             {step === 0 ? 'Annuler' : 'Retour'}
           </button>
@@ -533,9 +576,17 @@ function OnboardingWizard({
           ) : (
             <button
               onClick={handleFinish}
-              className="sa-btn"
+              disabled={saving}
+              className="sa-btn disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
             >
-              Activer et envoyer l'invitation
+              {saving ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Création…
+                </>
+              ) : (
+                'Créer le compte'
+              )}
             </button>
           )}
         </div>
@@ -949,9 +1000,47 @@ function TabPageWeb({ tenant }: { tenant: TenantDetailed }) {
 
 // Tab: Équipe
 function TabEquipe({ tenant }: { tenant: TenantDetailed }) {
-  const [members, setMembers] = useState<TeamMember[]>(MOCK_TEAM[tenant.id] ?? []);
+  const [members, setMembers] = useState<TeamMember[]>([]);
+  const [loadingMembers, setLoadingMembers] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newMember, setNewMember] = useState({ name: '', email: '', role: 'assistant' as TeamMember['role'] });
+  const [newMember, setNewMember] = useState({ name: '', email: '', password: '', role: 'assistant' as TeamMember['role'] });
+  const [addingSaving, setAddingSaving] = useState(false);
+  const [addError, setAddError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoadingMembers(true);
+    import('../lib/supabase').then(({ supabase }) => {
+      if (!supabase) { setLoadingMembers(false); return; }
+      supabase
+        .from('users')
+        .select('id, name, full_name, first_name, last_name, email, role, status, is_active')
+        .eq('tenant_id', tenant.id)
+        .then(({ data }) => {
+          if (cancelled) return;
+          const mapped: TeamMember[] = (data ?? []).map((u: any) => {
+            const displayName = u.name || u.full_name || `${u.first_name ?? ''} ${u.last_name ?? ''}`.trim() || u.email;
+            const role: TeamMember['role'] =
+              u.role === 'clinic_admin' ? 'admin' :
+              u.role === 'doctor' ? 'docteur' : 'assistant';
+            const status: TeamMember['status'] =
+              (u.status === 'active' || u.is_active === true) ? 'active' :
+              u.status === 'invited' ? 'invited' : 'inactive';
+            return {
+              id: u.id,
+              name: displayName,
+              email: u.email ?? '',
+              role,
+              status,
+              avatarColor: getAvatarColor(u.id),
+            };
+          });
+          setMembers(mapped);
+          setLoadingMembers(false);
+        });
+    });
+    return () => { cancelled = true; };
+  }, [tenant.id]);
 
   const ROLE_BADGE: Record<TeamMember['role'], string> = {
     admin: 'bg-purple-100 text-purple-700',
@@ -965,21 +1054,37 @@ function TabEquipe({ tenant }: { tenant: TenantDetailed }) {
     inactive: 'Inactif',
   };
 
-  const handleAdd = () => {
-    if (!newMember.name || !newMember.email) return;
-    setMembers(m => [
-      ...m,
-      {
-        id: `u${Date.now()}`,
-        name: newMember.name,
-        email: newMember.email,
-        role: newMember.role,
-        status: 'invited',
-        avatarColor: AVATAR_COLORS[members.length % AVATAR_COLORS.length] ?? 'bg-slate-500',
-      },
-    ]);
-    setNewMember({ name: '', email: '', role: 'assistant' });
-    setShowAddForm(false);
+  const handleAdd = async () => {
+    if (!newMember.name || !newMember.email || !newMember.password) return;
+    setAddingSaving(true);
+    setAddError(null);
+    try {
+      await createClinicWithAdmin({
+        clinic_name: tenant.name,
+        plan: (tenant.planTier ?? 'starter') as 'starter' | 'pro' | 'premium',
+        admin_email: newMember.email,
+        admin_password: newMember.password,
+        admin_name: newMember.name,
+        admin_role: newMember.role === 'admin' ? 'clinic_admin' : newMember.role === 'docteur' ? 'doctor' : 'staff',
+      });
+      setMembers(m => [
+        ...m,
+        {
+          id: `u${Date.now()}`,
+          name: newMember.name,
+          email: newMember.email,
+          role: newMember.role,
+          status: 'active',
+          avatarColor: AVATAR_COLORS[members.length % AVATAR_COLORS.length] ?? 'bg-slate-500',
+        },
+      ]);
+      setNewMember({ name: '', email: '', password: '', role: 'assistant' });
+      setShowAddForm(false);
+    } catch (err: any) {
+      setAddError(err.message ?? 'Erreur');
+    } finally {
+      setAddingSaving(false);
+    }
   };
 
   return (
@@ -996,9 +1101,18 @@ function TabEquipe({ tenant }: { tenant: TenantDetailed }) {
           </button>
         </div>
 
+        {loadingMembers && (
+          <div className="flex items-center justify-center py-6">
+            <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+
         {/* Add form */}
         {showAddForm && (
           <div className="px-4 py-3 bg-slate-50 border-b border-slate-100">
+            {addError && (
+              <p className="text-xs text-red-600 mb-2">{addError}</p>
+            )}
             <div className="grid grid-cols-3 gap-2 mb-2">
               <input
                 className="border border-slate-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1022,9 +1136,18 @@ function TabEquipe({ tenant }: { tenant: TenantDetailed }) {
                 <option value="assistant">Assistant</option>
               </select>
             </div>
+            <input
+              type="password"
+              className="w-full border border-slate-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+              placeholder="Mot de passe (8 car. min)"
+              value={newMember.password}
+              onChange={e => setNewMember(n => ({ ...n, password: e.target.value }))}
+            />
             <div className="flex justify-end gap-2">
-              <button onClick={() => setShowAddForm(false)} className="text-xs text-slate-500 hover:text-slate-700">Annuler</button>
-              <button onClick={handleAdd} className="sa-btn text-xs py-1.5">Inviter</button>
+              <button onClick={() => { setShowAddForm(false); setAddError(null); }} disabled={addingSaving} className="text-xs text-slate-500 hover:text-slate-700 disabled:opacity-40">Annuler</button>
+              <button onClick={handleAdd} disabled={addingSaving || !newMember.name || !newMember.email || newMember.password.length < 8} className="sa-btn text-xs py-1.5 disabled:opacity-40 flex items-center gap-1.5">
+                {addingSaving ? <><span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />Création…</> : 'Créer le compte'}
+              </button>
             </div>
           </div>
         )}
