@@ -82,6 +82,7 @@ export function usePatients(defaultPageSize = 25): UsePatientsReturn {
   const fetchKey = useRef(0);
 
   const fetchPatients = useCallback(async () => {
+    if (!tenantId) { setIsLoading(false); return; }
     const key = ++fetchKey.current;
     setIsLoading(true);
     setError(null);
@@ -165,6 +166,10 @@ export function usePatients(defaultPageSize = 25): UsePatientsReturn {
 
   const create = useCallback(
     async (data: Parameters<typeof createPatient>[0]): Promise<Patient | null> => {
+      if (!tenantId) {
+        setError('Aucun cabinet sélectionné. Connectez-vous avec un compte réel.');
+        return null;
+      }
       try {
         const created = await createPatient(data, tenantId, userId);
         await fetchPatients();

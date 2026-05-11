@@ -82,6 +82,10 @@ export const LoginPage: React.FC = () => {
     navigate(from ?? profile.redirectTo, { replace: true });
   };
 
+  // True when the user clicked a demo profile while Supabase is configured.
+  // In this state writes go to Supabase with no real session → RLS blocks them.
+  const demoWithSupabase = isSupabaseConfigured;
+
   const onSubmit = async (data: FormData) => {
     setServerError(null);
     try {
@@ -182,6 +186,13 @@ export const LoginPage: React.FC = () => {
 
           {showDemo && (
             <div className="border-t border-slate-100 divide-y divide-slate-50">
+              {demoWithSupabase && (
+                <div className="px-5 py-3 bg-amber-50 border-b border-amber-100">
+                  <p className="text-[11px] font-semibold text-amber-700 leading-snug">
+                    ⚠️ Supabase est connecté — les profils de démo utilisent des données fictives et ne persisteront pas. Connectez-vous avec un vrai compte pour sauvegarder vos données.
+                  </p>
+                </div>
+              )}
               {DEMO_PROFILES.map((p) => (
                 <button
                   key={p.user.id}
