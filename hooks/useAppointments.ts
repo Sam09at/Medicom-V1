@@ -88,21 +88,7 @@ export function useAppointments(options?: UseAppointmentsOptions) {
       let query = client
         .from('appointments')
         .select(
-          `
-          id,
-          patient_id,
-          doctor_id,
-          start_time,
-          end_time,
-          duration,
-          type,
-          status,
-          notes,
-          patients (
-            first_name,
-            last_name
-          )
-        `
+          'id, patient_id, doctor_id, start_time, duration, duration_minutes, type, status, notes, patient_name, tenant_id'
         )
         .eq('tenant_id', currentTenant.id);
 
@@ -119,17 +105,11 @@ export function useAppointments(options?: UseAppointmentsOptions) {
         patientId: row.patient_id,
         doctorId: row.doctor_id,
         start: new Date(row.start_time),
-        duration:
-          row.duration ||
-          Math.round(
-            (new Date(row.end_time).getTime() - new Date(row.start_time).getTime()) / 60000
-          ),
+        duration: row.duration || row.duration_minutes || 30,
         type: TYPE_FROM_DB[row.type] ?? (row.type as AppointmentType),
         status: STATUS_FROM_DB[row.status] ?? (row.status as AppointmentStatus),
         notes: row.notes,
-        patientName: row.patients
-          ? `${row.patients.first_name} ${row.patients.last_name}`
-          : 'Patient Inconnu',
+        patientName: row.patient_name || 'Patient Inconnu',
       }));
 
       setAppointments(mapped);
@@ -197,7 +177,6 @@ export function useAppointments(options?: UseAppointmentsOptions) {
     }
     try {
       const startTime = new Date(appointment.start);
-      const endTime = new Date(startTime.getTime() + appointment.duration * 60000);
       const doctorId = appointment.doctorId || currentUser?.id || '';
 
       const { data, error } = await client
@@ -207,7 +186,6 @@ export function useAppointments(options?: UseAppointmentsOptions) {
           patient_id: appointment.patientId,
           doctor_id: doctorId,
           start_time: startTime.toISOString(),
-          end_time: endTime.toISOString(),
           duration: appointment.duration,
           type: TYPE_TO_DB[appointment.type] ?? appointment.type,
           status: STATUS_TO_DB[appointment.status] ?? appointment.status,
@@ -257,10 +235,8 @@ export function useAppointments(options?: UseAppointmentsOptions) {
 
         const start = updates.start ? new Date(updates.start) : current.start;
         const duration = updates.duration ?? current.duration;
-        const end = new Date(start.getTime() + duration * 60000);
 
         dbUpdates.start_time = start.toISOString();
-        dbUpdates.end_time = end.toISOString();
         dbUpdates.duration = duration;
       }
 
