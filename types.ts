@@ -59,39 +59,42 @@ export interface User {
 // ── DB row types (used only inside lib/api/ mappers, never in components) ──────
 
 /** Raw row from public.users — snake_case mirrors actual DB columns */
+/** Raw row from public.users — matches actual DB columns */
 export interface UserRow {
   id: string;
   tenant_id: string | null;
   role: UserRole;
-  first_name: string | null;
-  last_name: string | null;
-  email: string;
-  phone: string | null;
-  avatar_url: string | null;
-  is_active: boolean;
-  module_config: Record<string, boolean> | null;
-  created_at: string;
-  updated_at: string;
+  name: string;
+  full_name: string | null;
+  email: string | null;
+  avatar: string | null;
+  clinic_name: string | null;
+  plan: string | null;
+  enabled_modules: Record<string, boolean> | null;
+  invited_by: string | null;
+  status: string | null;
+  updated_at: string | null;
 }
 
-/** Raw row from public.tenants — snake_case mirrors actual DB columns */
+/** Raw row from public.tenants — matches actual DB columns */
 export interface TenantRow {
   id: string;
-  name: string;
-  domain: string | null;
-  plan_tier: 'starter' | 'pro' | 'premium';
-  status: 'active' | 'suspended' | 'trial' | 'cancelled';
-  settings_json: Record<string, unknown>;
-  logo_url: string | null;
-  address: string | null;
-  city: string | null;
-  phone: string | null;
+  name: string | null;
+  contact_name: string | null;
+  contact_email: string | null;
   email: string | null;
-  website: string | null;
-  ice: string | null;
+  plan: string | null;
+  status: string | null;
+  users_count: number | null;
+  storage_used: string | null;
+  joined_at: string | null;
+  mrr: number | null;
   region: string | null;
-  created_at: string;
-  updated_at: string;
+  subdomain: string | null;
+  trial_ends_at: string | null;
+  location: string | null;
+  phone: string | null;
+  created_by: string | null;
 }
 
 /** Auth credentials for the login form */

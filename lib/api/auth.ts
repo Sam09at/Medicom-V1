@@ -44,47 +44,47 @@ function deserializeModuleConfig(
 }
 
 export function toUser(row: UserRow, tenantName?: string): User {
-  const displayName =
-    [row.first_name, row.last_name].filter(Boolean).join(' ') || row.email;
+  const displayName = row.full_name || row.name || row.email || 'Utilisateur';
+  const nameParts = displayName.split(' ');
 
   return {
     id: row.id,
     name: displayName,
-    firstName: row.first_name ?? undefined,
-    lastName: row.last_name ?? undefined,
+    firstName: nameParts[0] ?? undefined,
+    lastName: nameParts.slice(1).join(' ') || undefined,
     role: row.role,
-    // ui-avatars fallback: generates an initials avatar matching the app's blue
     avatar:
-      row.avatar_url ??
+      row.avatar ??
       `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=2563eb&color=fff&size=128&bold=true`,
-    avatarUrl: row.avatar_url ?? undefined,
+    avatarUrl: row.avatar ?? undefined,
     tenantId: row.tenant_id ?? undefined,
-    email: row.email,
-    phone: row.phone ?? undefined,
-    isActive: row.is_active,
-    enabledModules: deserializeModuleConfig(row.module_config),
-    clinicName: tenantName,
+    email: row.email ?? '',
+    phone: undefined,
+    isActive: row.status !== 'inactive' && row.status !== 'suspended',
+    enabledModules: deserializeModuleConfig(row.enabled_modules ?? null),
+    clinicName: row.clinic_name ?? tenantName,
   };
 }
 
 export function toTenantDetailed(row: TenantRow): TenantDetailed {
+  const planRaw = (row.plan ?? '').toLowerCase();
   return {
     id: row.id,
-    name: row.name,
-    contactName: row.name, // no dedicated contact_name column; fallback to clinic name
-    email: row.email ?? '',
-    plan: planTierToDisplay(row.plan_tier),
-    planTier: row.plan_tier,
+    name: row.name ?? '',
+    contactName: row.contact_name ?? row.name ?? '',
+    email: row.email ?? row.contact_email ?? '',
+    plan: planTierToDisplay(planRaw),
+    planTier: (['starter', 'pro', 'premium'].includes(planRaw) ? planRaw : 'starter') as 'starter' | 'pro' | 'premium',
     status:
-      row.status === 'active'
+      row.status?.toLowerCase() === 'active'
         ? 'Active'
-        : row.status === 'suspended'
+        : row.status?.toLowerCase() === 'suspended'
           ? 'Suspended'
           : 'Pending',
-    usersCount: 0, // populated separately when needed (avoids extra join on every auth)
-    storageUsed: '0 MB',
-    joinedAt: row.created_at,
-    mrr: 0,
+    usersCount: row.users_count ?? 0,
+    storageUsed: row.storage_used ?? '0 MB',
+    joinedAt: row.joined_at ?? new Date().toISOString(),
+    mrr: row.mrr ?? 0,
     region: row.region ?? '',
     enabledModules: {
       dashboard: true,
@@ -100,13 +100,13 @@ export function toTenantDetailed(row: TenantRow): TenantDetailed {
       support: true,
       landingPageBuilder: false,
     },
-    domain: row.domain,
-    logoUrl: row.logo_url,
-    address: row.address,
-    city: row.city,
-    phone: row.phone,
-    website: row.website,
-    ice: row.ice,
+    domain: row.subdomain ?? null,
+    logoUrl: null,
+    address: null,
+    city: row.location ?? null,
+    phone: row.phone ?? null,
+    website: null,
+    ice: null,
   };
 }
 
