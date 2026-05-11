@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import type { User, TenantDetailed, ToastMessage, UserRole, WaitingRoomFilter } from '../types';
+import { isSupabaseConfigured } from '../lib/supabase';
 import {
   CURRENT_USER_DOCTOR,
   CURRENT_USER_ASSISTANT,
@@ -66,6 +67,12 @@ export const useMedicomStore = create<MedicomStore>()(
     setCurrentUser: (user) =>
       set((state) => {
         state.currentUser = user;
+        // In mock mode, persist role across page refreshes via sessionStorage.
+        // In real Supabase mode Supabase SDK owns session persistence.
+        if (!isSupabaseConfigured) {
+          if (user) sessionStorage.setItem('medicom_mock_role', user.role);
+          else sessionStorage.removeItem('medicom_mock_role');
+        }
       }),
 
     setCurrentTenant: (tenant) =>
@@ -83,6 +90,7 @@ export const useMedicomStore = create<MedicomStore>()(
         state.currentUser = null;
         state.currentTenant = null;
         state.isAuthLoading = false;
+        sessionStorage.removeItem('medicom_mock_role');
       }),
 
     initializeFromMock: (role) =>

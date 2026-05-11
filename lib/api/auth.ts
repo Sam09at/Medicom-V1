@@ -112,7 +112,7 @@ export function toTenantDetailed(row: TenantRow): TenantDetailed {
 
 // ─── Internal helper ──────────────────────────────────────────────────────────
 
-async function fetchProfileForUserId(
+export async function fetchProfileForUserId(
   authUserId: string
 ): Promise<{ user: User; tenant: TenantDetailed | null }> {
   const { data: userRow, error: userError } = await supabase!
